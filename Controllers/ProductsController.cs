@@ -16,14 +16,14 @@ public sealed class ProductsController : ControllerBase
 
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<GetProductsFeature.Response>>> GetProducts(
-        [FromQuery] FilterParams filterParams)
+        [FromQuery] ProductParams productParams)
     {
         var response = await _mediator.Send(new GetProductsFeature.Request
         {
-            IsInStock = filterParams.IsInStock,
-            Predicate = filterParams.Predicate,
-            PageNumber = filterParams.PageNumber,
-            PageSize = filterParams.PageSize
+            IsInStock = productParams.IsInStock,
+            Predicate = productParams.Predicate,
+            PageNumber = productParams.PageNumber,
+            PageSize = productParams.PageSize
         });
 
         Response.AddPaginationHeader(

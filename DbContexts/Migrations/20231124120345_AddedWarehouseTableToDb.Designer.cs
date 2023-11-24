@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231124120345_AddedWarehouseTableToDb")]
+    partial class AddedWarehouseTableToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1211,8 +1214,7 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     b.HasOne("BiyLineApi.Entities.WarehouseEntity", "Warehouse")
                         .WithMany("Products")
-                        .HasForeignKey("WarehouseId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("WarehouseId");
 
                     b.Navigation("Category");
 

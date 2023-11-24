@@ -27,6 +27,9 @@ public sealed class ProductEntity
     public int? SubcategoryId { get; set; }
     public SubcategoryEntity? Subcategory { get; set; }
 
+    public int? WarehouseId { get; set; }
+    public WarehouseEntity? Warehouse { get; set; }
+    
     public ICollection<ImageEntity> Images { get; set; }
     public ICollection<RateEntity> Rates { get; set; }
     public ICollection<ProductColorEntity> Colors { get; set; }

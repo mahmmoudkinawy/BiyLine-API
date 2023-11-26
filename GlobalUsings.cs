@@ -1,4 +1,4 @@
-﻿global using Asp.Versioning;
+global using Asp.Versioning;
 global using AutoMapper;
 global using AutoMapper.QueryableExtensions;
 global using BiyLineApi.Attributes;
@@ -45,10 +45,5 @@ global using System.Net;
 global using System.Net.Mail;
 global using System.Security.Claims;
 global using System.Text;
-<<<<<<< HEAD
-global using System.Text.Json;
-=======
 global using System.Text.Json;
 global using System.Reflection;
-
->>>>>>> 935cc973cc1bee8ff74389525c57ebd9ca27d4b7

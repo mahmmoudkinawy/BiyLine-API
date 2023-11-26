@@ -15,10 +15,10 @@ public static class SwaggerServiceExtensions
 
         services.AddSwaggerGen(opts =>
         {
-            //var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            //var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
+            var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
 
-            //opts.IncludeXmlComments(xmlCommentsFullPath, true);
+            opts.IncludeXmlComments(xmlCommentsFullPath, true);
 
             opts.CustomSchemaIds(opts => opts.FullName?.Replace("+", "."));
 

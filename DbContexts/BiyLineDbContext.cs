@@ -35,10 +35,17 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<ShippingCompanyEntity> ShippingCompanies { get; set; }
     public DbSet<ShippingCompanyGovernorateEntity> ShippingCompanyGovernorates { get; set; }
     public DbSet<EmployeeEntity> Employees { get; set; }
+    public DbSet<WarehouseEntity> Warehouses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<WarehouseEntity>()
+            .HasMany(w => w.Products)
+            .WithOne(p => p.Warehouse)
+            .HasForeignKey(w => w.WarehouseId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.Entity<UserEntity>()
             .HasOne(u => u.Store)

@@ -1,4 +1,4 @@
-﻿global using Asp.Versioning;
+global using Asp.Versioning;
 global using AutoMapper;
 global using AutoMapper.QueryableExtensions;
 global using BiyLineApi.Attributes;
@@ -11,6 +11,7 @@ global using BiyLineApi.Features.Basket;
 global using BiyLineApi.Features.Categories;
 global using BiyLineApi.Features.Coupons;
 global using BiyLineApi.Features.Documents;
+global using BiyLineApi.Features.employees;
 global using BiyLineApi.Features.Location;
 global using BiyLineApi.Features.Products;
 global using BiyLineApi.Features.ShippingCompanies;
@@ -46,4 +47,3 @@ global using System.Security.Claims;
 global using System.Text;
 global using System.Text.Json;
 global using System.Reflection;
-

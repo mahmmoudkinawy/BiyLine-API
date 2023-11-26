@@ -45,12 +45,11 @@ public sealed class GetEmployeesForStoreByTraderFeature
 
             var user = await _userManager.FindByIdAsync(currentUserId.ToString());
 
-            var query = _context.Users
-                .Where(u => u.StoreId == store.Id && u.StoreId != currentUserId)
-                .OrderBy(u => u.UserName)
-                .Include(u => u.Employees)
-                .Include(u => u.UserRoles)
-                    .ThenInclude(ur => ur.Role)
+            var query = _context.Employees
+                .Include(e => e.User)
+                    .ThenInclude(u => u.UserRoles)
+                        .ThenInclude(ur => ur.Role)
+                .Where(u => u.StoreId == store.Id && u.UserId != currentUserId)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(request.Predicate))
@@ -58,20 +57,20 @@ public sealed class GetEmployeesForStoreByTraderFeature
                 var searchTerm = request.Predicate.ToLower();
 
                 query = query.Where(u =>
-                    u.Email.ToLower().Contains(searchTerm) ||
-                    u.UserName.ToLower().Contains(searchTerm) ||
-                    u.Name.ToLower().Contains(searchTerm) ||
-                    u.UserRoles.Any(r => r.Role.Name.ToLower().Contains(searchTerm)));
+                    u.User.Email.ToLower().Contains(searchTerm) ||
+                    u.User.UserName.ToLower().Contains(searchTerm) ||
+                    u.User.Name.ToLower().Contains(searchTerm) ||
+                    u.User.UserRoles.Any(r => r.Role.Name.ToLower().Contains(searchTerm)));
             }
 
             var result = query.Select(user => new Response
             {
                 Id = user.Id,
-                Email = user.Email,
-                Name = user.Name,
-                Username = user.UserName,
-                Roles = user.UserRoles.Select(ur => ur.Role.Name).ToList(),
-                Salary = user.Employees.FirstOrDefault(u => u.Id == user.Id).Salary.Value
+                Email = user.User.Email,
+                Name = user.User.Name,
+                Username = user.User.UserName,
+                Roles = user.User.UserRoles.Select(ur => ur.Role.Name).ToList(),
+                Salary = user.User.Employees.FirstOrDefault(u => u.Id == user.Id).Salary.Value
             });
 
             return await PagedList<Response>.CreateAsync(

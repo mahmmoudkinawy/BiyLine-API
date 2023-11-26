@@ -7,7 +7,9 @@ public sealed class GetStoreAddressWithMetadataFeature
     {
         public int Id { get; set; }
         public string Governorate { get; set; }
+        public int? GovernorateId { get; set; }
         public string Region { get; set; }
+        public int? RegionId { get; set; }
         public string Address { get; set; }
         public string Activity { get; set; }
         public bool AcceptReturns { get; set; }
@@ -48,6 +50,8 @@ public sealed class GetStoreAddressWithMetadataFeature
                 Activity = store?.Activity.ToString(),
                 Address = store?.Address,
                 Governorate = store?.Governorate?.Name,
+                GovernorateId = store?.GovernorateId,
+                RegionId = store?.RegionId,
                 Region = store?.Region.Name,
                 IsStoreAddressWithMetadataCompleted = true
             };

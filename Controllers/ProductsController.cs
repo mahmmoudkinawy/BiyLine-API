@@ -150,4 +150,24 @@ public sealed class ProductsController : ControllerBase
         return NoContent();
     }
 
+    [ApiVersion(2.0)]
+    [Authorize(Policy = Constants.Policies.MustBeTrader)]
+    [EnsureStoreProfileCompleteness]
+    [EnsureSingleStore]
+    [HttpDelete("{productId}")]
+    public async Task<IActionResult> DeleteProduct(
+        [FromRoute] int productId)
+    {
+        var response = await _mediator.Send(new DeleteProductByTraderFeature.Request
+        {
+            ProductId = productId
+        });
+
+        if (!response.IsSuccess)
+        {
+            return NotFound(response.Errors);
+        }
+
+        return NoContent();
+    }
 }

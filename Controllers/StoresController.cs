@@ -19,6 +19,28 @@ public sealed class StoresController : ControllerBase
     [EnsureSingleStore]
     public IActionResult EnsureStoreProfileComplete() => Ok("Now, trader profile is valid");
 
+    [HttpGet("wholesales-traders")]
+    [Authorize(Policy = Constants.Policies.MustBeTrader)]
+    [EnsureStoreProfileCompleteness]
+    [EnsureSingleStore]
+    public async Task<ActionResult<IReadOnlyList<GetWholesalesFeature.Response>>> GetWholesales(
+        [FromQuery] PaginationParams paginationParams)
+    {
+        var response = await _mediator.Send(new GetWholesalesFeature.Request
+        {
+            PageNumber = paginationParams.PageNumber,
+            PageSize = paginationParams.PageSize
+        });
+
+        Response.AddPaginationHeader(
+            response.CurrentPage,
+            response.PageSize,
+            response.TotalPages,
+            response.TotalCount);
+
+        return Ok(response);
+    }
+
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<GetStoresFeature.Response>>> GetStores(
         [FromQuery] PaginationParams paginationParams)

@@ -162,11 +162,14 @@ public sealed class CreateEmployeerForStoreByTraderFeature
                 UserName = request.Username,
                 PhoneNumber = request.PhoneNumber,
                 CountryCode = request.CountryCode,
-                Name = request.Name,
-                Employees = new List<EmployeeEntity>
-                {
+                Name = request.Name
+            };
+
+            employeeToCreate.Employees.Add(
                     new EmployeeEntity
                     {
+                        StoreId = store.Id,
+                        UserId = employeeToCreate.Id,
                         EmploymentDate = request.EmploymentDate,
                         Address = request.Address,
                         WorkingHours = request.WorkingHours,
@@ -186,9 +189,7 @@ public sealed class CreateEmployeerForStoreByTraderFeature
                             DateUploaded = DateTime.UtcNow,
                             Type = "EmployeesNationalIds"
                         }
-                    }
-                }
-            };
+                    });
 
             var roleExists = await _roleManager.RoleExistsAsync(request.Role);
 

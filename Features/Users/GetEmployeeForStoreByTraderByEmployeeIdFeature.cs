@@ -41,12 +41,11 @@ public sealed class GetEmployeeForStoreByTraderByEmployeeIdFeature
             var store = await _context.Stores
                 .FirstOrDefaultAsync(s => s.OwnerId == currentUserId, cancellationToken: cancellationToken);
 
-            var employee = await _context.Users
-                .OrderBy(u => u.UserName)
-                .Include(u => u.UserRoles)
-                    .ThenInclude(ur => ur.Role)
-                .FirstOrDefaultAsync(u => u.StoreId == store.Id && u.StoreId != currentUserId,
-                    cancellationToken: cancellationToken);
+            var employee = await _context.Employees
+                .Include(e => e.User)
+                    .ThenInclude(u => u.UserRoles)
+                        .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.StoreId == store.Id && u.UserId != currentUserId && u.Id == request.EmployeeId);
 
             if (employee == null)
             {
@@ -56,11 +55,11 @@ public sealed class GetEmployeeForStoreByTraderByEmployeeIdFeature
             return Result<Response>.Success(new Response
             {
                 Id = employee.Id,
-                Email = employee.Email,
-                Name = employee.Name,
-                Roles = employee.UserRoles.Select(ur => ur.Role.Name).ToList(),
-                Salary = employee.Employees.FirstOrDefault(e => e.Id == request.EmployeeId).Salary.Value,
-                Username = employee.UserName
+                Email = employee.User.Email,
+                Name = employee.User.Name,
+                Roles = employee.User.UserRoles.Select(ur => ur.Role.Name).ToList(),
+                Salary = employee.User.Employees.FirstOrDefault(e => e.Id == request.EmployeeId).Salary.Value,
+                Username = employee.User.UserName
             });
         }
     }

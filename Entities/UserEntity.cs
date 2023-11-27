@@ -10,5 +10,5 @@ public sealed class UserEntity : IdentityUser<int>
     public StoreEntity? Store { get; set; }
 
     public ICollection<UserRoleEntity> UserRoles { get; set; }
-    public ICollection<EmployeeEntity> Employees { get; set; }
+    public ICollection<EmployeeEntity> Employees { get; set; } = new List<EmployeeEntity>();
 }

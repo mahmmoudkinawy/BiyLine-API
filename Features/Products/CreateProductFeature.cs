@@ -5,6 +5,7 @@ public sealed class CreateProductFeature
     {
         public int CategoryId { get; set; }
         public int SubcategoryId { get; set; }
+        public int WarehouseId { get; set; }
         public string? ArabicName { get; set; }
         public string? EnglishName { get; set; }
         public decimal? OriginalPrice { get; set; }
@@ -48,12 +49,19 @@ public sealed class CreateProductFeature
             RuleFor(r => r.CategoryId)
                 .NotEmpty()
                 .NotNull()
+                .GreaterThan(0)
                 .Must((req, _) => _context.Categories.Any(c => c.Id == req.CategoryId))
                     .WithMessage("Category with the given Id does not exist");
+
+            RuleFor(r => r.WarehouseId)
+                .NotEmpty()
+                .NotNull()
+                .GreaterThan(0);
 
             RuleFor(r => r.SubcategoryId)
                 .NotEmpty()
                 .NotNull()
+                .GreaterThan(0)
                 .Must((req, _) =>
                         _context.Subcategories.Any(c => c.Id == req.SubcategoryId) &&
                         _context.Categories.Any(c => c.Id == req.CategoryId && c.Subcategories.Any(sc => sc.Id == req.SubcategoryId)))
@@ -97,7 +105,7 @@ public sealed class CreateProductFeature
                     .GreaterThan(0);
 
                 RuleFor(r => r.ThresholdReached)
-                    .GreaterThanOrEqualTo(r => r.CountInStock);
+                    .LessThanOrEqualTo(r => r.CountInStock);
             });
 
             When(req => req.Images != null && req.Images.Any(), () =>
@@ -234,7 +242,7 @@ public sealed class CreateProductFeature
 
         public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
-            var userId = _httpContextAccessor.HttpContext.User.GetUserById();
+            var userId = _httpContextAccessor.GetUserById();
 
             var store = await _context.Stores.FirstOrDefaultAsync(s => s.OwnerId == userId, cancellationToken: cancellationToken);
 
@@ -243,22 +251,35 @@ public sealed class CreateProductFeature
                 return Result<Response>.Failure(new List<string> { "Current Trader does not Owen a store" });
             }
 
+            var warehouse = await _context.Warehouses
+                .AnyAsync(w => w.Id == request.WarehouseId && w.StoreId == store.Id, cancellationToken: cancellationToken);
+
+            if (!warehouse)
+            {
+                return Result<Response>.Failure(new List<string> { "Warehouse does not exists for this store." });
+            }
+
             var productToCreate = new ProductEntity
             {
                 StoreId = store.Id,
+                WarehouseId = request.WarehouseId,
                 CategoryId = request.CategoryId,
                 CodeNumber = request.CodeNumber,
                 ThresholdReached = request.ThresholdReached,
-                Colors = request.Colors.Select(color => new ProductColorEntity
-                {
-                    Color = color.Color,
-                    Quantity = color.Quantity
-                }).ToList(),
-                Sizes = request.Sizes.Select(size => new ProductSizeEntity
-                {
-                    Size = size.Size,
-                    Quantity = size.Quantity
-                }).ToList(),
+                Colors = request.Colors != null ?
+                        request.Colors.Select(color => new ProductColorEntity
+                        {
+                            Color = color.Color,
+                            Quantity = color.Quantity
+                        }).ToList()
+                    : null,
+                Sizes = request.Sizes != null ?
+                        request.Sizes.Select(size => new ProductSizeEntity
+                        {
+                            Size = size.Size,
+                            Quantity = size.Quantity
+                        }).ToList()
+                    : null,
                 CountInStock = request.CountInStock,
                 IsInStock = request.IsInStock,
                 SellingPrice = request.SellingPrice,
@@ -291,6 +312,7 @@ public sealed class CreateProductFeature
                 {
                     return new ImageEntity
                     {
+                        ProductId = productToCreate.Id,
                         StoreId = store.Id,
                         ImageMimeType = image.ContentType,
                         FileName = image.FileName,

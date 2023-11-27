@@ -67,7 +67,7 @@ public sealed class CreateStoreAddressWithMetadataFeature
 
         public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
-            var userId = _httpContextAccessor.HttpContext.User.GetUserById();
+            var userId = _httpContextAccessor.GetUserById();
 
             var store = await _context.Stores
                 .Include(s => s.StoreProfileCompleteness)

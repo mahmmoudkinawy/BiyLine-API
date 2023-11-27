@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231124211852_createSupplierModel")]
+    partial class createSupplierModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -430,9 +433,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<decimal?>("Vat")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("WarehouseId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("WarrantyMonths")
                         .HasColumnType("int");
 
@@ -450,8 +450,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.HasIndex("StoreId");
 
                     b.HasIndex("SubcategoryId");
-
-                    b.HasIndex("WarehouseId");
 
                     b.ToTable("Products");
                 });
@@ -960,33 +958,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.WarehouseEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ShippingAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("WarehouseStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StoreId");
-
-                    b.ToTable("Warehouses");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -1083,8 +1054,8 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AccountNumber")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("AccountNumber")
+                        .HasColumnType("int");
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -1095,8 +1066,8 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("InvoiceStatus")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("InvoiceStatus")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsSuspended")
                         .HasColumnType("bit");
@@ -1104,16 +1075,10 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PaymentMethod")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StoreId")
+                    b.Property<int>("PaymentMethod")
                         .HasColumnType("int");
 
-                    b.Property<string>("SupplierType")
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TaxCard")
@@ -1122,14 +1087,7 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<string>("TradeName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("StoreId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Suppliers");
                 });
@@ -1268,11 +1226,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .WithMany("Products")
                         .HasForeignKey("SubcategoryId");
 
-                    b.HasOne("BiyLineApi.Entities.WarehouseEntity", "Warehouse")
-                        .WithMany("Products")
-                        .HasForeignKey("WarehouseId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.Navigation("Category");
 
                     b.Navigation("Offer");
@@ -1280,8 +1233,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Store");
 
                     b.Navigation("Subcategory");
-
-                    b.Navigation("Warehouse");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.ProductSizeEntity", b =>
@@ -1500,17 +1451,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.WarehouseEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
-                        .WithMany()
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Store");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("BiyLineApi.Entities.RoleEntity", null)
@@ -1545,23 +1485,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("SupplierEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
-                        .WithMany("Suppliers")
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Store");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.BasketEntity", b =>
@@ -1648,8 +1571,6 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     b.Navigation("StoreProfileCompleteness")
                         .IsRequired();
-
-                    b.Navigation("Suppliers");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.SubcategoryEntity", b =>
@@ -1666,11 +1587,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Store");
 
                     b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.WarehouseEntity", b =>
-                {
-                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

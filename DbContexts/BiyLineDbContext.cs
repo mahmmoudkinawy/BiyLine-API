@@ -37,6 +37,8 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<EmployeeEntity> Employees { get; set; }
     public DbSet<WarehouseEntity> Warehouses { get; set; }
 
+    public DbSet<SupplierEntity> Suppliers { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

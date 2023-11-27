@@ -1,4 +1,6 @@
-﻿public sealed class SupplierEntity
+﻿namespace BiyLineApi.Entities;
+
+public sealed class SupplierEntity
 {
     public int Id { get; set; }
     public string? Name { get; set; }
@@ -12,6 +14,7 @@
     public string? PaymentMethod { get; set; }
     public bool IsSuspended { get; set; }
     public string? SupplierType { get; set; }
+
     public int? UserId { get; set; }
     public UserEntity? User { get; set; }
     public int StoreId { get; set; }

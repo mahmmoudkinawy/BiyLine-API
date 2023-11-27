@@ -12,7 +12,7 @@ public sealed class StoreEntity
     public int? NumberOfEmployees { get; set; }
     public double? Rating { get; set; }
     public int? MinimumNumberOfPieces { get; set; }
-    public StoreActivityEnum? Activity { get; set; }
+    public string? Activity { get; set; }
 
     public ICollection<ProductEntity> Products { get; set; }
     public ICollection<ImageEntity> Images { get; set; }

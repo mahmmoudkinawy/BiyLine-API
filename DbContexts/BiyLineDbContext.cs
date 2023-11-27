@@ -12,7 +12,7 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     }
 
     public DbSet<ProductEntity> Products { get; set; }
-    public DbSet<CategoryEntity> Categories { get; set; }
+    public DbSet<CategoryEntity> Categories { get; set; }   
     public DbSet<OfferEntity> Offers { get; set; }
     public DbSet<StoreEntity> Stores { get; set; }
     public DbSet<RateEntity> Rates { get; set; }
@@ -29,18 +29,24 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<StoreCategoryEntity> StoreCategories { get; set; }
     public DbSet<StoreProfileCompletenessEntity> StoresProfilesCompleteness { get; set; }
     public DbSet<SubcategoryEntity> Subcategories { get; set; }
-    public DbSet<ProductSizeEntity> ProductSizes { get; set; }
-    public DbSet<ProductColorEntity> ProductColors { get; set; }
     public DbSet<SubSpecializationEntity> SubSpecializations { get; set; }
     public DbSet<ShippingCompanyEntity> ShippingCompanies { get; set; }
     public DbSet<ShippingCompanyGovernorateEntity> ShippingCompanyGovernorates { get; set; }
     public DbSet<EmployeeEntity> Employees { get; set; }
     public DbSet<WarehouseEntity> Warehouses { get; set; }
     public DbSet<SupplierEntity> Suppliers { get; set; }
+    public DbSet<QuantityPricingTierEntity> QuantityPricingTiers { get; set; }
+    public DbSet<ProductVariationEntity> ProductVariations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<QuantityPricingTierEntity>()
+            .HasOne(qpt => qpt.Product)
+            .WithMany(p => p.QuantityPricingTiers)
+            .HasForeignKey(k => k.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<WarehouseEntity>()
             .HasMany(w => w.Products)
@@ -85,13 +91,8 @@ public sealed class BiyLineDbContext : IdentityDbContext<
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<ProductEntity>()
-            .HasMany(p => p.Colors)
-            .WithOne()
-            .HasForeignKey(p => p.ProductId);
-
-        builder.Entity<ProductEntity>()
-            .HasMany(p => p.Sizes)
-            .WithOne()
+            .HasMany(p => p.ProductVariations)
+            .WithOne(pv => pv.Product)
             .HasForeignKey(p => p.ProductId);
 
         builder.Entity<SubcategoryEntity>()

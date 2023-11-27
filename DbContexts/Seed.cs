@@ -190,8 +190,6 @@ public static class Seed
         await context.SaveChangesAsync();
 
         var products = new List<ProductEntity>();
-        var colors = new List<ProductColorEntity>();
-        var sizes = new List<ProductSizeEntity>();
 
         var englishFaker = new Faker<ProductEntity>("en");
         var arabicFaker = new Faker<ProductEntity>("ar");
@@ -283,20 +281,6 @@ public static class Seed
                     .Generate();
 
                 productImages.Add(image);
-
-                var color = new Faker<ProductColorEntity>()
-                    .RuleFor(c => c.Color, f => f.Commerce.Color())
-                    .RuleFor(c => c.Quantity, f => f.Random.Int(1, 500))
-                    .Generate();
-
-                colors.Add(color);
-
-                var size = new Faker<ProductSizeEntity>()
-                    .RuleFor(c => c.Size, f => f.PickRandom("Small", "Medium", "Large", "XL", "XXL"))
-                    .RuleFor(c => c.Quantity, f => f.Random.Int(10, 100))
-                    .Generate();
-
-                sizes.Add(size);
             }
 
             var rates = new List<RateEntity>();
@@ -314,8 +298,6 @@ public static class Seed
 
             product.Images = productImages;
             product.Rates = rates;
-            product.Colors = colors;
-            product.Sizes = sizes;
         }
 
         var coupons = new Faker<CouponEntity>()

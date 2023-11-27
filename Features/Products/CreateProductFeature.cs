@@ -1,4 +1,4 @@
-﻿ namespace BiyLineApi.Features.Products;
+﻿namespace BiyLineApi.Features.Products;
 public sealed class CreateProductFeature
 {
     public sealed class Request : IRequest<Result<Response>>
@@ -19,20 +19,23 @@ public sealed class CreateProductFeature
         public string? EnglishDescription { get; set; }
         public bool? IsInStock { get; set; }
         public int? CountInStock { get; set; }
-        public List<ColorQuantityRequest>? Colors { get; set; }
-        public List<SizeQuantityRequest>? Sizes { get; set; }
+        public List<ProductVariationRequest> Variations { get; set; }
+        public List<QuantityPricingTierRequest>? PricingTiers { get; set; }
     }
 
-    public sealed class ColorQuantityRequest
+    public sealed class ProductVariationRequest
     {
         public string? Color { get; set; }
-        public int? Quantity { get; set; }
-    }
-
-    public sealed class SizeQuantityRequest
-    {
         public string? Size { get; set; }
         public int? Quantity { get; set; }
+        public decimal? Price { get; set; }
+    }
+
+    public sealed class QuantityPricingTierRequest
+    {
+        public int? MinQuantity { get; set; }
+        public int? MaxQuantity { get; set; }
+        public decimal? Price { get; set; }
     }
 
     public sealed class Response { }
@@ -40,11 +43,14 @@ public sealed class CreateProductFeature
     public sealed class Validator : AbstractValidator<Request>
     {
         private readonly BiyLineDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public Validator(BiyLineDbContext context)
+        public Validator(BiyLineDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context ??
                 throw new ArgumentNullException(nameof(context));
+            _httpContextAccessor = httpContextAccessor ??
+                throw new ArgumentNullException(nameof(httpContextAccessor));
 
             RuleFor(r => r.CategoryId)
                 .NotEmpty()
@@ -146,60 +152,89 @@ public sealed class CreateProductFeature
                 .NotNull()
                 .GreaterThanOrEqualTo(0);
 
-            When(req => req.Colors != null && req.Colors.Any(), () =>
-            {
-                RuleFor(r => r.Colors)
-                    .NotEmpty()
-                    .NotNull()
-                    .Must(colors => colors.Count <= 10)
-                        .WithMessage("Maximum of 10 colors allowed")
-                    .Must(colors => colors.Distinct().Count() == colors.Count)
-                        .WithMessage("Colors must be unique");
+            RuleFor(x => x.Variations)
+                .NotNull()
+                .WithMessage("Variations list cannot be empty");
 
-                RuleForEach(req => req.Colors)
-                    .SetValidator(new ColorQuantityRequestValidator());
+            When(x => x.Variations != null && x.Variations.Any(), () =>
+            {
+                RuleForEach(x => x.Variations)
+                    .SetValidator(new ProductVariationRequestValidator());
             });
 
-            When(req => req.Sizes != null && req.Sizes.Any(), () =>
+            When(x => x.PricingTiers != null && x.PricingTiers.Any(), () =>
             {
-                RuleFor(r => r.Sizes)
-                    .NotEmpty()
-                    .NotNull()
-                    .Must(sizes => sizes.Count <= 10)
-                        .WithMessage("Maximum of 10 sizes allowed")
-                    .Must(sizes => sizes.Distinct().Count() == sizes.Count)
-                        .WithMessage("Sizes must be unique");
+                RuleForEach(x => x.PricingTiers)
+                    .SetValidator(new QuantityPricingTierRequestValidator());
+            });
 
-                RuleForEach(req => req.Sizes)
-                    .SetValidator(new SizeQuantityRequestValidator());
+            When(x => x.PricingTiers != null && IsUserWholesaleFactoryImporter(), () =>
+            {
+                RuleFor(x => x.PricingTiers)
+                    .Must(p => p?.Count > 0)
+                        .WithMessage("At least one pricing tier is required for Wholesale, Factory, Importer users");
             });
         }
 
-        public sealed class ColorQuantityRequestValidator : AbstractValidator<ColorQuantityRequest>
+        private bool IsUserWholesaleFactoryImporter()
         {
-            public ColorQuantityRequestValidator()
-            {
-                RuleFor(req => req.Color)
-                    .NotEmpty()
-                    .NotNull();
+            var userId = _httpContextAccessor.GetUserById();
 
-                RuleFor(req => req.Quantity)
-                    .InclusiveBetween(0, int.MaxValue)
-                    .When(req => req.Color != null);
+            var store = _context.Stores.FirstOrDefault(s => s.OwnerId == userId);
+
+            return store.Activity == StoreActivityEnum.Wholesale.ToString() ||
+                   store.Activity == StoreActivityEnum.Factory.ToString() ||
+                   store.Activity == StoreActivityEnum.Importer.ToString();
+        }
+
+        public sealed class QuantityPricingTierRequestValidator : AbstractValidator<QuantityPricingTierRequest>
+        {
+            public QuantityPricingTierRequestValidator()
+            {
+                RuleFor(x => x.MinQuantity)
+                    .NotNull()
+                        .WithMessage("MinQuantity is required")
+                    .GreaterThanOrEqualTo(0)
+                        .WithMessage("MinQuantity must be greater than or equal to 0");
+
+                RuleFor(x => x.MaxQuantity)
+                    .NotNull()
+                        .WithMessage("MaxQuantity is required")
+                    .GreaterThanOrEqualTo(0)
+                        .WithMessage("MaxQuantity must be greater than or equal to 0")
+                    .GreaterThanOrEqualTo(x => x.MinQuantity)
+                        .WithMessage("MaxQuantity must be greater than or equal to MinQuantity");
+
+                RuleFor(x => x.Price)
+                    .NotNull()
+                        .WithMessage("Price is required")
+                    .GreaterThanOrEqualTo(0)
+                        .WithMessage("Price must be greater than or equal to 0");
             }
         }
-
-        public class SizeQuantityRequestValidator : AbstractValidator<SizeQuantityRequest>
+        public sealed class ProductVariationRequestValidator : AbstractValidator<ProductVariationRequest>
         {
-            public SizeQuantityRequestValidator()
+            public ProductVariationRequestValidator()
             {
-                RuleFor(req => req.Size)
+                RuleFor(x => x.Color)
                     .NotEmpty()
-                    .NotNull();
+                        .WithMessage("Color is required");
 
-                RuleFor(req => req.Quantity)
-                    .InclusiveBetween(0, int.MaxValue)
-                    .When(req => req.Size != null);
+                RuleFor(x => x.Size)
+                    .NotEmpty()
+                        .WithMessage("Size is required");
+
+                RuleFor(x => x.Quantity)
+                    .NotNull()
+                        .WithMessage("Quantity is required")
+                    .GreaterThanOrEqualTo(0)
+                        .WithMessage("Quantity must be greater than or equal to 0");
+
+                RuleFor(x => x.Price)
+                    .NotNull()
+                        .WithMessage("Price is required")
+                    .GreaterThan(0)
+                        .WithMessage("Price must be greater than 0");
             }
         }
 
@@ -266,20 +301,6 @@ public sealed class CreateProductFeature
                 CategoryId = request.CategoryId,
                 CodeNumber = request.CodeNumber,
                 ThresholdReached = request.ThresholdReached,
-                Colors = request.Colors != null ?
-                        request.Colors.Select(color => new ProductColorEntity
-                        {
-                            Color = color.Color,
-                            Quantity = color.Quantity
-                        }).ToList()
-                    : null,
-                Sizes = request.Sizes != null ?
-                        request.Sizes.Select(size => new ProductSizeEntity
-                        {
-                            Size = size.Size,
-                            Quantity = size.Quantity
-                        }).ToList()
-                    : null,
                 CountInStock = request.CountInStock,
                 IsInStock = request.IsInStock,
                 SellingPrice = request.SellingPrice,
@@ -303,7 +324,14 @@ public sealed class CreateProductFeature
                         Description = request.EnglishDescription,
                         GeneralOverview = request.GeneralOverview
                     }
-                }
+                },
+                ProductVariations = request.Variations.Select(req => new ProductVariationEntity
+                {
+                    Color = req.Color,
+                    Price = req.Price,
+                    Quantity = req.Quantity,
+                    Size = req.Size
+                }).ToList()
             };
 
             if (request.Images != null)

@@ -46,7 +46,7 @@ public sealed class CreateStoreAddressWithMetadataFeature
                 .NotEmpty()
                 .NotNull()
                 .Must(activity => Enum.TryParse<StoreActivityEnum>(activity, out _))
-                    .WithMessage($"Please provide a valid activity from StoreActivityEnum. Valid options are: Sectional, Wholesale.");
+                    .WithMessage($"Please provide a valid activity from StoreActivityEnum. Valid options are: Sectional, Wholesale, Factory, Importer.");
         }
         private bool ValidateRegionBelongsToGovernorate(int governorateId, int regionId)
             => _context.Regions.Any(r => r.Id == regionId && r.GovernorateId == governorateId);
@@ -79,7 +79,7 @@ public sealed class CreateStoreAddressWithMetadataFeature
             }
 
             store.Activity = Enum.TryParse(request.Activity, out StoreActivityEnum activity)
-                ? activity
+                ? activity.ToString()
                 : default;
             store.AcceptsReturns = request.AcceptReturns;
             store.Address = request.Address;

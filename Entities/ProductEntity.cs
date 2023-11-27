@@ -32,7 +32,7 @@ public sealed class ProductEntity
     
     public ICollection<ImageEntity> Images { get; set; }
     public ICollection<RateEntity> Rates { get; set; }
-    public ICollection<ProductColorEntity> Colors { get; set; }
-    public ICollection<ProductSizeEntity> Sizes { get; set; }
+    public ICollection<ProductVariationEntity> ProductVariations { get; set; } = new List<ProductVariationEntity>();
+    public ICollection<QuantityPricingTierEntity> QuantityPricingTiers { get; set; } = new List<QuantityPricingTierEntity>();
     public ICollection<ProductTranslationEntity> ProductTranslations { get; set; } = new List<ProductTranslationEntity>();
 }

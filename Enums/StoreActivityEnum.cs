@@ -2,5 +2,7 @@
 public enum StoreActivityEnum
 {
     Sectional,
-    Wholesale
+    Wholesale,
+    Factory,
+    Importer
 }

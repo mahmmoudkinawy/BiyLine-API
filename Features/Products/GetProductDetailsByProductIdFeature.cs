@@ -20,22 +20,16 @@ public sealed class GetProductDetailsByProductIdFeature
         public decimal Discount { get; set; }
         public decimal Vat { get; set; }
         public string ImageUrl { get; set; }
-        public List<ColorResponse> Colors { get; set; }
-        public List<SizeResponse> Sizes { get; set; }
+        public List<ProductVariationResponse> Variations { get; set; }
     }
 
-    public sealed class ColorResponse
+    public sealed class ProductVariationResponse
     {
         public int Id { get; set; }
         public string Color { get; set; }
-        public int Quantity { get; set; }
-    }
-
-    public sealed class SizeResponse
-    {
-        public int Id { get; set; }
         public string Size { get; set; }
         public int Quantity { get; set; }
+        public decimal Price { get; set; }
     }
 
     public sealed class Mapper : Profile
@@ -45,8 +39,7 @@ public sealed class GetProductDetailsByProductIdFeature
             CreateMap<ProductEntity, Response>()
                 .ForMember(dest => dest.ImageUrl, opts => opts.MapFrom(src =>
                     src.Images.OrderByDescending(i => i.DateUploaded).FirstOrDefault(i => i.Type == "ProductImage" && i.IsMain.Value)));
-            CreateMap<ProductColorEntity, ColorResponse>();
-            CreateMap<ProductSizeEntity, SizeResponse>();
+            CreateMap<ProductVariationEntity, ProductVariationResponse>();
         }
     }
 
@@ -83,20 +76,15 @@ public sealed class GetProductDetailsByProductIdFeature
                 return Result<Response>.Failure(new List<string> { "This product does not belong to current logged in user." });
             }
 
+            productBelongsToCurrentUserStore.ProductVariations = await _context
+                .ProductVariations
+                .Where(pv => pv.ProductId == request.ProductId)
+                .ToListAsync();
+
             productBelongsToCurrentUserStore.Images = await _context
                 .Images
                 .OrderByDescending(i => i.DateUploaded)
                 .Where(i => i.Type == "ProductImage" && i.ProductId == request.ProductId)
-                .ToListAsync(cancellationToken: cancellationToken);
-
-            productBelongsToCurrentUserStore.Colors = await _context
-                .ProductColors
-                .Where(pc => pc.ProductId == request.ProductId)
-                .ToListAsync(cancellationToken: cancellationToken);
-
-            productBelongsToCurrentUserStore.Sizes = await _context
-                .ProductSizes
-                .Where(ps => ps.ProductId == request.ProductId)
                 .ToListAsync(cancellationToken: cancellationToken);
 
             productBelongsToCurrentUserStore.ProductTranslations = await _context

@@ -9,15 +9,15 @@ using Microsoft.Identity.Client;
 
 namespace BiyLineApi.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/v{version:apiVersion}/suppliers")]
 [ApiController]
 [ApiVersion("2.0")]
 [Authorize(Policy = Constants.Policies.MustBeTrader)] 
 [EnsureSingleStore]
-public class SupplierController : ControllerBase
+public class SuppliersController : ControllerBase
 {
     private readonly IMediator _mediator;
-    public SupplierController(IMediator mediator)
+    public SuppliersController(IMediator mediator)
     {
         _mediator = mediator ??
         throw new ArgumentNullException(nameof(mediator));

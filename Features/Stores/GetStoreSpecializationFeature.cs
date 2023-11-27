@@ -4,12 +4,14 @@ public sealed class GetStoreSpecializationFeature
     public sealed class Request : IRequest<IEnumerable<Response>> { }
     public sealed class Response
     {
+        public int Id { get; set; }
         public string? Name { get; set; }
         public List<SubSpecializationResponse>? SubSpecializations { get; set; }
     }
 
     public sealed class SubSpecializationResponse
     {
+        public int Id { get; set; }
         public string? Name { get; set; }
         public string? ImageUrl { get; set; }
     }
@@ -47,9 +49,11 @@ public sealed class GetStoreSpecializationFeature
 
             var result = specializations.Select(specialization => new Response
             {
+                Id = specialization.Id,
                 Name = specialization?.Name,
                 SubSpecializations = specialization?.SubSpecializations.Select(ss => new SubSpecializationResponse
                 {
+                    Id = ss.Id,
                     Name = ss.Name,
                     ImageUrl = baseUri.CombineUri(ss.SubSpecializationImage?.ImageUrl)
                 }).ToList(),

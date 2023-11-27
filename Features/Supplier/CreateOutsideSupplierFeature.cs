@@ -1,11 +1,5 @@
-﻿using BiyLineApi.DbContexts;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using System.Runtime.CompilerServices;
-
-namespace BiyLineApi.Features.Supplier;
-
-public sealed class AddOutsideSupplierFeature
+﻿namespace BiyLineApi.Features.Supplier;
+public sealed class CreateOutsideSupplierFeature
 {
     public sealed class Request : IRequest<Result<Response>>
     {
@@ -19,14 +13,15 @@ public sealed class AddOutsideSupplierFeature
         public string? PaymentMethod { get; set; }
         public string? AccountNumber { get; set; }
     }
+
     public sealed class Response { }
+
     public sealed class Validator : AbstractValidator<Request>
     {
         public Validator()
         {
             RuleFor(s => s.Name)
-            .NotEmpty()
-            .WithMessage("The Name Is Required");
+                .NotEmpty();
 
             When(s => !string.IsNullOrEmpty(s.Name), () =>
             {
@@ -36,8 +31,7 @@ public sealed class AddOutsideSupplierFeature
             });
 
             RuleFor(s => s.PhoneNumber)
-                .NotEmpty()
-                .WithMessage("The Phone Number Is Required");
+                .NotEmpty();
 
             When(s => !string.IsNullOrEmpty(s.PhoneNumber), () =>
             {
@@ -48,8 +42,7 @@ public sealed class AddOutsideSupplierFeature
                     .WithMessage("Phone Number Must Be Only Numbers");
             });
 
-
-            When( s => s.PaymentMethod != null,() =>
+            When(s => !string.IsNullOrEmpty(s.PaymentMethod), () =>
                 {
                     RuleFor(s => s.PaymentMethod)
                        .Must((request, paymentMethod) =>
@@ -65,13 +58,15 @@ public sealed class AddOutsideSupplierFeature
     {
         private readonly BiyLineDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+
         public Handler(BiyLineDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context ??
-                            throw new ArgumentNullException(nameof(context));
+                throw new ArgumentNullException(nameof(context));
             _httpContextAccessor = httpContextAccessor ??
-                             throw new ArgumentNullException(nameof(httpContextAccessor));
+                throw new ArgumentNullException(nameof(httpContextAccessor));
         }
+
         public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
             var userId = _httpContextAccessor.GetUserById();
@@ -98,13 +93,10 @@ public sealed class AddOutsideSupplierFeature
                 StoreId = store.Id,
             };
 
-             _context.Add(supplier);
-
-            await _context.SaveChangesAsync();
+            _context.Suppliers.Add(supplier);
+            await _context.SaveChangesAsync(cancellationToken);
 
             return Result<Response>.Success(new Response());
         }
     }
-
-
 }

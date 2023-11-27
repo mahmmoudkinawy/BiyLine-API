@@ -36,7 +36,6 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<ShippingCompanyGovernorateEntity> ShippingCompanyGovernorates { get; set; }
     public DbSet<EmployeeEntity> Employees { get; set; }
     public DbSet<WarehouseEntity> Warehouses { get; set; }
-
     public DbSet<SupplierEntity> Suppliers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)

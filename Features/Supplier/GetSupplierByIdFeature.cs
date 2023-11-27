@@ -1,10 +1,11 @@
 ﻿namespace BiyLineApi.Features.Supplier;
-
-public sealed class GetSupplierById
+public sealed class GetSupplierByIdFeature
 {
     public sealed class Request : IRequest<Result<Response>>
     {
+        public int SupplierId { get; set; }
     }
+
     public sealed class Response
     {
         public int Id { get; set; }
@@ -21,12 +22,13 @@ public sealed class GetSupplierById
     {
         private readonly BiyLineDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+
         public Handler(BiyLineDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context ??
-                            throw new ArgumentNullException(nameof(context));
+                throw new ArgumentNullException(nameof(context));
             _httpContextAccessor = httpContextAccessor ??
-                            throw new ArgumentNullException(nameof(httpContextAccessor));
+                throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
         public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
@@ -35,25 +37,21 @@ public sealed class GetSupplierById
 
             var store = await _context.Stores.FirstOrDefaultAsync(s => s.OwnerId == userId);
 
-            if(store == null)
+            if (store == null)
             {
                 return Result<Response>.Failure("This Store Is Not Found");
-
             }
-
-            var supplierId = _httpContextAccessor.GetValueFromRoute("supplierId");
 
             var supplierFromDb = await _context.Suppliers.Where(s => s.StoreId == store.Id)
                 .Include(s => s.User)
-                .ThenInclude(s=>s.Store)
-                .FirstOrDefaultAsync(s => s.Id == supplierId);
+                .ThenInclude(s => s.Store)
+                .FirstOrDefaultAsync(s => s.Id == request.SupplierId);
 
-            if(supplierFromDb == null)
+            if (supplierFromDb == null)
             {
                 return Result<Response>.Failure("This Supplier Is Not Found");
-
             }
-
+            
             var response = new Response
             {
                 Id = supplierFromDb.Id,
@@ -63,7 +61,7 @@ public sealed class GetSupplierById
                 AccountNumber = supplierFromDb.AccountNumber,
                 PaymentMethod = supplierFromDb.PaymentMethod,
                 SupplierType = supplierFromDb.SupplierType,
-                IsSuspended =  supplierFromDb.IsSuspended,
+                IsSuspended = supplierFromDb.IsSuspended,
             };
 
             return Result<Response>.Success(response);

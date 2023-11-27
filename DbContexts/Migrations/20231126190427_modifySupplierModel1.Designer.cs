@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231126190427_modifySupplierModel1")]
+    partial class modifySupplierModel1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1063,8 +1066,8 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("InvoiceStatus")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("InvoiceStatus")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsSuspended")
                         .HasColumnType("bit");
@@ -1072,8 +1075,8 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PaymentMethod")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
@@ -1081,8 +1084,8 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<int>("StoreId")
                         .HasColumnType("int");
 
-                    b.Property<string>("SupplierType")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("SupplierType")
+                        .HasColumnType("int");
 
                     b.Property<string>("TaxCard")
                         .HasColumnType("nvarchar(max)");

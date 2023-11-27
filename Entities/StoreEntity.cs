@@ -46,4 +46,6 @@ public sealed class StoreEntity
     public UserEntity? Owner { get; set; }
 
     public StoreProfileCompletenessEntity StoreProfileCompleteness { get; set; }
+
+    public ICollection<SupplierEntity> Suppliers { get; set; }
 }

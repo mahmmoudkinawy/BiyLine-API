@@ -28,7 +28,6 @@ public sealed class CreateProductFeature
         public string? Color { get; set; }
         public string? Size { get; set; }
         public int? Quantity { get; set; }
-        public decimal? Price { get; set; }
     }
 
     public sealed class QuantityPricingTierRequest
@@ -152,10 +151,6 @@ public sealed class CreateProductFeature
                 .NotNull()
                 .GreaterThanOrEqualTo(0);
 
-            RuleFor(x => x.Variations)
-                .NotNull()
-                .WithMessage("Variations list cannot be empty");
-
             When(x => x.Variations != null && x.Variations.Any(), () =>
             {
                 RuleForEach(x => x.Variations)
@@ -229,12 +224,6 @@ public sealed class CreateProductFeature
                         .WithMessage("Quantity is required")
                     .GreaterThanOrEqualTo(0)
                         .WithMessage("Quantity must be greater than or equal to 0");
-
-                RuleFor(x => x.Price)
-                    .NotNull()
-                        .WithMessage("Price is required")
-                    .GreaterThan(0)
-                        .WithMessage("Price must be greater than 0");
             }
         }
 
@@ -325,13 +314,12 @@ public sealed class CreateProductFeature
                         GeneralOverview = request.GeneralOverview
                     }
                 },
-                ProductVariations = request.Variations.Select(req => new ProductVariationEntity
+                ProductVariations = request.Variations != null ? request.Variations.Select(req => new ProductVariationEntity
                 {
                     Color = req.Color,
-                    Price = req.Price,
                     Quantity = req.Quantity,
                     Size = req.Size
-                }).ToList()
+                }).ToList() : null
             };
 
             if (request.Images != null)

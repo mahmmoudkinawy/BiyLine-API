@@ -18,6 +18,7 @@ public sealed class GetCurrentUserFeature
     public sealed class StoreResponse
     {
         public int Id { get; set; }
+        public string CurrencyCode { get; set; }
         public string Name { get; set; }
         public string Username { get; set; }
         public string Address { get; set; }
@@ -37,21 +38,24 @@ public sealed class GetCurrentUserFeature
     public sealed class Handler : IRequestHandler<Request, Response>
     {
         private readonly UserManager<UserEntity> _userManager;
+        private readonly BiyLineDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMapper _mapper;
 
         public Handler(
             UserManager<UserEntity> userManager,
+            BiyLineDbContext context,
             IHttpContextAccessor httpContextAccessor,
             IDateTimeProvider dateTimeProvider,
             IMapper mapper)
         {
             _userManager = userManager ??
                 throw new ArgumentNullException(nameof(userManager));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
             _httpContextAccessor = httpContextAccessor ??
                 throw new ArgumentNullException(nameof(httpContextAccessor));
-            _dateTimeProvider = dateTimeProvider ?? 
+            _dateTimeProvider = dateTimeProvider ??
                 throw new ArgumentNullException(nameof(dateTimeProvider));
             _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
@@ -89,6 +93,14 @@ public sealed class GetCurrentUserFeature
             user.LastActive = _dateTimeProvider.GetCurrentDateTimeUtc();
 
             await _userManager.UpdateAsync(user);
+
+            if (result.Store != null)
+            {
+                var country = await _context.Countries
+                    .FirstOrDefaultAsync(c => c.Store.Id == result.Store.Id, cancellationToken: cancellationToken);
+
+                result.Store.CurrencyCode = country.CurrencyCode;
+            }
 
             return result;
         }

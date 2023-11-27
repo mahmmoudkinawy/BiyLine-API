@@ -13,22 +13,19 @@ public sealed class GetEmployeeForStoreByTraderByEmployeeIdFeature
         public string Email { get; set; }
         public string Username { get; set; }
         public decimal Salary { get; set; }
+        public DateTime LastLogIn { get; set; }
         public List<string> Roles { get; set; }
     }
 
     public sealed class Handler : IRequestHandler<Request, Result<Response>>
     {
-        private readonly UserManager<UserEntity> _userManager;
         private readonly BiyLineDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public Handler(
-            UserManager<UserEntity> userManager,
             BiyLineDbContext context,
             IHttpContextAccessor httpContextAccessor)
         {
-            _userManager = userManager ??
-                throw new ArgumentNullException(nameof(userManager));
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _httpContextAccessor = httpContextAccessor ??
                 throw new ArgumentNullException(nameof(httpContextAccessor));
@@ -55,6 +52,7 @@ public sealed class GetEmployeeForStoreByTraderByEmployeeIdFeature
             return Result<Response>.Success(new Response
             {
                 Id = employee.Id,
+                LastLogIn = employee.User.LastActive.Value,
                 Email = employee.User.Email,
                 Name = employee.User.Name,
                 Roles = employee.User.UserRoles.Select(ur => ur.Role.Name).ToList(),

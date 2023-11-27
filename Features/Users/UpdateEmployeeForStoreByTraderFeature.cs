@@ -177,10 +177,10 @@ public sealed class UpdateEmployeeForStoreByTraderFeature
             employee.WorkingHours = request.WorkingHours;
             employee.Salary = request.Salary;
             employee.PaymentPeriod = Enum.TryParse<PaymentPeriodEnum>(request.PaymentPeriod, out var paymentPeriodEnum)
-                ? paymentPeriodEnum
+                ? paymentPeriodEnum.ToString()
                 : throw new ArgumentException("Invalid PaymentPeriod value.");
             employee.PaymentMethod = Enum.TryParse<PaymentMethodEnum>(request.PaymentMethod, out var paymentMethodEnum)
-                ? paymentMethodEnum
+                ? paymentMethodEnum.ToString()
                 : throw new ArgumentException("Invalid PaymentMethod value.");
             employee.VisaNumber = request.VisaNumber;
             user.UserName = request.Username;

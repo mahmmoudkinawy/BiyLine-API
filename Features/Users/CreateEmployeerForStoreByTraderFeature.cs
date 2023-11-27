@@ -175,10 +175,10 @@ public sealed class CreateEmployeerForStoreByTraderFeature
                         WorkingHours = request.WorkingHours,
                         VisaNumber = request.VisaNumber,
                         PaymentMethod = Enum.TryParse<PaymentMethodEnum>(request.PaymentMethod, out var paymentMethodEnum)
-                                 ? paymentMethodEnum
+                                 ? paymentMethodEnum.ToString()
                                  : throw new ArgumentException("Invalid PaymentMethod value."),
                         PaymentPeriod = Enum.TryParse<PaymentPeriodEnum>(request.PaymentPeriod, out var paymentPeriodEnum)
-                                 ? paymentPeriodEnum
+                                 ? paymentPeriodEnum.ToString()
                                  : throw new ArgumentException("Invalid PaymentPeriod value."),
                         Salary = request.Salary,
                         NationalIdImage = new ImageEntity

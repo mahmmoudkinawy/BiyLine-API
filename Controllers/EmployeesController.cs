@@ -30,6 +30,23 @@ public sealed class EmployeesController : ControllerBase
         return NoContent();
     }
 
+    [HttpPut("{employeeId}/suspend")]
+    public async Task<IActionResult> SuspendEmployeeByTrader(
+        [FromRoute] int employeeId)
+    {
+        var response = await _mediator.Send(new SuspendEmployeeByTraderFeature.Request
+        {
+            EmployeeId = employeeId
+        });
+
+        if (!response.IsSuccess)
+        {
+            return NotFound(response.Errors);
+        }
+
+        return NoContent();
+    }
+
     [HttpPut("{employeeId}")]
     public async Task<IActionResult> UpdateEmployeeForStoreByTrader(
         [FromRoute] int employeeId,

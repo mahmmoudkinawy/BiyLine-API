@@ -15,6 +15,7 @@ public sealed class GetEmployeesForStoreByTraderFeature
         public string Email { get; set; }
         public string Username { get; set; }
         public decimal Salary { get; set; }
+        public DateTime LastLogIn { get; set; }
         public List<string> Roles { get; set; }
     }
 
@@ -66,6 +67,7 @@ public sealed class GetEmployeesForStoreByTraderFeature
             var result = query.Select(user => new Response
             {
                 Id = user.Id,
+                LastLogIn = user.User.LastActive.Value,
                 Email = user.User.Email,
                 Name = user.User.Name,
                 Username = user.User.UserName,

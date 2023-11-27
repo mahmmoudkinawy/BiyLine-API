@@ -38,17 +38,21 @@ public sealed class GetCurrentUserFeature
     {
         private readonly UserManager<UserEntity> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMapper _mapper;
 
         public Handler(
             UserManager<UserEntity> userManager,
             IHttpContextAccessor httpContextAccessor,
+            IDateTimeProvider dateTimeProvider,
             IMapper mapper)
         {
             _userManager = userManager ??
                 throw new ArgumentNullException(nameof(userManager));
             _httpContextAccessor = httpContextAccessor ??
                 throw new ArgumentNullException(nameof(httpContextAccessor));
+            _dateTimeProvider = dateTimeProvider ?? 
+                throw new ArgumentNullException(nameof(dateTimeProvider));
             _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
         }
@@ -81,6 +85,10 @@ public sealed class GetCurrentUserFeature
             var acceptLanguageHeader = _httpContextAccessor.HttpContext.Request.Headers["Accept-Language"];
 
             result.Name = acceptLanguageHeader.Contains("ar") ? user.Store?.ArabicName : user.Store?.EnglishName;
+
+            user.LastActive = _dateTimeProvider.GetCurrentDateTimeUtc();
+
+            await _userManager.UpdateAsync(user);
 
             return result;
         }

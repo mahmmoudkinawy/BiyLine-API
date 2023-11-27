@@ -18,7 +18,7 @@ public sealed class UsersController : ControllerBase
     [HttpGet("current-user")]
     public async Task<ActionResult<GetCurrentUserFeature.Response>> GetCurrentUser()
     {
-        var response = await _mediator.Send(new GetCurrentUserFeature.Request());
+        var response = await _mediator.Send(new GetCurrentUserFeature.Request { });
 
         return Ok(response);
     }

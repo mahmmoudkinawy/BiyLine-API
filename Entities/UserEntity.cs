@@ -3,6 +3,7 @@ public sealed class UserEntity : IdentityUser<int>
 {
     public string? Name { get; set; }
     public string? CountryCode { get; set; }
+    public DateTime? LastActive { get; set; }
 
     public BasketEntity? Basket { get; set; }
 

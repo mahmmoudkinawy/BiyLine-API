@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231127205118_PaymentMethodsAreNowString")]
+    partial class PaymentMethodsAreNowString
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -957,9 +960,6 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastActive")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");

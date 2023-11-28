@@ -150,8 +150,8 @@ public sealed class BiyLineDbContext : IdentityDbContext<
 
         builder.Entity<StoreEntity>()
             .HasOne(s => s.Country)
-            .WithOne(c => c.Store)
-            .HasForeignKey<StoreEntity>(s => s.CountryId);
+            .WithMany(c => c.Stores)
+            .HasForeignKey(k => k.CountryId);
 
         builder.Entity<SpecializationEntity>()
             .HasOne(s => s.Store)

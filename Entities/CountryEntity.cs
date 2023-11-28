@@ -8,5 +8,5 @@ public sealed class CountryEntity
     public string? CurrencySymbol { get; set; }
 
     public ICollection<GovernorateEntity> Governorates { get; set; }
-    public StoreEntity? Store { get; set; }
+    public ICollection<StoreEntity> Stores { get; set; }
 }

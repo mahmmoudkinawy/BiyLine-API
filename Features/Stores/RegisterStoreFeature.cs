@@ -133,7 +133,7 @@ public sealed class RegisterStoreFeature
             var data = new
             {
                 username = traderToCreate.Name ?? traderToCreate.Email,
-                verificationLink = $"http://localhost:4200/account/verify-email?userId={traderToCreate.Id}&token={WebUtility.UrlEncode(tokenToVerify)}" // will be replaced
+                verificationLink = $"https://biyline.vercel.app/account/verify-email?userId={traderToCreate.Id}&token={WebUtility.UrlEncode(tokenToVerify)}" // will be replaced
             };
 
             var emailTemplate = _mailService.LoadEmailTemplate("VerificationEmailTemplate.html");

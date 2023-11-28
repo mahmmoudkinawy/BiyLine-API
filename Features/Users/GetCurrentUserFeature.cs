@@ -18,6 +18,7 @@ public sealed class GetCurrentUserFeature
     public sealed class StoreResponse
     {
         public int Id { get; set; }
+        public bool IsStoreProfileCompleted { get; set; }
         public string CurrencyCode { get; set; }
         public string Name { get; set; }
         public string Username { get; set; }
@@ -63,7 +64,7 @@ public sealed class GetCurrentUserFeature
 
         public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
         {
-            var currentUserId = _httpContextAccessor.HttpContext.User.GetUserById();
+            var currentUserId = _httpContextAccessor.GetUserById();
 
             var user = await _userManager.Users
                 .Include(u => u.Store)
@@ -97,9 +98,18 @@ public sealed class GetCurrentUserFeature
             if (result.Store != null)
             {
                 var country = await _context.Countries
-                    .FirstOrDefaultAsync(c => c.Store.Id == result.Store.Id, cancellationToken: cancellationToken);
+                    .Include(s => s.Stores)
+                    .FirstOrDefaultAsync(c => c.Stores.Any(ss => ss.Id == result.Store.Id), cancellationToken: cancellationToken);
 
                 result.Store.CurrencyCode = country.CurrencyCode;
+
+                var storeProfileCompleteness = await _context.StoresProfilesCompleteness
+                    .FirstOrDefaultAsync(spc => spc.StoreId == result.Store.Id, cancellationToken: cancellationToken);
+
+                if (storeProfileCompleteness != null)
+                {
+                    result.Store.IsStoreProfileCompleted = storeProfileCompleteness.IsAddressComplete && storeProfileCompleteness.IsDetailsComplete;
+                }
             }
 
             return result;

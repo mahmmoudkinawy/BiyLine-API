@@ -25,10 +25,8 @@ public sealed class EnsureStoreProfileCompletenessFilter : IAsyncActionFilter
                 .FirstOrDefaultAsync(spc => spc.UserId == userId);
 
             if (storeProfileCompleteness != null &&
-                typeof(StoreProfileCompletenessEntity)
-                    .GetProperties()
-                    .Where(p => p.PropertyType == typeof(bool))
-                    .All(p => (bool)p.GetValue(storeProfileCompleteness, null)))
+                storeProfileCompleteness.IsDetailsComplete &&
+                storeProfileCompleteness.IsAddressComplete)
             {
                 await next();
             }

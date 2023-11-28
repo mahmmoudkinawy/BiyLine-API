@@ -6,7 +6,7 @@ public static class ApplicationServiceExtensions
         IConfiguration config)
     {
         services.AddDbContext<BiyLineDbContext>(options =>
-            options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer("Server=tcp:biyline-server.database.windows.net,1433;Initial Catalog=biyline;Persist Security Info=False;User ID=biyline-server-admin;Password=66ZZJ60UEB5ZR8F7$;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"));
 
         services.AddControllers()
              .AddFluentValidation(_ => _.RegisterValidatorsFromAssemblyContaining<Program>());

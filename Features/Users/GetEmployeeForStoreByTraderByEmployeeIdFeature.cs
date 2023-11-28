@@ -9,12 +9,20 @@ public sealed class GetEmployeeForStoreByTraderByEmployeeIdFeature
     public sealed class Response
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string Username { get; set; }
-        public decimal Salary { get; set; }
-        public DateTime LastLogIn { get; set; }
-        public List<string> Roles { get; set; }
+        public string? Name { get; set; }
+        public string? Email { get; set; }
+        public string? Username { get; set; }
+        public decimal? Salary { get; set; }
+        public DateTime? LastLogIn { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Address { get; set; }
+        public string? ImageUrl { get; set; }
+        public DateTime? JoinedAt { get; set; }
+        public int? WorkHours { get; set; }
+        public string? PaymentPeriod { get; set; }
+        public string? PaymentMethod { get; set; }
+        public string? AccountNumber { get; set; }
+        public List<string>? Roles { get; set; }
     }
 
     public sealed class Handler : IRequestHandler<Request, Result<Response>>
@@ -42,7 +50,8 @@ public sealed class GetEmployeeForStoreByTraderByEmployeeIdFeature
                 .Include(e => e.User)
                     .ThenInclude(u => u.UserRoles)
                         .ThenInclude(ur => ur.Role)
-                .FirstOrDefaultAsync(u => u.StoreId == store.Id && u.UserId != currentUserId && u.Id == request.EmployeeId);
+                .Include(e => e.ImageOwner)
+                .FirstOrDefaultAsync(u => u.StoreId == store.Id && u.UserId != currentUserId && u.Id == request.EmployeeId, cancellationToken: cancellationToken);
 
             if (employee == null)
             {
@@ -52,13 +61,22 @@ public sealed class GetEmployeeForStoreByTraderByEmployeeIdFeature
             return Result<Response>.Success(new Response
             {
                 Id = employee.Id,
-                LastLogIn = employee.User.LastActive.Value,
-                Email = employee.User.Email,
-                Name = employee.User.Name,
-                Roles = employee.User.UserRoles.Select(ur => ur.Role.Name).ToList(),
-                Salary = employee.User.Employees.FirstOrDefault(e => e.Id == request.EmployeeId).Salary.Value,
-                Username = employee.User.UserName
+                LastLogIn = employee.User?.LastActive.GetValueOrDefault(),
+                Roles = employee.User?.UserRoles?.Select(ur => ur.Role.Name).ToList(),
+                Salary = employee.User?.Employees?.FirstOrDefault(e => e.Id == request.EmployeeId)?.Salary,
+                Username = employee.User?.UserName,
+                Email = employee?.User?.Email,
+                Name = employee?.User?.Name,
+                AccountNumber = employee.VisaNumber,
+                Address = employee.Address,
+                PaymentMethod = employee.PaymentMethod,
+                PaymentPeriod = employee.PaymentPeriod,
+                PhoneNumber = employee.User?.PhoneNumber,
+                WorkHours = employee.WorkingHours,
+                JoinedAt = employee.JoinedAt,
+                ImageUrl = employee.ImageOwner?.ImageUrl
             });
+
         }
     }
 }

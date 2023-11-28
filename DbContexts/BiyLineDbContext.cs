@@ -42,6 +42,11 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<EmployeeEntity>()
+            .HasOne(e => e.ImageOwner)
+            .WithOne()
+            .HasForeignKey<EmployeeEntity>(e => e.ImageOwnerId);
+
         builder.Entity<QuantityPricingTierEntity>()
             .HasOne(qpt => qpt.Product)
             .WithMany(p => p.QuantityPricingTiers)

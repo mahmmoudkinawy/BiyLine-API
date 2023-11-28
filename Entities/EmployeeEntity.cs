@@ -5,10 +5,14 @@ public sealed class EmployeeEntity
     public decimal? Salary { get; set; }
     public string? Address { get; set; }
     public DateTime? EmploymentDate { get; set; }
+    public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
     public int? WorkingHours { get; set; }
     public string? PaymentPeriod { get; set; }
     public string? PaymentMethod { get; set; }
     public string? VisaNumber { get; set; }
+
+    public int? ImageOwnerId { get; set; }
+    public ImageEntity? ImageOwner { get; set; }
 
     public int? NationalIdImageId { get; set; }
     public ImageEntity? NationalIdImage { get; set; }

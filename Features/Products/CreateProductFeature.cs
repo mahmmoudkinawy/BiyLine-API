@@ -3,8 +3,8 @@ public sealed class CreateProductFeature
 {
     public sealed class Request : IRequest<Result<Response>>
     {
-        public int CategoryId { get; set; }
-        public int SubcategoryId { get; set; }
+        public int? CategoryId { get; set; }
+        public int? SubcategoryId { get; set; }
         public int WarehouseId { get; set; }
         public string? ArabicName { get; set; }
         public string? EnglishName { get; set; }
@@ -19,7 +19,7 @@ public sealed class CreateProductFeature
         public string? EnglishDescription { get; set; }
         public bool? IsInStock { get; set; }
         public int? CountInStock { get; set; }
-        public List<ProductVariationRequest> Variations { get; set; }
+        public List<ProductVariationRequest>? Variations { get; set; }
         public List<QuantityPricingTierRequest>? PricingTiers { get; set; }
     }
 
@@ -51,19 +51,24 @@ public sealed class CreateProductFeature
             _httpContextAccessor = httpContextAccessor ??
                 throw new ArgumentNullException(nameof(httpContextAccessor));
 
-            RuleFor(r => r.CategoryId)
-                .NotEmpty()
-                .NotNull()
-                .GreaterThan(0)
-                .Must((req, _) => _context.Categories.Any(c => c.Id == req.CategoryId))
-                    .WithMessage("Category with the given Id does not exist");
+            When(r => r.CategoryId != null, () =>
+            {
+                RuleFor(r => r.CategoryId)
+                    .NotEmpty()
+                    .NotNull()
+                    .GreaterThan(0)
+                    .Must((req, _) => _context.Categories.Any(c => c.Id == req.CategoryId))
+                        .WithMessage("Category with the given Id does not exist");
+            });
 
             RuleFor(r => r.WarehouseId)
                 .NotEmpty()
                 .NotNull()
                 .GreaterThan(0);
 
-            RuleFor(r => r.SubcategoryId)
+            When(r => r.SubcategoryId != null, () =>
+            {
+                RuleFor(r => r.SubcategoryId)
                 .NotEmpty()
                 .NotNull()
                 .GreaterThan(0)
@@ -71,6 +76,7 @@ public sealed class CreateProductFeature
                         _context.Subcategories.Any(c => c.Id == req.SubcategoryId) &&
                         _context.Categories.Any(c => c.Id == req.CategoryId && c.Subcategories.Any(sc => sc.Id == req.SubcategoryId)))
                     .WithMessage("SubcategoryId with the given Id does not exist");
+            });
 
             RuleFor(r => r.ArabicName)
                 .NotEmpty()
@@ -151,7 +157,7 @@ public sealed class CreateProductFeature
                 .NotNull()
                 .GreaterThanOrEqualTo(0);
 
-            When(x => x.Variations != null && x.Variations.Any(), () =>
+            When(x => x.Variations != null, () =>
             {
                 RuleForEach(x => x.Variations)
                     .SetValidator(new ProductVariationRequestValidator());
@@ -287,7 +293,7 @@ public sealed class CreateProductFeature
             {
                 StoreId = store.Id,
                 WarehouseId = request.WarehouseId,
-                CategoryId = request.CategoryId,
+                CategoryId = request.CategoryId ?? null,
                 CodeNumber = request.CodeNumber,
                 ThresholdReached = request.ThresholdReached,
                 CountInStock = request.CountInStock,
@@ -295,7 +301,7 @@ public sealed class CreateProductFeature
                 SellingPrice = request.SellingPrice,
                 OriginalPrice = request.OriginalPrice,
                 Vat = request.Vat,
-                SubcategoryId = request.SubcategoryId,
+                SubcategoryId = request.SubcategoryId ?? null,
                 DateAdded = _dateTimeProvider.GetCurrentDateTimeUtc(),
                 ProductTranslations = new List<ProductTranslationEntity>
                 {

@@ -22,6 +22,7 @@ global using BiyLineApi.Features.Warehouses;
 global using BiyLineApi.Helpers;
 global using BiyLineApi.Services;
 global using FluentValidation;
+global using BiyLineApi.Features.Images;
 global using FluentValidation.AspNetCore;
 global using HandlebarsDotNet;
 global using MediatR;

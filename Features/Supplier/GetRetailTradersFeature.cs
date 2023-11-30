@@ -1,6 +1,6 @@
 ﻿namespace BiyLineApi.Features.Supplier;
 
-public sealed class GetAllTradersExceptSectionalFeature
+public sealed class GetRetailTradersFeature
 {
     public sealed class Request : IRequest<PagedList<Response>>
     {

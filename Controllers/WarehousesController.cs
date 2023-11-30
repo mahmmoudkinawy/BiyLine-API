@@ -34,6 +34,23 @@ public sealed class WarehousesController : ControllerBase
 
         return Ok(response);
     }
+    
+    [HttpGet("{warehouseId}")]
+    public async Task<ActionResult<GetWareHouseFeature.Response>> GetWarehouseForStore(
+        [FromRoute] int warehouseId)
+    {
+        var response = await _mediator.Send(new GetWareHouseFeature.Request {
+            WareHouseId = warehouseId,
+        });
+
+
+        if (!response.IsSuccess)
+        {
+            return NotFound(response.Errors);
+        }
+
+        return Ok(response);
+    }
 
     [HttpGet("{warehouseId}/products")]
     public async Task<ActionResult<IReadOnlyList<GetWarehouseProductByWarehouseIdFeature.Response>>>

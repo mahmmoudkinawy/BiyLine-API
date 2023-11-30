@@ -1,11 +1,10 @@
 ﻿namespace BiyLineApi.Features.Products;
-public sealed class CreateProductFeature
+public sealed class UpdateProductFeature
 {
     public sealed class Request : IRequest<Result<Response>>
     {
         public int? CategoryId { get; set; }
         public int? SubcategoryId { get; set; }
-        public int WarehouseId { get; set; }
         public string? ArabicName { get; set; }
         public string? EnglishName { get; set; }
         public decimal? OriginalPrice { get; set; }
@@ -13,7 +12,6 @@ public sealed class CreateProductFeature
         public string? CodeNumber { get; set; }
         public decimal? Vat { get; set; }
         public int? ThresholdReached { get; set; }
-        public List<IFormFile>? Images { get; set; }
         public string? GeneralOverview { get; set; }
         public string? ArabicDescription { get; set; }
         public string? EnglishDescription { get; set; }
@@ -60,11 +58,6 @@ public sealed class CreateProductFeature
                     .Must((req, _) => _context.Categories.Any(c => c.Id == req.CategoryId))
                         .WithMessage("Category with the given Id does not exist");
             });
-
-            RuleFor(r => r.WarehouseId)
-                .NotEmpty()
-                .NotNull()
-                .GreaterThan(0);
 
             When(r => r.SubcategoryId != null, () =>
             {
@@ -117,17 +110,6 @@ public sealed class CreateProductFeature
 
                 RuleFor(r => r.ThresholdReached)
                     .LessThanOrEqualTo(r => r.CountInStock);
-            });
-
-            When(req => req.Images != null && req.Images.Any(), () =>
-            {
-                RuleFor(r => r.Images)
-                    .Must(images => images.Count <= 5)
-                        .WithMessage("Maximum of 5 images allowed");
-
-                RuleForEach(r => r.Images)
-                    .Must(IsValidImage)
-                        .WithMessage("Invalid image format or size. Maximum size is 2MB, and valid extensions are .jpg, .jpeg, .png, .gif");
             });
 
             RuleFor(r => r.GeneralOverview)
@@ -232,23 +214,6 @@ public sealed class CreateProductFeature
                         .WithMessage("Quantity must be greater than or equal to 0");
             }
         }
-
-        private static bool IsValidImage(IFormFile image)
-        {
-            if (image == null || image.Length == 0)
-            {
-                return false;
-            }
-
-            if (image.Length > 2 * 1024 * 1024)
-            {
-                return false;
-            }
-
-            var validExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-            var fileExtension = Path.GetExtension(image.FileName);
-            return validExtensions.Any(ext => ext.Equals(fileExtension, StringComparison.OrdinalIgnoreCase));
-        }
     }
 
     public sealed class Handler : IRequestHandler<Request, Result<Response>>
@@ -281,73 +246,63 @@ public sealed class CreateProductFeature
                 return Result<Response>.Failure(new List<string> { "Current Trader does not Owen a store" });
             }
 
-            var warehouse = await _context.Warehouses
-                .AnyAsync(w => w.Id == request.WarehouseId && w.StoreId == store.Id, cancellationToken: cancellationToken);
+            var productId = _httpContextAccessor.GetValueFromRoute("productId");
 
-            if (!warehouse)
+            var product = await _context.Products
+                .FirstOrDefaultAsync(p => p.StoreId == store.Id && p.Id == productId,
+                    cancellationToken: cancellationToken);
+
+            if (product is null)
             {
-                return Result<Response>.Failure(new List<string> { "Warehouse does not exists for this store." });
+                return Result<Response>.Failure(new List<string> { "Current Trader does not Owen this product" });
             }
 
-            var productToCreate = new ProductEntity
-            {
-                StoreId = store.Id,
-                WarehouseId = request.WarehouseId,
-                CategoryId = request.CategoryId ?? null,
-                CodeNumber = request.CodeNumber,
-                ThresholdReached = request.ThresholdReached,
-                CountInStock = request.CountInStock,
-                IsInStock = request.IsInStock,
-                SellingPrice = request.SellingPrice,
-                OriginalPrice = request.OriginalPrice,
-                Vat = request.Vat,
-                SubcategoryId = request.SubcategoryId ?? null,
-                DateAdded = _dateTimeProvider.GetCurrentDateTimeUtc(),
-                ProductTranslations = new List<ProductTranslationEntity>
-                {
-                    new ProductTranslationEntity
-                    {
-                        Language = "ar",
-                        Name = request.ArabicName,
-                        Description = request.ArabicDescription,
-                        GeneralOverview = request.GeneralOverview
-                    },
-                    new ProductTranslationEntity
-                    {
-                        Language = "en",
-                        Name = request.EnglishName,
-                        Description = request.EnglishDescription,
-                        GeneralOverview = request.GeneralOverview
-                    }
-                },
-                ProductVariations = request.Variations != null ? request.Variations.Select(req => new ProductVariationEntity
-                {
-                    Color = req.Color,
-                    Quantity = req.Quantity,
-                    Size = req.Size
-                }).ToList() : null
-            };
+            product.CategoryId = request.CategoryId;
+            product.CodeNumber = request.CodeNumber;
+            product.ThresholdReached = request.ThresholdReached;
+            product.CountInStock = request.CountInStock;
+            product.IsInStock = request.IsInStock;
+            product.SellingPrice = request.SellingPrice;
+            product.OriginalPrice = request.OriginalPrice;
+            product.Vat = request.Vat;
+            product.SubcategoryId = request.SubcategoryId;
 
-            if (request.Images != null)
+            var arTranslation = product.ProductTranslations.FirstOrDefault(t => t.Language == "ar");
+            if (arTranslation != null)
             {
-                var images = await Task.WhenAll(request.Images?.Select(async image =>
+                arTranslation.Name = request.ArabicName;
+                arTranslation.Description = request.ArabicDescription;
+                arTranslation.GeneralOverview = request.GeneralOverview;
+            }
+            else
+            {
+                product.ProductTranslations.Add(new ProductTranslationEntity
                 {
-                    return new ImageEntity
-                    {
-                        ProductId = productToCreate.Id,
-                        StoreId = store.Id,
-                        ImageMimeType = image.ContentType,
-                        FileName = image.FileName,
-                        Type = "ProductImage",
-                        ImageUrl = await _imageService.UploadImageAsync(image, "ProductImages"),
-                        DateUploaded = _dateTimeProvider.GetCurrentDateTimeUtc()
-                    };
-                }));
-
-                productToCreate.Images = images;
+                    Language = "ar",
+                    Name = request.ArabicName,
+                    Description = request.ArabicDescription,
+                    GeneralOverview = request.GeneralOverview
+                });
             }
 
-            _context.Products.Add(productToCreate);
+            var enTranslation = product.ProductTranslations.FirstOrDefault(t => t.Language == "en");
+            if (enTranslation != null)
+            {
+                enTranslation.Name = request.EnglishName;
+                enTranslation.Description = request.EnglishDescription;
+                enTranslation.GeneralOverview = request.GeneralOverview;
+            }
+            else
+            {
+                product.ProductTranslations.Add(new ProductTranslationEntity
+                {
+                    Language = "en",
+                    Name = request.EnglishName,
+                    Description = request.EnglishDescription,
+                    GeneralOverview = request.GeneralOverview
+                });
+            }
+
             await _context.SaveChangesAsync(cancellationToken);
 
             return Result<Response>.Success(new Response { });

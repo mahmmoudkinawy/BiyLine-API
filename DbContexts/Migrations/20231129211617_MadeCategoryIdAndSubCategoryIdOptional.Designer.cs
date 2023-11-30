@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231129211617_MadeCategoryIdAndSubCategoryIdOptional")]
+    partial class MadeCategoryIdAndSubCategoryIdOptional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -113,76 +116,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.HasIndex("Name");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.ContractOrderEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("FromStoreId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Note")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ToStoreId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FromStoreId");
-
-                    b.HasIndex("ToStoreId");
-
-                    b.ToTable("ContractOrders");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.ContractOrderProductEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ContractOrderProducts");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.ContractOrderVariationEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductVariationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductVariationId");
-
-                    b.ToTable("ContractOrderVariations");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.CountryEntity", b =>
@@ -1130,36 +1063,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.ToTable("Warehouses");
                 });
 
-            modelBuilder.Entity("ContractOrderEntityContractOrderProductEntity", b =>
-                {
-                    b.Property<int>("ContractOrderProductsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ContractOrdersId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ContractOrderProductsId", "ContractOrdersId");
-
-                    b.HasIndex("ContractOrdersId");
-
-                    b.ToTable("ContractOrderEntityContractOrderProductEntity");
-                });
-
-            modelBuilder.Entity("ContractOrderProductEntityContractOrderVariationEntity", b =>
-                {
-                    b.Property<int>("ContractOrderProductsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ContractOrderVariationsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ContractOrderProductsId", "ContractOrderVariationsId");
-
-                    b.HasIndex("ContractOrderVariationsId");
-
-                    b.ToTable("ContractOrderProductEntityContractOrderVariationEntity");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -1273,47 +1176,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Basket");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.ContractOrderEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.StoreEntity", "FromStore")
-                        .WithMany("ContractOrdersFromStore")
-                        .HasForeignKey("FromStoreId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.StoreEntity", "ToStore")
-                        .WithMany("ContractOrdersToStore")
-                        .HasForeignKey("ToStoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FromStore");
-
-                    b.Navigation("ToStore");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.ContractOrderProductEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.ProductEntity", "Product")
-                        .WithMany("ContractOrderProducts")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.ContractOrderVariationEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.ProductVariationEntity", "ProductVariation")
-                        .WithMany("ContractOrderVariations")
-                        .HasForeignKey("ProductVariationId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("ProductVariation");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.CouponEntity", b =>
@@ -1692,36 +1554,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Store");
                 });
 
-            modelBuilder.Entity("ContractOrderEntityContractOrderProductEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.ContractOrderProductEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ContractOrderProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.ContractOrderEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ContractOrdersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ContractOrderProductEntityContractOrderVariationEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.ContractOrderProductEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ContractOrderProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.ContractOrderVariationEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ContractOrderVariationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("BiyLineApi.Entities.RoleEntity", null)
@@ -1800,8 +1632,6 @@ namespace BiyLineApi.DbContexts.Migrations
 
             modelBuilder.Entity("BiyLineApi.Entities.ProductEntity", b =>
                 {
-                    b.Navigation("ContractOrderProducts");
-
                     b.Navigation("Images");
 
                     b.Navigation("ProductTranslations");
@@ -1811,11 +1641,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("QuantityPricingTiers");
 
                     b.Navigation("Rates");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.ProductVariationEntity", b =>
-                {
-                    b.Navigation("ContractOrderVariations");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.RoleEntity", b =>
@@ -1835,10 +1660,6 @@ namespace BiyLineApi.DbContexts.Migrations
 
             modelBuilder.Entity("BiyLineApi.Entities.StoreEntity", b =>
                 {
-                    b.Navigation("ContractOrdersFromStore");
-
-                    b.Navigation("ContractOrdersToStore");
-
                     b.Navigation("Coupons");
 
                     b.Navigation("Employees");

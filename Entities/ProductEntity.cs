@@ -35,4 +35,6 @@ public sealed class ProductEntity
     public ICollection<ProductVariationEntity> ProductVariations { get; set; } = new List<ProductVariationEntity>();
     public ICollection<QuantityPricingTierEntity> QuantityPricingTiers { get; set; } = new List<QuantityPricingTierEntity>();
     public ICollection<ProductTranslationEntity> ProductTranslations { get; set; } = new List<ProductTranslationEntity>();
+    public ICollection<ContractOrderProductEntity> ContractOrderProducts { get; set; } = new List<ContractOrderProductEntity>();
+
 }

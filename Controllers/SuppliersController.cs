@@ -1,5 +1,6 @@
 ﻿namespace BiyLineApi.Controllers;
 
+
 [Route("api/v{version:apiVersion}/suppliers")]
 [ApiController]
 [ApiVersion("2.0")]
@@ -118,6 +119,19 @@ public sealed class SuppliersController : ControllerBase
         {
             SupplierId = supplierId
         });
+
+        if (!response.IsSuccess)
+        {
+            return NotFound(response.Errors);
+        }
+
+        return NoContent();
+    }
+    
+    [HttpPost("Traders/{supplierId}")]
+    public async Task<IActionResult> CreateContractOrder([FromBody] CreateContractOrderFeature.Request request)
+    {
+        var response = await _mediator.Send(request);
 
         if (!response.IsSuccess)
         {

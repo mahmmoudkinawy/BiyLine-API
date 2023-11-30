@@ -20,6 +20,8 @@ public sealed class StoreEntity
     public ICollection<StoreCategoryEntity> StoreCategories { get; set; } = new List<StoreCategoryEntity>();
     public ICollection<CouponEntity> Coupons { get; set; } = new List<CouponEntity>();
     public ICollection<EmployeeEntity> Employees { get; set; }
+    public ICollection<ContractOrderEntity> ContractOrdersToStore { get; set; } = new List<ContractOrderEntity>();
+    public ICollection<ContractOrderEntity> ContractOrdersFromStore { get; set; } = new List<ContractOrderEntity>();
 
     public int? TaxRegistrationDocumentImageId { get; set; }
     public ImageEntity? TaxRegistrationDocumentImage { get; set; }

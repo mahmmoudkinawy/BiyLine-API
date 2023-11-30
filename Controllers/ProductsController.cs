@@ -189,4 +189,20 @@ public sealed class ProductsController : ControllerBase
 
         return NoContent();
     }
-}
+
+    [EnsureStoreProfileCompleteness]
+    [EnsureSingleStore]
+    [Authorize(Policy = Constants.Policies.MustBeTrader)]
+    [HttpGet("{productId}/trader")]
+    public async Task <ActionResult<GetProductByIdForTraderFeature.Response>> GetProductByIdForTrader([FromRoute]int productId)
+    {
+        var response = await _mediator.Send(new GetProductByIdForTraderFeature.Request { ProductId = productId });
+
+        if (!response.IsSuccess)
+        {
+            return NotFound(response.Errors);
+        }
+
+        return Ok(response.Value);
+    }
+}      

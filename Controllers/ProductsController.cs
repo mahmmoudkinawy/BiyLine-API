@@ -154,6 +154,25 @@ public sealed class ProductsController : ControllerBase
     [Authorize(Policy = Constants.Policies.MustBeTrader)]
     [EnsureStoreProfileCompleteness]
     [EnsureSingleStore]
+    [HttpPut("{productId}")]
+    public async Task<IActionResult> UpdateProduct(
+        [FromBody] UpdateProductFeature.Request request)
+    {
+        var response = await _mediator.Send(request);
+
+        if (!response.IsSuccess)
+        {
+            return NotFound(response.Errors);
+        }
+
+        return NoContent();
+    }
+
+
+    [ApiVersion(2.0)]
+    [Authorize(Policy = Constants.Policies.MustBeTrader)]
+    [EnsureStoreProfileCompleteness]
+    [EnsureSingleStore]
     [HttpDelete("{productId}")]
     public async Task<IActionResult> DeleteProduct(
         [FromRoute] int productId)
@@ -170,4 +189,20 @@ public sealed class ProductsController : ControllerBase
 
         return NoContent();
     }
-}
+
+    [EnsureStoreProfileCompleteness]
+    [EnsureSingleStore]
+    [Authorize(Policy = Constants.Policies.MustBeTrader)]
+    [HttpGet("{productId}/trader")]
+    public async Task <ActionResult<GetProductByIdForTraderFeature.Response>> GetProductByIdForTrader([FromRoute]int productId)
+    {
+        var response = await _mediator.Send(new GetProductByIdForTraderFeature.Request { ProductId = productId });
+
+        if (!response.IsSuccess)
+        {
+            return NotFound(response.Errors);
+        }
+
+        return Ok(response.Value);
+    }
+}      

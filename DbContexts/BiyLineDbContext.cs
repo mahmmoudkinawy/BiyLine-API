@@ -37,6 +37,10 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<SupplierEntity> Suppliers { get; set; }
     public DbSet<QuantityPricingTierEntity> QuantityPricingTiers { get; set; }
     public DbSet<ProductVariationEntity> ProductVariations { get; set; }
+    public DbSet<ContractOrderProductEntity> ContractOrderProducts { get; set; }
+    public DbSet<ContractOrderEntity> ContractOrders { get; set; }
+    public DbSet<ContractOrderVariationEntity> ContractOrderVariations { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -302,6 +306,44 @@ public sealed class BiyLineDbContext : IdentityDbContext<
 
         builder.Entity<ProductEntity>()
             .HasQueryFilter(c => c.ProductTranslations.Any(pt => pt.Language.Equals(_language)));
+
+
+       
+
+       
+
+        builder.Entity<ContractOrderEntity>()
+                    .HasOne(e => e.FromStore)
+                    .WithMany(s => s.ContractOrdersFromStore)
+                    .HasForeignKey(e => e.FromStoreId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+
+        builder.Entity<ContractOrderEntity>()
+            .HasOne(c => c.ToStore)
+            .WithMany(s => s.ContractOrdersToStore)
+            .HasForeignKey(c => c.ToStoreId)
+            .IsRequired();
+
+        builder.Entity<ContractOrderEntity>()
+            .HasMany(c => c.ContractOrderProducts)
+            .WithMany(c => c.ContractOrders);
+
+
+        builder.Entity<ContractOrderProductEntity>()
+            .HasOne(cp => cp.Product)
+            .WithMany(p => p.ContractOrderProducts)
+            .HasForeignKey(cp => cp.ProductId)
+            .OnDelete(deleteBehavior: DeleteBehavior.NoAction);
+
+
+
+        builder.Entity<ContractOrderVariationEntity>()
+            .HasOne(c => c.ProductVariation)
+            .WithMany(p => p.ContractOrderVariations)
+            .HasForeignKey(s => s.ProductVariationId)
+            .OnDelete(DeleteBehavior.NoAction);
+
     }
 
 }

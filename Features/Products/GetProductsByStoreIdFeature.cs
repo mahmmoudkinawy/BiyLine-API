@@ -1,5 +1,5 @@
 ﻿namespace BiyLineApi.Features.Products;
-public class GetProductsByStoreId
+public sealed class GetProductsByStoreIdFeature
 {
     public sealed class Request : IRequest<PagedList<Response>>
     {

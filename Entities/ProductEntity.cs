@@ -15,8 +15,8 @@ public sealed class ProductEntity
         public int? ThresholdReached { get; set; }
         public DateTime? DateAdded { get; set; }
 
-        public int CategoryId { get; set; }
-    public CategoryEntity Category { get; set; }
+    public int? CategoryId { get; set; }
+    public CategoryEntity? Category { get; set; }
 
     public int? OfferId { get; set; }
     public OfferEntity? Offer { get; set; }

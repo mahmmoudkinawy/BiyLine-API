@@ -250,6 +250,7 @@ public sealed class StoresController : ControllerBase
     {
         var response = await _mediator.Send(new GetCurrentStoreProductsFeature.Request
         {
+            Status = storeProductsParams.Status,
             IsInStock = storeProductsParams.IsInStock,
             CodeNumber = storeProductsParams.CodeNumber,
             Name = storeProductsParams.Name,
@@ -267,11 +268,11 @@ public sealed class StoresController : ControllerBase
     }
 
     [HttpGet("{storeId}/products")]
-    public async Task<ActionResult<IReadOnlyList<GetProductsByStoreId.Response>>> GetProductsByStoreId(
+    public async Task<ActionResult<IReadOnlyList<GetProductsByStoreIdFeature.Response>>> GetProductsByStoreId(
         [FromRoute] int storeId,
         [FromQuery] PaginationParams paginationParams)
     {
-        var response = await _mediator.Send(new GetProductsByStoreId.Request
+        var response = await _mediator.Send(new GetProductsByStoreIdFeature.Request
         {
             StoreId = storeId,
             PageNumber = paginationParams.PageNumber,

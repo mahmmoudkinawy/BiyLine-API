@@ -5,6 +5,7 @@ public sealed class GetCurrentStoreProductsFeature
     {
         public bool? IsInStock { get; set; }
         public string? Name { get; set; }
+        public string? Status { get; set; }
         public string? CodeNumber { get; set; }
         public int? PageNumber { get; set; }
         public int? PageSize { get; set; }
@@ -15,6 +16,7 @@ public sealed class GetCurrentStoreProductsFeature
         public int Id { get; set; }
         public string Name { get; set; }
         public string CodeNumber { get; set; }
+        public string Status { get; set; }
         public bool IsInStock { get; set; }
         public decimal SellingPrice { get; set; }
         public string ImageUrl { get; set; }
@@ -37,7 +39,7 @@ public sealed class GetCurrentStoreProductsFeature
 
         public async Task<PagedList<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
-            var userId = _httpContextAccessor.HttpContext.User.GetUserById();
+            var userId = _httpContextAccessor.GetUserById();
 
             var store = await _context.Stores
                 .FirstOrDefaultAsync(s => s.OwnerId == userId, cancellationToken: cancellationToken);
@@ -58,6 +60,12 @@ public sealed class GetCurrentStoreProductsFeature
                 query = query.Where(p => p.CodeNumber == request.CodeNumber);
             }
 
+            if (!string.IsNullOrWhiteSpace(request.Status))
+            {
+                query = query.Where(p => GetProductStatus(p)
+                    .Equals(request.Status, StringComparison.OrdinalIgnoreCase));
+            }
+
             if (request.IsInStock != null)
             {
                 query = query.Where(p => p.IsInStock == request.IsInStock);
@@ -73,13 +81,32 @@ public sealed class GetCurrentStoreProductsFeature
                 IsInStock = product.IsInStock.Value,
                 Name = product.ProductTranslations.FirstOrDefault().Name,
                 ImageUrl = baseUri.CombineUri(
-                    product.Images.OrderByDescending(d => d.DateUploaded).FirstOrDefault().ImageUrl)
+                    product.Images.OrderByDescending(d => d.DateUploaded).FirstOrDefault().ImageUrl),
+                Status = GetProductStatus(product)
             });
 
             return await PagedList<Response>.CreateAsync(
                 products.AsNoTracking(),
                 request.PageNumber.Value,
                 request.PageSize.Value);
+        }
+
+        private static string GetProductStatus(ProductEntity product)
+        {
+            if (product.CountInStock > product.ThresholdReached)
+            {
+                return "Available";
+            }
+            else if (product.CountInStock == 0)
+            {
+                return "NotAvailable";
+            }
+            else if (product.CountInStock > 0 && product.CountInStock < product.ThresholdReached)
+            {
+                return "AlmostFinished";
+            }
+
+            return "Unknown";
         }
     }
 }

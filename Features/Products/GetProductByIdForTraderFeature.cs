@@ -24,16 +24,15 @@ public sealed class GetProductByIdForTraderFeature
         public decimal? Vat { get; set; }
         public int? ThresholdReached { get; set; }
         public DateTime? DateAdded { get; set; }
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
         public int? OfferId { get; set; }
         public int? SubcategoryId { get; set; }
         public int? WarehouseId { get; set; }
-        public ICollection<ImageEntity> Images { get; set; }
-        public ICollection<RateEntity> Rates { get; set; }
-        public ICollection<ProductVariationEntity> ProductVariations { get; set; } = new List<ProductVariationEntity>();
-        public ICollection<QuantityPricingTierEntity> QuantityPricingTiers { get; set; } = new List<QuantityPricingTierEntity>();
-        public ICollection<ProductTranslationEntity> ProductTranslations { get; set; } = new List<ProductTranslationEntity>();
-        public ICollection<ContractOrderProductEntity> ContractOrderProducts { get; set; } = new List<ContractOrderProductEntity>();
+        public ICollection<ImageResponse> Images { get; set; }
+        public ICollection<ProductVariationResponse> ProductVariations { get; set; } = new List<ProductVariationResponse>();
+        public ICollection<QuantityPricingTierResponse> QuantityPricingTiers { get; set; } = new List<QuantityPricingTierResponse>();
+        public ICollection<ProductTranslationResponse> ProductTranslations { get; set; } = new List<ProductTranslationResponse>();
+        public ICollection<ContractOrderProductResponse> ContractOrderProducts { get; set; } = new List<ContractOrderProductResponse>();
 
     }
 
@@ -108,14 +107,12 @@ public sealed class GetProductByIdForTraderFeature
                 .Include(p => p.ProductTranslations)
                 .Include(p => p.Images)
                 .Include(p => p.Store)
-                .Include(p=>p.Category)
-                .Include(p=>p.Subcategory)
-                .Include(p=>p.ProductVariations)
-                .Include(p=>p.Offer)
-                .Include(p=>p.ContractOrderProducts)
-                .Where(p => p.Id == request.ProductId)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+                .Include(p => p.Category)
+                .Include(p => p.Subcategory)
+                .Include(p => p.ProductVariations)
+                .Include(p => p.Offer)
+                .Include(p => p.ContractOrderProducts)
+                .FirstOrDefaultAsync(p => p.Id == request.ProductId, cancellationToken: cancellationToken);
 
             if (product is null)
             {
@@ -133,14 +130,44 @@ public sealed class GetProductByIdForTraderFeature
                 Dimensions = product.Dimensions,
                 IsInStock = product.IsInStock,
                 OfferId = product.OfferId,
-                Rates = product.Rates,
-                ContractOrderProducts = product.ContractOrderProducts,
-                Images = product.Images,
+                ContractOrderProducts = product.ContractOrderProducts
+                .Select(p => new ContractOrderProductResponse { Id = p.Id, ProductId = p.ProductId })
+                .ToList(),
+
+                Images = product.Images
+                 .Select(p => new ImageResponse { FileName = p.FileName, ImageMimeType = p.ImageMimeType, ImageUrl = p.ImageUrl })
+                .ToList(),
+
                 NumberOfReviews = product.NumberOfReviews,
                 OriginalPrice = product.OriginalPrice,
-                ProductTranslations = product.ProductTranslations,
-                ProductVariations = product.ProductVariations,
-                QuantityPricingTiers = product.QuantityPricingTiers,
+                ProductTranslations = product.ProductTranslations
+                .Select(p => new ProductTranslationResponse { Id = p.Id,
+                    Brand = p.Brand,
+                    Description = p.Description,
+                    GeneralOverview = p.GeneralOverview,
+                    Language = p.Language,
+                    Name = p.Name,
+                    ProductId = p.ProductId,
+                    Specifications = p.Specifications }).ToList(),
+
+                ProductVariations = product.ProductVariations.Select(p => new ProductVariationResponse
+                {
+                    Id = p.Id,
+                    ProductId = p.ProductId,
+                    Color = p.Color,
+                    Quantity = p.Quantity,
+                    Size = p.Size
+                }).ToList(),
+
+                QuantityPricingTiers = product.QuantityPricingTiers.Select(p=>new QuantityPricingTierResponse
+                {
+                    Id=p.Id,
+                    Price = p.Price,
+                    MaxQuantity=p.MaxQuantity,
+                    MinQuantity=p.MinQuantity,
+                    ProductId = p.ProductId
+                }).ToList(),
+
                 SellingPrice = product.SellingPrice,
                 SubcategoryId = product.SubcategoryId,
                 ThresholdReached = product.ThresholdReached,

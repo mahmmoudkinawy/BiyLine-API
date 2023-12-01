@@ -190,9 +190,10 @@ public sealed class ProductsController : ControllerBase
         return NoContent();
     }
 
-    [EnsureStoreProfileCompleteness]
-    [EnsureSingleStore]
-    [Authorize(Policy = Constants.Policies.MustBeTrader)]
+    [ApiVersion(2.0)]
+    //[EnsureStoreProfileCompleteness]
+    //[EnsureSingleStore]
+    //[Authorize(Policy = Constants.Policies.MustBeTrader)]
     [HttpGet("{productId}/trader")]
     public async Task <ActionResult<GetProductByIdForTraderFeature.Response>> GetProductByIdForTrader([FromRoute]int productId)
     {

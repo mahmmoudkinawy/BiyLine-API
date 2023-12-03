@@ -40,11 +40,16 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<ContractOrderProductEntity> ContractOrderProducts { get; set; }
     public DbSet<ContractOrderEntity> ContractOrders { get; set; }
     public DbSet<ContractOrderVariationEntity> ContractOrderVariations { get; set; }
-
+    public DbSet<InventoryEntity> Inventories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<InventoryEntity>()
+            .HasOne(i => i.Warehouse)
+            .WithOne()
+            .HasForeignKey<InventoryEntity>(i => i.WarehouseId);
 
         builder.Entity<EmployeeEntity>()
             .HasOne(e => e.ImageOwner)

@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231202154103_MakeTheNoteNullableInContractOrderEntity")]
+    partial class MakeTheNoteNullableInContractOrderEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -136,22 +139,12 @@ namespace BiyLineApi.DbContexts.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("SupplierInvoiceId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ToStoreId")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("FromStoreId");
-
-                    b.HasIndex("SupplierInvoiceId")
-                        .IsUnique()
-                        .HasFilter("[SupplierInvoiceId] IS NOT NULL");
 
                     b.HasIndex("ToStoreId");
 
@@ -169,17 +162,9 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("ProductPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("QuantityPricingTierId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("QuantityPricingTierId");
 
                     b.ToTable("ContractOrderProducts");
                 });
@@ -1028,40 +1013,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.ToTable("Suppliers");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.SupplierInvoiceEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AccountNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("PaidAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("PaymentMethod")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("RemainingAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Returned")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ShippingPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SupplierInvoices");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.UserEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -1337,10 +1288,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BiyLineApi.Entities.SupplierInvoiceEntity", "SupplierInvoice")
-                        .WithOne("ContractOrder")
-                        .HasForeignKey("BiyLineApi.Entities.ContractOrderEntity", "SupplierInvoiceId");
-
                     b.HasOne("BiyLineApi.Entities.StoreEntity", "ToStore")
                         .WithMany("ContractOrdersToStore")
                         .HasForeignKey("ToStoreId")
@@ -1348,8 +1295,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .IsRequired();
 
                     b.Navigation("FromStore");
-
-                    b.Navigation("SupplierInvoice");
 
                     b.Navigation("ToStore");
                 });
@@ -1362,15 +1307,7 @@ namespace BiyLineApi.DbContexts.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("BiyLineApi.Entities.QuantityPricingTierEntity", "QuantityPricingTier")
-                        .WithMany("ContractOrderProducts")
-                        .HasForeignKey("QuantityPricingTierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Product");
-
-                    b.Navigation("QuantityPricingTier");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.ContractOrderVariationEntity", b =>
@@ -1886,11 +1823,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("ContractOrderVariations");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.QuantityPricingTierEntity", b =>
-                {
-                    b.Navigation("ContractOrderProducts");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.RoleEntity", b =>
                 {
                     b.Navigation("UserRoles");
@@ -1933,12 +1865,6 @@ namespace BiyLineApi.DbContexts.Migrations
             modelBuilder.Entity("BiyLineApi.Entities.SubcategoryEntity", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.SupplierInvoiceEntity", b =>
-                {
-                    b.Navigation("ContractOrder")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.UserEntity", b =>

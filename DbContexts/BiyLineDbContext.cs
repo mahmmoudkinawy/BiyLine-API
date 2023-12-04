@@ -40,6 +40,7 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<ContractOrderProductEntity> ContractOrderProducts { get; set; }
     public DbSet<ContractOrderEntity> ContractOrders { get; set; }
     public DbSet<ContractOrderVariationEntity> ContractOrderVariations { get; set; }
+    public DbSet<SupplierInvoiceEntity> SupplierInvoices { get; set; } 
 
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -308,15 +309,11 @@ public sealed class BiyLineDbContext : IdentityDbContext<
             .HasQueryFilter(c => c.ProductTranslations.Any(pt => pt.Language.Equals(_language)));
 
 
-       
-
-       
-
         builder.Entity<ContractOrderEntity>()
-                    .HasOne(e => e.FromStore)
-                    .WithMany(s => s.ContractOrdersFromStore)
-                    .HasForeignKey(e => e.FromStoreId)
-                    .OnDelete(DeleteBehavior.Restrict);
+             .HasOne(e => e.FromStore)
+             .WithMany(s => s.ContractOrdersFromStore)
+             .HasForeignKey(e => e.FromStoreId)
+             .OnDelete(DeleteBehavior.Restrict);
 
 
         builder.Entity<ContractOrderEntity>()
@@ -328,6 +325,7 @@ public sealed class BiyLineDbContext : IdentityDbContext<
         builder.Entity<ContractOrderEntity>()
             .HasMany(c => c.ContractOrderProducts)
             .WithMany(c => c.ContractOrders);
+            
 
 
         builder.Entity<ContractOrderProductEntity>()
@@ -343,6 +341,11 @@ public sealed class BiyLineDbContext : IdentityDbContext<
             .WithMany(p => p.ContractOrderVariations)
             .HasForeignKey(s => s.ProductVariationId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<SupplierEntity>()
+              .HasOne(s => s.Store)
+              .WithMany(s => s.Suppliers)
+              .HasForeignKey(s => s.StoreId);
 
     }
 

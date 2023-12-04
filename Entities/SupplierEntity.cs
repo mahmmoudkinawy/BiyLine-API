@@ -17,6 +17,7 @@ public sealed class SupplierEntity
 
     public int? UserId { get; set; }
     public UserEntity? User { get; set; }
+
     public int StoreId { get; set; }
     public StoreEntity? Store { get; set; }
 }

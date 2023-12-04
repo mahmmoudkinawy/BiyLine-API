@@ -201,7 +201,7 @@ public sealed class ProductsController : ControllerBase
 
         if (!response.IsSuccess)
         {
-            return NotFound(response.Errors);
+            return NotFound();
         }
 
         return Ok(response.Value);

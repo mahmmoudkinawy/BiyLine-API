@@ -51,7 +51,7 @@ public sealed class GetSupplierByIdFeature
             {
                 return Result<Response>.Failure("This Supplier Is Not Found");
             }
-            
+
             var response = new Response
             {
                 Id = supplierFromDb.Id,

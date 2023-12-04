@@ -30,9 +30,8 @@ public sealed class GetRetailTradersFeature
         public async Task<PagedList<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
             var query = _context.Users
-                 .Where(u => u.StoreId != null)
                  .Include(u => u.Store)
-                 .Where(u => u.Store.Activity != StoreActivityEnum.Sectional.ToString())
+                 .Where(u => u.StoreId != null && u.Store.Activity != StoreActivityEnum.Sectional.ToString())
                  .AsQueryable();
 
             if (!string.IsNullOrEmpty(request.Predicate))

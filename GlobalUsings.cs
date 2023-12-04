@@ -13,6 +13,7 @@ global using BiyLineApi.Features.Coupons;
 global using BiyLineApi.Features.Documents;
 global using BiyLineApi.Features.employees;
 global using BiyLineApi.Features.Images;
+global using BiyLineApi.Features.Inventories;
 global using BiyLineApi.Features.Location;
 global using BiyLineApi.Features.Products;
 global using BiyLineApi.Features.ShippingCompanies;

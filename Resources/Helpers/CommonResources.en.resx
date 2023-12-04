@@ -180,4 +180,7 @@
   <data name="UserWithEmailDoesNotExist" xml:space="preserve">
     <value>User with Email does not exist.</value>
   </data>
+  <data name="Warehouse does not found" xml:space="preserve">
+    <value>Warehouse does not found</value>
+  </data>
 </root>

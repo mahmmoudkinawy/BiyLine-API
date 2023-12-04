@@ -180,4 +180,7 @@
   <data name="UserWithEmailDoesNotExist" xml:space="preserve">
     <value>المستخدم بالبريد الإلكتروني غير موجود.</value>
   </data>
+  <data name="Warehouse does not found" xml:space="preserve">
+    <value>المخزن غير موجود</value>
+  </data>
 </root>

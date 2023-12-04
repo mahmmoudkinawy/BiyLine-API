@@ -1,4 +1,6 @@
-﻿namespace BiyLineApi.Entities;
+﻿using Bogus.DataSets;
+
+namespace BiyLineApi.Entities;
 public sealed class ContractOrderEntity
 { 
     public int Id { get; set; }
@@ -10,7 +12,14 @@ public sealed class ContractOrderEntity
     public int ToStoreId { get; set; }
     public StoreEntity ToStore { get; set; }
 
-    public string Note { get; set; }
+    public decimal TotalPrice { get; set; }
+
+    public string? Note { get; set; }
+
+    public DateTime Date { get; set; }
+
+    public int? SupplierInvoiceId { get; set; }
+    public SupplierInvoiceEntity SupplierInvoice { get; set; }
 
     public ICollection<ContractOrderProductEntity> ContractOrderProducts { get; set; } = new List<ContractOrderProductEntity>();
 }

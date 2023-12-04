@@ -57,7 +57,7 @@ public sealed class UpdateSupplierFeature
                       })
                        .WithMessage("The Payment Method Is InValid");
                });
-         }
+        }
     }
 
     public sealed class Handler : IRequestHandler<Request, Result<Response>>
@@ -84,14 +84,14 @@ public sealed class UpdateSupplierFeature
             }
 
             var supplierId = _httpContextAccessor.GetValueFromRoute("supplierId");
-            var supplierFromDb = await _context.Suppliers.Where(s=>s.StoreId==store.Id).FirstOrDefaultAsync(s => s.Id == supplierId);
+            var supplierFromDb = await _context.Suppliers.Where(s => s.StoreId == store.Id).FirstOrDefaultAsync(s => s.Id == supplierId);
 
-            if(supplierFromDb is null)
+            if (supplierFromDb is null)
             {
                 return Result<Response>.Failure("This Supplier Is Not Found");
             }
 
-            supplierFromDb.Name =  request.Name;
+            supplierFromDb.Name = request.Name;
             supplierFromDb.TradeName = request.TradeName;
             supplierFromDb.PhoneNumber = request.PhoneNumber;
             supplierFromDb.Email = request.Email;
@@ -100,7 +100,7 @@ public sealed class UpdateSupplierFeature
             supplierFromDb.CommercialRecord = request.CommercialRecord;
             supplierFromDb.TaxCard = request.TaxCard;
             supplierFromDb.PaymentMethod = request.PaymentMethod;
-            
+
 
             _context.Update(supplierFromDb);
 

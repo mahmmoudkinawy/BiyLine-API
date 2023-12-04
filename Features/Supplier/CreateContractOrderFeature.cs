@@ -13,10 +13,14 @@ public sealed class CreateContractOrderFeature
     public sealed class ContractOrderProductRequest
     {
         public int ProductId { get; set; }
+
+        public int QuantityPricingTierId { get; set; }
+
         public List<VariationRequest> Variations { get; set; }  
     }
     public sealed class Request : IRequest<Result<Response>>
     {
+        public string? Note { get; set; }
         public List<ContractOrderProductRequest> ContractOrderProducts { get; set; }
     }
 
@@ -83,11 +87,23 @@ public sealed class CreateContractOrderFeature
             {
                 FromStoreId = traderId,
                 ToStoreId = supplierId,
-                Status = ContractOrderStatus.Pending.ToString()
+                Status = ContractOrderStatus.Pending.ToString(),
+                Note= request.Note,
+                Date = DateTime.UtcNow,
+                
             };
 
             foreach ( var item in request.ContractOrderProducts)
             {
+                decimal productprice = 0;
+
+                var quantityPricingTier = await _context.QuantityPricingTiers.FirstOrDefaultAsync(t => t.Id == item.QuantityPricingTierId && t.ProductId==item.ProductId);
+
+                if (quantityPricingTier == null)
+                {
+                    return Result<Response>.Failure("This quantityPricingTier Not Exist");
+                }
+
                 foreach (var variation in item.Variations)
                 {
                      var productVariation = await _context.ProductVariations.FirstOrDefaultAsync(pv => (pv.Id == variation.ProductVariationId) && (pv.ProductId == item.ProductId));
@@ -96,17 +112,24 @@ public sealed class CreateContractOrderFeature
                     {
                         return Result<Response>.Failure("This Product Does not Have This Variation");
                     }
+
+                    productprice += variation.Quantity * quantityPricingTier.Price ?? 0;
                 }
 
                 contractOrder.ContractOrderProducts.Add(new ContractOrderProductEntity
                 {
                     ProductId = item.ProductId,
+                    ProductPrice = productprice,
+                    QuantityPricingTierId = item.QuantityPricingTierId,
+
                     ContractOrderVariations = item.Variations.Select(x => new ContractOrderVariationEntity
                     {
                         Quantity = x.Quantity,
                         ProductVariationId = x.ProductVariationId,
                     }).ToList()
                 }) ;
+
+                contractOrder.TotalPrice += productprice;
             }
 
             _context.ContractOrders.Add(contractOrder);

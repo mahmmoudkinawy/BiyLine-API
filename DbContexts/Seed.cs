@@ -109,6 +109,17 @@ public static class Seed
 
         await userManager.CreateAsync(shippingCompany, "Pa$$w0rd");
         await userManager.AddToRoleAsync(shippingCompany, Constants.Roles.ShippingCompany);
+
+        var supplier = new UserEntity
+        {
+            Name = "supplier",
+            Email = "supplier@test.com",
+            UserName = "supplier@test.com",
+            EmailConfirmed = true
+        };
+
+        await userManager.CreateAsync(supplier, "Pa$$w0rd");
+        await userManager.AddToRoleAsync(supplier, Constants.Roles.Trader);
     }
 
     public static async Task SeedCategoriesWithRelatedDataAsync(BiyLineDbContext context)

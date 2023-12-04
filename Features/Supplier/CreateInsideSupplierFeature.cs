@@ -31,7 +31,7 @@ public sealed class CreateInsideSupplierFeature
 
             var supplierId = _httpContextAccessor.GetValueFromRoute("supplierId");
 
-            var supplierFromDb = await _context.Users.FirstOrDefaultAsync(s => s.Id == supplierId);
+            var supplierFromDb = await _context.Users.Include(s=>s.Store).FirstOrDefaultAsync(s => s.Id == supplierId && s.Store.OwnerId==supplierId && s.Store.Activity!=StoreActivityEnum.Sectional.ToString());
 
             if (supplierFromDb is null)
             {

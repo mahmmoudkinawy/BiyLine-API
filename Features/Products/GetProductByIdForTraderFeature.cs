@@ -112,7 +112,7 @@ public sealed class GetProductByIdForTraderFeature
                 .Include(p => p.ProductVariations)
                 .Include(p => p.Offer)
                 .Include(p => p.ContractOrderProducts)
-                .FirstOrDefaultAsync(p => p.Id == request.ProductId, cancellationToken: cancellationToken);
+                .FirstOrDefaultAsync(p => p.Id == request.ProductId);
 
             if (product is null)
             {

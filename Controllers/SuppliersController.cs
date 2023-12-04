@@ -1,4 +1,9 @@
-﻿namespace BiyLineApi.Controllers;
+﻿using BiyLineApi.Features.Contractor;
+using BiyLineApi.Features.ContractOrder;
+using BiyLineApi.Features.SupplierInvoice;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
+namespace BiyLineApi.Controllers;
 
 
 [Route("api/v{version:apiVersion}/suppliers")]
@@ -21,6 +26,25 @@ public sealed class SuppliersController : ControllerBase
         [FromQuery] PaginationParams paginationParams)
     {
         var response = await _mediator.Send(new GetSuppliersFeature.Request
+        {
+            PageNumber = paginationParams.PageNumber,
+            PageSize = paginationParams.PageSize,
+        });
+
+        Response.AddPaginationHeader(
+            response.CurrentPage,
+            response.PageSize,
+            response.TotalPages,
+            response.TotalCount);
+
+        return Ok(response);
+    }
+
+    [HttpGet("retailSuppliers")]
+    public async Task<ActionResult<IReadOnlyList<GetRetailSuppliersFeature.Response>>> GetRetailSuppliers(
+        [FromQuery] PaginationParams paginationParams)
+    {
+        var response = await _mediator.Send(new GetRetailSuppliersFeature.Request
         {
             PageNumber = paginationParams.PageNumber,
             PageSize = paginationParams.PageSize,
@@ -127,17 +151,93 @@ public sealed class SuppliersController : ControllerBase
 
         return NoContent();
     }
-    
-    [HttpPost("Traders/{supplierId}")]
-    public async Task<IActionResult> CreateContractOrder([FromBody] CreateContractOrderFeature.Request request)
+
+
+    [HttpGet("contractOrders")]
+    public async Task<ActionResult<IReadOnlyList<GetAllContractOrdersFeature.Response>>> GetContractOrders(
+        [FromQuery] PaginationParams paginationParams)
+    {
+        var response = await _mediator.Send(new GetAllContractOrdersFeature.Request
+        {
+            PageNumber = paginationParams.PageNumber,
+            PageSize = paginationParams.PageSize,
+        });
+
+        Response.AddPaginationHeader(
+            response.CurrentPage,
+            response.PageSize,
+            response.TotalPages,
+            response.TotalCount);
+
+        return Ok(response);
+    }
+
+    [HttpGet("contractOrders/{contractOrderId}")]
+    public async Task<ActionResult<GetContractOrderByIdFeature.Response>> GetContractOrderById([FromRoute] int contractOrderId)
+    {
+        var response = await _mediator.Send(new GetContractOrderByIdFeature.Request { ContractOrderId = contractOrderId });
+
+        if (!response.IsSuccess)
+        {
+            return NotFound();
+        }
+
+        return Ok(response.Value);
+    }
+
+
+    [HttpPut("contractOrders/{contractOrderId}/shipping-status")]
+
+    public async Task<IActionResult> UpdateContractOrderStatusToShipping([FromBody] CreateSupplierInvoiceFeature.Request request)
+    {
+        var updatedStatusResponse = await _mediator.Send(new UpdateContractOrderStateToShippingFeature.Request { });
+
+        if (!updatedStatusResponse.IsSuccess)
+        {
+            return NotFound();
+        }
+
+        var createdSupplierInvoiceResponse = await _mediator.Send(new CreateSupplierInvoiceFeature.Request { PaidAmount = request.PaidAmount, ShippingPrice = request.ShippingPrice });
+
+        if (!createdSupplierInvoiceResponse.IsSuccess)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
+
+    [HttpPut("contractOrders/{contractOrderId}/rejected-status")]
+
+    public async Task<IActionResult> UpdateContractOrderStatusToRejected([FromBody] UpdateContractOrderStateToRejectedFeature.Request request)
     {
         var response = await _mediator.Send(request);
 
         if (!response.IsSuccess)
         {
-            return NotFound(response.Errors);
+            return NotFound();
         }
 
         return NoContent();
     }
+
+    [HttpGet("contractors")]
+
+    public async Task<ActionResult<IReadOnlyList<GetAllContractorsFeature.Response>>> GetAllContractors([FromQuery] PaginationParams paginationParams)
+    {
+        var response = await _mediator.Send(new GetAllContractorsFeature.Request
+        {
+            PageNumber = paginationParams.PageNumber,
+            PageSize = paginationParams.PageSize,
+        });
+
+        Response.AddPaginationHeader(
+            response.CurrentPage,
+            response.PageSize,
+            response.TotalPages,
+            response.TotalCount);
+
+        return Ok(response);
+    }
 }
+

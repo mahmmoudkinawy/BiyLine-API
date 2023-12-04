@@ -22,6 +22,9 @@ public sealed class StoreEntity
     public ICollection<EmployeeEntity> Employees { get; set; }
     public ICollection<ContractOrderEntity> ContractOrdersToStore { get; set; } = new List<ContractOrderEntity>();
     public ICollection<ContractOrderEntity> ContractOrdersFromStore { get; set; } = new List<ContractOrderEntity>();
+    public ICollection<SupplierEntity> Suppliers { get; set; } = new List<SupplierEntity>();
+
+
 
     public int? TaxRegistrationDocumentImageId { get; set; }
     public ImageEntity? TaxRegistrationDocumentImage { get; set; }
@@ -49,5 +52,4 @@ public sealed class StoreEntity
 
     public StoreProfileCompletenessEntity StoreProfileCompleteness { get; set; }
 
-    public ICollection<SupplierEntity> Suppliers { get; set; }
 }

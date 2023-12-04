@@ -1,4 +1,7 @@
 ﻿
+using BiyLineApi.Features.ContractOrder;
+using BiyLineApi.Features.SupplierInvoice;
+using BiyLineApi.Features.Trader;
 
 namespace BiyLineApi.Controllers;
 
@@ -64,6 +67,52 @@ public class TradersController : ControllerBase
         if (!response.IsSuccess)
         {
             return NotFound(response.Errors);
+        }
+
+        return NoContent();
+    }
+
+    [HttpDelete("contractOrders/{contractOrderId}")]
+    public async Task<IActionResult> CancelContractOrder([FromRoute] int contractOrderId)
+    {
+        var response = await _mediator.Send(new CancelContractOrderFeature.Request { ContractOrderId = contractOrderId });
+
+        if (!response.IsSuccess)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
+
+
+    [HttpPut("contractOrders/{contractOrderId}/delivered-status")]
+    public async Task<IActionResult> UpdateContractOrderStatusToRejected([FromRoute] int contractOrderId)
+    {
+        var response = await _mediator.Send(new UpdateContractOrderStatusToDeliverdFeature.Request { ContractOrderId = contractOrderId });
+
+        if (!response.IsSuccess)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
+
+    [HttpPut("supplierInvoice/{supplierInvoiceId}")]
+
+    public async Task<IActionResult> UpdateSupplierInvoice([FromBody] UpdateSupplierInvoiceFeature.Request request)
+    {
+        var response = await _mediator.Send(request);
+
+        if (!response.IsSuccess)
+        {
+            return NotFound();
+        }
+
+        if (response.IsBadRequest)
+        {
+            return BadRequest(response.Error);
         }
 
         return NoContent();

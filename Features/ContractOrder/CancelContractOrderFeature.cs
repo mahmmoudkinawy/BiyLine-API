@@ -35,14 +35,14 @@ public sealed class CancelContractOrderFeature
                 return Result<Response>.Failure("This Store Is Not Found");
             }
 
-            var contractOrderFromDb = await _context.ContractOrders.FirstOrDefaultAsync(c => c.Id == request.ContractOrderId && c.FromStoreId==traderId && c.Status == ContractOrderStatus.Pending.ToString());
-            
-            if(contractOrderFromDb == null)
+            var contractOrderFromDb = await _context.ContractOrders.FirstOrDefaultAsync(c => c.Id == request.ContractOrderId && c.FromStoreId == traderId && c.Status == ContractOrderStatus.Pending.ToString());
+
+            if (contractOrderFromDb == null)
             {
                 return Result<Response>.Failure("This Contract Order Is Not Found");
 
             }
-           
+
             _context.ContractOrders.Remove(contractOrderFromDb);
             await _context.SaveChangesAsync();
 

@@ -6,7 +6,7 @@ public sealed class SupplierInvoiceEntity
     public decimal ShippingPrice { get; set; }
     public decimal PaidAmount { get; set; }
     public decimal RemainingAmount { get; set; }
-    public decimal Returned { get; set; } 
+    public decimal Returned { get; set; }
     public decimal TotalPrice { get; set; }
     public string? AccountNumber { get; set; }
     public string? PaymentMethod { get; set; }

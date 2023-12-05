@@ -95,14 +95,14 @@ public sealed class GetAllContractOrdersFeature
                 Date = c.Date,
                 ToStoreId = c.ToStoreId,
                 StoreName = c.ToStore.EnglishName,
-                Images = c.ToStore.Images.Select( i => new ImageResponse
+                Images = c.ToStore.Images.Select(i => new ImageResponse
                 {
-                    FileName= i.FileName,
+                    FileName = i.FileName,
                     ImageUrl = i.ImageUrl,
-                    ImageMimeType =i.ImageMimeType
+                    ImageMimeType = i.ImageMimeType
                 }).ToList(),
 
-                TotalPrice =c.TotalPrice,
+                TotalPrice = c.TotalPrice,
                 Products = c.ContractOrderProducts.Select(cp => new ProductResponse
                 {
 
@@ -114,14 +114,14 @@ public sealed class GetAllContractOrdersFeature
                         Quantity = v.Quantity
                     }).ToList()
                 }).ToList(),
-            }) ;
+            });
 
 
 
-                return await PagedList<Response>.CreateAsync(
-                   contractOrders.AsNoTracking(),
-                   request.PageNumber.Value,
-                   request.PageSize.Value);
+            return await PagedList<Response>.CreateAsync(
+               contractOrders.AsNoTracking(),
+               request.PageNumber.Value,
+               request.PageSize.Value);
 
 
         }

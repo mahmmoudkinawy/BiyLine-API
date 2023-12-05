@@ -24,8 +24,8 @@ public sealed class GetStoresFeature
         public Mapper()
         {
             CreateMap<StoreEntity, Response>()
-                .ForMember(dest => dest.ImageUrl, 
-                    opt => 
+                .ForMember(dest => dest.ImageUrl,
+                    opt =>
                         opt.MapFrom(src => src.Images.OrderByDescending(i => i.DateUploaded).FirstOrDefault().ImageUrl));
         }
     }

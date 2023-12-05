@@ -141,14 +141,17 @@ public sealed class GetProductByIdForTraderFeature
                 NumberOfReviews = product.NumberOfReviews,
                 OriginalPrice = product.OriginalPrice,
                 ProductTranslations = product.ProductTranslations
-                .Select(p => new ProductTranslationResponse { Id = p.Id,
+                .Select(p => new ProductTranslationResponse
+                {
+                    Id = p.Id,
                     Brand = p.Brand,
                     Description = p.Description,
                     GeneralOverview = p.GeneralOverview,
                     Language = p.Language,
                     Name = p.Name,
                     ProductId = p.ProductId,
-                    Specifications = p.Specifications }).ToList(),
+                    Specifications = p.Specifications
+                }).ToList(),
 
                 ProductVariations = product.ProductVariations.Select(p => new ProductVariationResponse
                 {
@@ -159,12 +162,12 @@ public sealed class GetProductByIdForTraderFeature
                     Size = p.Size
                 }).ToList(),
 
-                QuantityPricingTiers = product.QuantityPricingTiers.Select(p=>new QuantityPricingTierResponse
+                QuantityPricingTiers = product.QuantityPricingTiers.Select(p => new QuantityPricingTierResponse
                 {
-                    Id=p.Id,
+                    Id = p.Id,
                     Price = p.Price,
-                    MaxQuantity=p.MaxQuantity,
-                    MinQuantity=p.MinQuantity,
+                    MaxQuantity = p.MaxQuantity,
+                    MinQuantity = p.MinQuantity,
                     ProductId = p.ProductId
                 }).ToList(),
 

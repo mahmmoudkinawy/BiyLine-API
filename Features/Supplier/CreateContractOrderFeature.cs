@@ -16,7 +16,7 @@ public sealed class CreateContractOrderFeature
 
         public int QuantityPricingTierId { get; set; }
 
-        public List<VariationRequest> Variations { get; set; }  
+        public List<VariationRequest> Variations { get; set; }
     }
     public sealed class Request : IRequest<Result<Response>>
     {
@@ -88,16 +88,16 @@ public sealed class CreateContractOrderFeature
                 FromStoreId = traderId,
                 ToStoreId = supplierId,
                 Status = ContractOrderStatus.Pending.ToString(),
-                Note= request.Note,
+                Note = request.Note,
                 Date = DateTime.UtcNow,
-                
+
             };
 
-            foreach ( var item in request.ContractOrderProducts)
+            foreach (var item in request.ContractOrderProducts)
             {
                 decimal productprice = 0;
 
-                var quantityPricingTier = await _context.QuantityPricingTiers.FirstOrDefaultAsync(t => t.Id == item.QuantityPricingTierId && t.ProductId==item.ProductId);
+                var quantityPricingTier = await _context.QuantityPricingTiers.FirstOrDefaultAsync(t => t.Id == item.QuantityPricingTierId && t.ProductId == item.ProductId);
 
                 if (quantityPricingTier == null)
                 {
@@ -106,7 +106,7 @@ public sealed class CreateContractOrderFeature
 
                 foreach (var variation in item.Variations)
                 {
-                     var productVariation = await _context.ProductVariations.FirstOrDefaultAsync(pv => (pv.Id == variation.ProductVariationId) && (pv.ProductId == item.ProductId));
+                    var productVariation = await _context.ProductVariations.FirstOrDefaultAsync(pv => (pv.Id == variation.ProductVariationId) && (pv.ProductId == item.ProductId));
 
                     if (productVariation is null)
                     {
@@ -127,7 +127,7 @@ public sealed class CreateContractOrderFeature
                         Quantity = x.Quantity,
                         ProductVariationId = x.ProductVariationId,
                     }).ToList()
-                }) ;
+                });
 
                 contractOrder.TotalPrice += productprice;
             }

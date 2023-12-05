@@ -12,6 +12,6 @@ public sealed class ContractOrderProductEntity
     public QuantityPricingTierEntity? QuantityPricingTier { get; set; }
 
 
-    public ICollection<ContractOrderVariationEntity> ContractOrderVariations { get; set; }  = new List<ContractOrderVariationEntity>();
+    public ICollection<ContractOrderVariationEntity> ContractOrderVariations { get; set; } = new List<ContractOrderVariationEntity>();
     public ICollection<ContractOrderEntity> ContractOrders { get; set; } = new List<ContractOrderEntity>();
 }

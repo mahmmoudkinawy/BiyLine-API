@@ -35,14 +35,14 @@ public sealed class GetWholesalesFeature
         public Handler(BiyLineDbContext context, IMapper mapper)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-            _mapper = mapper ?? 
+            _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
         }
 
         public async Task<PagedList<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
             var query = _context.Users
-                .Include(u=>u.Store)
+                .Include(u => u.Store)
                 .Where(u => u.UserRoles.Any(r => r.Role.Name == Constants.Roles.Trader && r.User.Store.Activity == StoreActivityEnum.Wholesale.ToString()))
                 .AsQueryable();
 

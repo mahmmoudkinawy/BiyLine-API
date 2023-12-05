@@ -35,7 +35,7 @@ public sealed class AddTaxRegistrationDocumentImageFeature
         }
     }
 
-    public sealed class Handler : IRequestHandler<Request,Result<Response>>
+    public sealed class Handler : IRequestHandler<Request, Result<Response>>
     {
         private readonly BiyLineDbContext _context;
         private readonly IDateTimeProvider _dateTimeProvider;

@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231205213255_AddedStocksTableToDb")]
+    partial class AddedStocksTableToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -819,9 +822,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<int>("SourceWarehouseId")
                         .HasColumnType("int");
 
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("DestinationWarehouseId");
@@ -829,8 +829,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.HasIndex("ProductId");
 
                     b.HasIndex("SourceWarehouseId");
-
-                    b.HasIndex("StoreId");
 
                     b.ToTable("Stocks");
                 });
@@ -1700,19 +1698,11 @@ namespace BiyLineApi.DbContexts.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
-                        .WithMany("Stocks")
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("DestinationWarehouse");
 
                     b.Navigation("Product");
 
                     b.Navigation("SourceWarehouse");
-
-                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.StoreCategoryEntity", b =>
@@ -2040,8 +2030,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Products");
 
                     b.Navigation("Specializations");
-
-                    b.Navigation("Stocks");
 
                     b.Navigation("StoreCategories");
 

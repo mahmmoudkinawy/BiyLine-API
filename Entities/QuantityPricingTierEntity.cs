@@ -9,6 +9,6 @@ public sealed class QuantityPricingTierEntity
     public int ProductId { get; set; }
     public ProductEntity Product { get; set; }
 
-    public ICollection<ContractOrderProductEntity> ContractOrderProducts { get; set; } = new List<ContractOrderProductEntity>();  
+    public ICollection<ContractOrderProductEntity> ContractOrderProducts { get; set; } = new List<ContractOrderProductEntity>();
 
 }

@@ -10,6 +10,6 @@ public sealed class ShippingCompanyEntity
     public int StoreId { get; set; }
     public StoreEntity Store { get; set; }
 
-    public ICollection<ShippingCompanyGovernorateEntity> ShippingCompanyGovernorates { get; set; } 
+    public ICollection<ShippingCompanyGovernorateEntity> ShippingCompanyGovernorates { get; set; }
         = new List<ShippingCompanyGovernorateEntity>();
 }

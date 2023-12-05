@@ -26,7 +26,7 @@ public sealed class CategoriesController : ControllerBase
 
         Response.AddPaginationHeader(
             response.CurrentPage,
-            response.PageSize, 
+            response.PageSize,
             response.TotalPages,
             response.TotalCount);
 

@@ -77,7 +77,7 @@ public sealed class GetContractOrderByIdFeature
                 .Include(c => c.ToStore)
                 .ThenInclude(s => s.Images)
                 .Include(s => s.ContractOrderProducts)
-                .ThenInclude(c=>c.ContractOrderVariations)
+                .ThenInclude(c => c.ContractOrderVariations)
                 .FirstOrDefaultAsync(c => c.Id == request.ContractOrderId);
 
             if (contractOrder == null)
@@ -122,7 +122,7 @@ public sealed class GetContractOrderByIdFeature
 
 
             return Result<Response>.Success(response);
-            
+
 
         }
     }

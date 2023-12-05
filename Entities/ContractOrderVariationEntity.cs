@@ -7,5 +7,5 @@ public sealed class ContractOrderVariationEntity
     public int ProductVariationId { get; set; }
     public ProductVariationEntity ProductVariation { get; set; }
 
-    public ICollection <ContractOrderProductEntity>  ContractOrderProducts { get; set; } = new List <ContractOrderProductEntity> ();
+    public ICollection<ContractOrderProductEntity> ContractOrderProducts { get; set; } = new List<ContractOrderProductEntity>();
 }

@@ -63,7 +63,7 @@
                     Name = wareHouse.Name,
                     ShippingAddress = wareHouse.ShippingAddress,
                     WarehouseStatus = wareHouse.WarehouseStatus
-                   
+
                 });
             }
         }

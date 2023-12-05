@@ -2,14 +2,14 @@
 
 public sealed class GetTraderById
 {
-    public sealed class Request : IRequest<Result<Response>> 
-    { 
-            public int Id { get; set; }
+    public sealed class Request : IRequest<Result<Response>>
+    {
+        public int Id { get; set; }
     }
 
     public sealed class Response
     {
-        public  int Id { get; set; }
+        public int Id { get; set; }
         public string? Name { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Address { get; set; }
@@ -20,7 +20,7 @@ public sealed class GetTraderById
         public string? StoreName { get; set; }
     }
 
-    public sealed class Handler : IRequestHandler<Request, Result<Response>> 
+    public sealed class Handler : IRequestHandler<Request, Result<Response>>
     {
         private readonly BiyLineDbContext _context;
         public Handler(BiyLineDbContext context, IHttpContextAccessor httpContextAccessor)
@@ -35,7 +35,7 @@ public sealed class GetTraderById
                 .Where(u => u.StoreId != null)
                 .Include(u => u.Store)
                 .Where(u => u.Store.Activity != StoreActivityEnum.Sectional.ToString())
-                .FirstOrDefaultAsync(s=>s.Id== request.Id);
+                .FirstOrDefaultAsync(s => s.Id == request.Id);
 
             if (traderFromDb == null)
             {

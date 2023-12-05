@@ -1,4 +1,6 @@
-﻿namespace BiyLineApi.DbContexts;
+﻿using Microsoft.Identity.Client;
+
+namespace BiyLineApi.DbContexts;
 public sealed class BiyLineDbContext : IdentityDbContext<
     UserEntity, RoleEntity, int, IdentityUserClaim<int>,
     UserRoleEntity, IdentityUserLogin<int>, IdentityRoleClaim<int>,
@@ -42,6 +44,7 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<ContractOrderVariationEntity> ContractOrderVariations { get; set; }
     public DbSet<InventoryEntity> Inventories { get; set; }
     public DbSet<SupplierInvoiceEntity> SupplierInvoices { get; set; } 
+    public DbSet<StoreWalletEntity> StoreWallets { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -352,6 +355,11 @@ public sealed class BiyLineDbContext : IdentityDbContext<
               .WithMany(s => s.Suppliers)
               .HasForeignKey(s => s.StoreId);
 
+        builder.Entity<StoreWalletEntity>()
+            .HasOne(s => s.Store)
+            .WithMany(s => s.StoreWallets)
+            .HasForeignKey(s => s.StoreId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 
 }

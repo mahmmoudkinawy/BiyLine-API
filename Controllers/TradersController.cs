@@ -23,7 +23,7 @@ public class TradersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<GetRetailTradersFeature.Response>>> GetTraders(
+    public async Task<ActionResult<IReadOnlyList<GetRetailTradersFeature.Response>>> GetRetailTraders(
     [FromQuery] TraderParams traderParams)
     {
         var response = await _mediator.Send(new GetRetailTradersFeature.Request
@@ -43,10 +43,10 @@ public class TradersController : ControllerBase
     }
 
     [HttpGet("{traderId}")]
-    public async Task<ActionResult<GetTraderById.Response>> GetTraderById(
+    public async Task<ActionResult<GetRetailTraderById.Response>> GetRetailTraderById(
     [FromRoute] int traderId)
     {
-        var response = await _mediator.Send(new GetTraderById.Request
+        var response = await _mediator.Send(new GetRetailTraderById.Request
         {
             Id = traderId
         });

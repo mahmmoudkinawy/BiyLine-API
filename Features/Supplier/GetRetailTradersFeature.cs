@@ -17,6 +17,9 @@ public sealed class GetRetailTradersFeature
         public string? GovernorateName { get; set; }
         public string? RegionName { get; set; }
         public string? StoreName { get; set; }
+        public string? ImageUrl { get; set; }
+
+
     }
 
     public sealed class Handler : IRequestHandler<Request, PagedList<Response>>
@@ -47,7 +50,9 @@ public sealed class GetRetailTradersFeature
                     GovernorateName = s.Store.Governorate.Name,
                     CountryName = s.Store.Country.Name,
                     RegionName = s.Store.Region.Name,
-                    StoreName = s.Store.EnglishName
+                    StoreName = s.Store.EnglishName,
+                    ImageUrl = traderFromDb.Store.Images.OrderByDescending(i => i.DateUploaded).FirstOrDefault(i => i.Type == "ProfilePictureImage").ImageUrl
+
                 });
 
             return await PagedList<Response>.CreateAsync(

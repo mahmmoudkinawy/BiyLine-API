@@ -1,9 +1,4 @@
-﻿
-using BiyLineApi.Features.ContractOrder;
-using BiyLineApi.Features.SupplierInvoice;
-using BiyLineApi.Features.Trader;
-
-namespace BiyLineApi.Controllers;
+﻿namespace BiyLineApi.Controllers;
 
 [Route("api/v{version:apiVersion}/traders")]
 [ApiController]
@@ -17,9 +12,8 @@ public class TradersController : ControllerBase
 
     public TradersController(IMediator mediator)
     {
-
         _mediator = mediator ??
-                    throw new ArgumentNullException(nameof(mediator));
+            throw new ArgumentNullException(nameof(mediator));
     }
 
     [HttpGet]
@@ -100,7 +94,6 @@ public class TradersController : ControllerBase
     }
 
     [HttpPut("supplierInvoice/{supplierInvoiceId}")]
-
     public async Task<IActionResult> UpdateSupplierInvoice([FromBody] UpdateSupplierInvoiceFeature.Request request)
     {
         var response = await _mediator.Send(request);

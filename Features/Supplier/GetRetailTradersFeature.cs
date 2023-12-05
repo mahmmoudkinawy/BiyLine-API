@@ -1,5 +1,4 @@
 ﻿namespace BiyLineApi.Features.Supplier;
-
 public sealed class GetRetailTradersFeature
 {
     public sealed class Request : IRequest<PagedList<Response>>
@@ -8,7 +7,6 @@ public sealed class GetRetailTradersFeature
         public int? PageSize { get; set; }
         public string? Predicate { get; set; }
     }
-
     public sealed class Response
     {
         public string? Name { get; set; }
@@ -18,7 +16,6 @@ public sealed class GetRetailTradersFeature
         public string? RegionName { get; set; }
         public string? StoreName { get; set; }
         public string? ImageUrl { get; set; }
-
 
     }
 
@@ -51,8 +48,7 @@ public sealed class GetRetailTradersFeature
                     CountryName = s.Store.Country.Name,
                     RegionName = s.Store.Region.Name,
                     StoreName = s.Store.EnglishName,
-                    ImageUrl = traderFromDb.Store.Images.OrderByDescending(i => i.DateUploaded).FirstOrDefault(i => i.Type == "ProfilePictureImage").ImageUrl
-
+                    ImageUrl = s.Store.Images.OrderByDescending(i => i.DateUploaded).FirstOrDefault(i => i.Type == "ProfilePictureImage").ImageUrl
                 });
 
             return await PagedList<Response>.CreateAsync(

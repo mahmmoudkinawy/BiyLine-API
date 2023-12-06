@@ -19,6 +19,7 @@ global using BiyLineApi.Features.Location;
 global using BiyLineApi.Features.Products;
 global using BiyLineApi.Features.ShippingCompanies;
 global using BiyLineApi.Features.Stocks;
+global using BiyLineApi.Features.StockTrackers;
 global using BiyLineApi.Features.Stores;
 global using BiyLineApi.Features.Supplier;
 global using BiyLineApi.Features.SupplierInvoice;

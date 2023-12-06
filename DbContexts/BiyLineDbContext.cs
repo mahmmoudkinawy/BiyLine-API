@@ -43,10 +43,23 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<InventoryEntity> Inventories { get; set; }
     public DbSet<SupplierInvoiceEntity> SupplierInvoices { get; set; }
     public DbSet<StockEntity> Stocks { get; set; }
+    public DbSet<StockTrackerEntity> StockTrackers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<StockTrackerEntity>()
+            .HasOne(st => st.Store)
+            .WithMany()
+            .HasForeignKey(st => st.StoreId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<StockTrackerEntity>()
+            .HasOne(st => st.Warehouse)
+            .WithMany()
+            .HasForeignKey(st => st.WarehouseId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<StockEntity>()
             .HasOne(s => s.Store)

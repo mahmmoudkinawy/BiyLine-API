@@ -2,13 +2,13 @@
 
 namespace BiyLineApi.Entities;
 public sealed class ContractOrderEntity
-{ 
+{
     public int Id { get; set; }
     public string Status { get; set; }
 
     public int FromStoreId { get; set; }
     public StoreEntity FromStore { get; set; }
-    
+
     public int ToStoreId { get; set; }
     public StoreEntity ToStore { get; set; }
 
@@ -23,4 +23,3 @@ public sealed class ContractOrderEntity
 
     public ICollection<ContractOrderProductEntity> ContractOrderProducts { get; set; } = new List<ContractOrderProductEntity>();
 }
-    

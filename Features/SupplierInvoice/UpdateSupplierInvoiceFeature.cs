@@ -20,7 +20,7 @@ public sealed class UpdateSupplierInvoiceFeature
                 .GreaterThanOrEqualTo(0);
 
             RuleFor(s => s.Returned)
-                .GreaterThanOrEqualTo(0);      
+                .GreaterThanOrEqualTo(0);
         }
     }
 
@@ -43,14 +43,14 @@ public sealed class UpdateSupplierInvoiceFeature
 
             var supplierInvoiceId = _httpContextAccessor.GetValueFromRoute("supplierInvoiceId");
 
-            var supplierInvoice = await _context.SupplierInvoices.Include(i=>i.ContractOrder).FirstOrDefaultAsync(i => i.Id == supplierInvoiceId && i.ContractOrder.FromStoreId == traderId);
+            var supplierInvoice = await _context.SupplierInvoices.Include(i => i.ContractOrder).FirstOrDefaultAsync(i => i.Id == supplierInvoiceId && i.ContractOrder.FromStoreId == traderId);
 
             if (supplierInvoice == null)
             {
                 return Result<Response>.Failure("This SupplierInvoice Not Found");
             }
 
-            if((supplierInvoice.PaidAmount + request.PaidAmount) > supplierInvoice.TotalPrice)
+            if ((supplierInvoice.PaidAmount + request.PaidAmount) > supplierInvoice.TotalPrice)
             {
                 return Result<Response>.BadRequest("Invalid Operation");
             }

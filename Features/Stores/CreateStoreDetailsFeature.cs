@@ -60,7 +60,7 @@ public sealed class CreateStoreDetailsFeature
         {
             _context = context ??
                 throw new ArgumentNullException(nameof(context));
-            _httpContextAccessor = httpContextAccessor ?? 
+            _httpContextAccessor = httpContextAccessor ??
                 throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 

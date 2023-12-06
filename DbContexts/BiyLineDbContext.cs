@@ -14,7 +14,7 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     }
 
     public DbSet<ProductEntity> Products { get; set; }
-    public DbSet<CategoryEntity> Categories { get; set; }   
+    public DbSet<CategoryEntity> Categories { get; set; }
     public DbSet<OfferEntity> Offers { get; set; }
     public DbSet<StoreEntity> Stores { get; set; }
     public DbSet<RateEntity> Rates { get; set; }
@@ -43,12 +43,36 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<ContractOrderEntity> ContractOrders { get; set; }
     public DbSet<ContractOrderVariationEntity> ContractOrderVariations { get; set; }
     public DbSet<InventoryEntity> Inventories { get; set; }
-    public DbSet<SupplierInvoiceEntity> SupplierInvoices { get; set; } 
+    public DbSet<SupplierInvoiceEntity> SupplierInvoices { get; set; }
+    public DbSet<StockEntity> Stocks { get; set; }
     public DbSet<StoreWalletEntity> StoreWallets { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<StockEntity>()
+            .HasOne(s => s.Store)
+            .WithMany(s => s.Stocks)
+            .HasForeignKey(k => k.StoreId);
+
+        builder.Entity<StockEntity>()
+            .HasOne(stock => stock.Product)
+            .WithMany(product => product.Stocks)
+            .HasForeignKey(stock => stock.ProductId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<StockEntity>()
+            .HasOne(stock => stock.SourceWarehouse)
+            .WithMany(warehouse => warehouse.SourceStocks)
+            .HasForeignKey(stock => stock.SourceWarehouseId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<StockEntity>()
+            .HasOne(stock => stock.DestinationWarehouse)
+            .WithMany(warehouse => warehouse.DestinationStocks)
+            .HasForeignKey(stock => stock.DestinationWarehouseId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<InventoryEntity>()
             .HasOne(i => i.Warehouse)
@@ -316,13 +340,11 @@ public sealed class BiyLineDbContext : IdentityDbContext<
         builder.Entity<ProductEntity>()
             .HasQueryFilter(c => c.ProductTranslations.Any(pt => pt.Language.Equals(_language)));
 
-
         builder.Entity<ContractOrderEntity>()
              .HasOne(e => e.FromStore)
              .WithMany(s => s.ContractOrdersFromStore)
              .HasForeignKey(e => e.FromStoreId)
              .OnDelete(DeleteBehavior.Restrict);
-
 
         builder.Entity<ContractOrderEntity>()
             .HasOne(c => c.ToStore)
@@ -333,16 +355,12 @@ public sealed class BiyLineDbContext : IdentityDbContext<
         builder.Entity<ContractOrderEntity>()
             .HasMany(c => c.ContractOrderProducts)
             .WithMany(c => c.ContractOrders);
-            
-
 
         builder.Entity<ContractOrderProductEntity>()
             .HasOne(cp => cp.Product)
             .WithMany(p => p.ContractOrderProducts)
             .HasForeignKey(cp => cp.ProductId)
             .OnDelete(deleteBehavior: DeleteBehavior.NoAction);
-
-
 
         builder.Entity<ContractOrderVariationEntity>()
             .HasOne(c => c.ProductVariation)
@@ -361,5 +379,4 @@ public sealed class BiyLineDbContext : IdentityDbContext<
             .HasForeignKey(s => s.StoreId)
             .OnDelete(DeleteBehavior.NoAction);
     }
-
 }

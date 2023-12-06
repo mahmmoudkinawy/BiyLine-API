@@ -3,7 +3,7 @@ public sealed class ImageEntity
 {
     public int Id { get; set; }
     public string? FileName { get; set; }
-    public string? ImageUrl { get; set; } 
+    public string? ImageUrl { get; set; }
     public string? ImageMimeType { get; set; }
     public bool? IsMain { get; set; }
     public string? Description { get; set; }

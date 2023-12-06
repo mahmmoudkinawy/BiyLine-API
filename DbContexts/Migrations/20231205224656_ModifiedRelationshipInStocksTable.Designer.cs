@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231205224656_ModifiedRelationshipInStocksTable")]
+    partial class ModifiedRelationshipInStocksTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -988,43 +991,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.ToTable("StoresProfilesCompleteness");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.StoreWalletEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("StoreWalletStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("TotalBalance")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("StoreId");
-
-                    b.ToTable("StoreWallets");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.SubSpecializationEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -1841,25 +1807,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.StoreWalletEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.EmployeeEntity", "Employee")
-                        .WithMany("StoreWallets")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
-                        .WithMany("StoreWallets")
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("Store");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.SubSpecializationEntity", b =>
                 {
                     b.HasOne("BiyLineApi.Entities.SpecializationEntity", "Specialization")
@@ -2022,11 +1969,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Stores");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.EmployeeEntity", b =>
-                {
-                    b.Navigation("StoreWallets");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.GovernorateEntity", b =>
                 {
                     b.Navigation("Regions");
@@ -2108,8 +2050,6 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     b.Navigation("StoreProfileCompleteness")
                         .IsRequired();
-
-                    b.Navigation("StoreWallets");
 
                     b.Navigation("Suppliers");
                 });

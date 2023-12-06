@@ -24,9 +24,9 @@ public sealed class UpdateContractOrderStateToShippingFeature
 
             var contractOrderId = _httpContextAccessor.GetValueFromRoute("contractOrderId");
 
-            var contractOrder = await _context.ContractOrders.FirstOrDefaultAsync(c => c.Id == contractOrderId && c.ToStoreId==supplierId);
+            var contractOrder = await _context.ContractOrders.FirstOrDefaultAsync(c => c.Id == contractOrderId && c.ToStoreId == supplierId);
 
-            if (contractOrder == null) 
+            if (contractOrder == null)
             {
                 return Result<Response>.Failure("This Contract Order Not Found");
             }

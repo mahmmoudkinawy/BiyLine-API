@@ -50,7 +50,7 @@ public sealed class BasketService : IBasketService
 
     public void SetBasketInCookie(BasketEntity basket)
     {
-        var basketJson = JsonSerializer.Serialize(basket,new JsonSerializerOptions
+        var basketJson = JsonSerializer.Serialize(basket, new JsonSerializerOptions
         {
             ReferenceHandler = ReferenceHandler.Preserve
         });

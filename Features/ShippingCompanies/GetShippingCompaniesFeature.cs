@@ -34,7 +34,7 @@ public sealed class GetShippingCompaniesFeature
         {
             _context = context ??
                 throw new ArgumentNullException(nameof(context));
-            _mapper = mapper ?? 
+            _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
             _httpContextAccessor = httpContextAccessor ??
                 throw new ArgumentNullException(nameof(httpContextAccessor));

@@ -195,7 +195,7 @@ public sealed class ProductsController : ControllerBase
     //[EnsureSingleStore]
     //[Authorize(Policy = Constants.Policies.MustBeTrader)]
     [HttpGet("{productId}/trader")]
-    public async Task <ActionResult<GetProductByIdForTraderFeature.Response>> GetProductByIdForTrader([FromRoute]int productId)
+    public async Task<ActionResult<GetProductByIdForTraderFeature.Response>> GetProductByIdForTrader([FromRoute] int productId)
     {
         var response = await _mediator.Send(new GetProductByIdForTraderFeature.Request { ProductId = productId });
 
@@ -206,4 +206,4 @@ public sealed class ProductsController : ControllerBase
 
         return Ok(response.Value);
     }
-}      
+}

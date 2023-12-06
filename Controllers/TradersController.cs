@@ -1,9 +1,4 @@
-﻿
-using BiyLineApi.Features.ContractOrder;
-using BiyLineApi.Features.SupplierInvoice;
-using BiyLineApi.Features.Trader;
-
-namespace BiyLineApi.Controllers;
+﻿namespace BiyLineApi.Controllers;
 
 [Route("api/v{version:apiVersion}/traders")]
 [ApiController]
@@ -17,13 +12,12 @@ public class TradersController : ControllerBase
 
     public TradersController(IMediator mediator)
     {
-
         _mediator = mediator ??
-                    throw new ArgumentNullException(nameof(mediator));
+            throw new ArgumentNullException(nameof(mediator));
     }
 
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<GetRetailTradersFeature.Response>>> GetTraders(
+    public async Task<ActionResult<IReadOnlyList<GetRetailTradersFeature.Response>>> GetRetailTraders(
     [FromQuery] TraderParams traderParams)
     {
         var response = await _mediator.Send(new GetRetailTradersFeature.Request
@@ -43,10 +37,10 @@ public class TradersController : ControllerBase
     }
 
     [HttpGet("{traderId}")]
-    public async Task<ActionResult<GetTraderById.Response>> GetTraderById(
+    public async Task<ActionResult<GetRetailTraderById.Response>> GetRetailTraderById(
     [FromRoute] int traderId)
     {
-        var response = await _mediator.Send(new GetTraderById.Request
+        var response = await _mediator.Send(new GetRetailTraderById.Request
         {
             Id = traderId
         });
@@ -100,7 +94,6 @@ public class TradersController : ControllerBase
     }
 
     [HttpPut("supplierInvoice/{supplierInvoiceId}")]
-
     public async Task<IActionResult> UpdateSupplierInvoice([FromBody] UpdateSupplierInvoiceFeature.Request request)
     {
         var response = await _mediator.Send(request);

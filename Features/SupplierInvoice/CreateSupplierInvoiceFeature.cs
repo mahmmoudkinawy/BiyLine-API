@@ -2,7 +2,7 @@
 
 public sealed class CreateSupplierInvoiceFeature
 {
-    public sealed class Request : IRequest< Result<Response>>
+    public sealed class Request : IRequest<Result<Response>>
     {
         public decimal ShippingPrice { get; set; }
         public decimal PaidAmount { get; set; }
@@ -17,8 +17,8 @@ public sealed class CreateSupplierInvoiceFeature
             RuleFor(s => s.PaidAmount)
                 .GreaterThan(0);
 
-            RuleFor(s=>s.ShippingPrice)
-                .GreaterThanOrEqualTo(0);       
+            RuleFor(s => s.ShippingPrice)
+                .GreaterThanOrEqualTo(0);
         }
     }
 
@@ -39,13 +39,13 @@ public sealed class CreateSupplierInvoiceFeature
         {
             var contractOrderId = _httpContextAccessor.GetValueFromRoute("contractOrderId");
 
-            var contractOrder = await _context.ContractOrders.FirstOrDefaultAsync(c=>c.Id==contractOrderId);
+            var contractOrder = await _context.ContractOrders.FirstOrDefaultAsync(c => c.Id == contractOrderId);
 
             var supplierInvoice = new SupplierInvoiceEntity
             {
                 ShippingPrice = request.ShippingPrice,
                 PaidAmount = request.PaidAmount,
-                
+
             };
 
             supplierInvoice.TotalPrice = supplierInvoice.ShippingPrice + contractOrder.TotalPrice;
@@ -54,7 +54,7 @@ public sealed class CreateSupplierInvoiceFeature
             _context.SupplierInvoices.Add(supplierInvoice);
             await _context.SaveChangesAsync();
 
-            contractOrder.SupplierInvoiceId= supplierInvoice.Id;
+            contractOrder.SupplierInvoiceId = supplierInvoice.Id;
             await _context.SaveChangesAsync();
 
             return Result<Response>.Success(new Response { });

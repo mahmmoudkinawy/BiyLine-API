@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231205213255_AddedStocksTableToDb")]
+    partial class AddedStocksTableToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -819,9 +822,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<int>("SourceWarehouseId")
                         .HasColumnType("int");
 
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("DestinationWarehouseId");
@@ -829,8 +829,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.HasIndex("ProductId");
 
                     b.HasIndex("SourceWarehouseId");
-
-                    b.HasIndex("StoreId");
 
                     b.ToTable("Stocks");
                 });
@@ -986,43 +984,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .IsUnique();
 
                     b.ToTable("StoresProfilesCompleteness");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.StoreWalletEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("StoreWalletStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("TotalBalance")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("StoreId");
-
-                    b.ToTable("StoreWallets");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.SubSpecializationEntity", b =>
@@ -1737,19 +1698,11 @@ namespace BiyLineApi.DbContexts.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
-                        .WithMany("Stocks")
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("DestinationWarehouse");
 
                     b.Navigation("Product");
 
                     b.Navigation("SourceWarehouse");
-
-                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.StoreCategoryEntity", b =>
@@ -1839,25 +1792,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Store");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.StoreWalletEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.EmployeeEntity", "Employee")
-                        .WithMany("StoreWallets")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
-                        .WithMany("StoreWallets")
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.SubSpecializationEntity", b =>
@@ -2022,11 +1956,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Stores");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.EmployeeEntity", b =>
-                {
-                    b.Navigation("StoreWallets");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.GovernorateEntity", b =>
                 {
                     b.Navigation("Regions");
@@ -2102,14 +2031,10 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     b.Navigation("Specializations");
 
-                    b.Navigation("Stocks");
-
                     b.Navigation("StoreCategories");
 
                     b.Navigation("StoreProfileCompleteness")
                         .IsRequired();
-
-                    b.Navigation("StoreWallets");
 
                     b.Navigation("Suppliers");
                 });

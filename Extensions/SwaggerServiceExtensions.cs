@@ -9,7 +9,7 @@ public static class SwaggerServiceExtensions
         {
             setup.DefaultApiVersion = new ApiVersion(1, 0);
             setup.AssumeDefaultVersionWhenUnspecified = true;
-            setup.ReportApiVersions = true;;
+            setup.ReportApiVersions = true; ;
         })
             .AddApiExplorer(options => options.GroupNameFormat = "'v'VVV");
 

@@ -34,12 +34,13 @@ public sealed class WarehousesController : ControllerBase
 
         return Ok(response);
     }
-    
+
     [HttpGet("{warehouseId}")]
     public async Task<ActionResult<GetWareHouseFeature.Response>> GetWarehouseForStore(
         [FromRoute] int warehouseId)
     {
-        var response = await _mediator.Send(new GetWareHouseFeature.Request {
+        var response = await _mediator.Send(new GetWareHouseFeature.Request
+        {
             WareHouseId = warehouseId,
         });
 

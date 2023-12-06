@@ -20,6 +20,7 @@ public sealed class StoreEntity
     public ICollection<StoreCategoryEntity> StoreCategories { get; set; } = new List<StoreCategoryEntity>();
     public ICollection<CouponEntity> Coupons { get; set; } = new List<CouponEntity>();
     public ICollection<EmployeeEntity> Employees { get; set; }
+    public ICollection<StockEntity> Stocks { get; set; }
     public ICollection<ContractOrderEntity> ContractOrdersToStore { get; set; } = new List<ContractOrderEntity>();
     public ICollection<ContractOrderEntity> ContractOrdersFromStore { get; set; } = new List<ContractOrderEntity>();
     public ICollection<SupplierEntity> Suppliers { get; set; } = new List<SupplierEntity>();
@@ -50,5 +51,4 @@ public sealed class StoreEntity
     public UserEntity? Owner { get; set; }
 
     public StoreProfileCompletenessEntity StoreProfileCompleteness { get; set; }
-
 }

@@ -41,8 +41,8 @@ public sealed class GetAllContractorsFeature
 
             var query = _context.Stores
                 .Include(s => s.Suppliers)
-                .Include(s=>s.Owner)
-                .Where(s => s.Suppliers.Any(s=>s.UserId==supplierId))
+                .Include(s => s.Owner)
+                .Where(s => s.Suppliers.Any(s => s.UserId == supplierId))
                 .AsQueryable();
 
             var contractors = query.Select(s => new Response
@@ -51,7 +51,7 @@ public sealed class GetAllContractorsFeature
                 TraderName = s.Owner.Name,
                 StoreName = s.EnglishName,
                 PhoneNumber = s.Owner.PhoneNumber,
-                
+
             });
 
 

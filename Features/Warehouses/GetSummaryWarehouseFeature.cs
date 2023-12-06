@@ -13,7 +13,7 @@ public sealed class GetSummaryWarehouseFeature
 
     public sealed class Response
     {
-
+        // Missing properties
     }
 
     public sealed class Handler : IRequestHandler<Request, OneOf<PagedList<Response>, Result<Response>>>
@@ -69,7 +69,7 @@ public sealed class GetSummaryWarehouseFeature
 
             var result = query.Select(wp => new Response
             {
-                
+
             });
 
             return await PagedList<Response>.CreateAsync(

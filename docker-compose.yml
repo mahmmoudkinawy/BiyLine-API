@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  biylinedb:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+
+  biylineapi:
+    image: kino2001/biylineapi
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+volumes:
+  biylinedb_data:

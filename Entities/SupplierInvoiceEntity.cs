@@ -1,5 +1,4 @@
 ﻿namespace BiyLineApi.Entities;
-
 public sealed class SupplierInvoiceEntity
 {
     public int Id { get; set; }

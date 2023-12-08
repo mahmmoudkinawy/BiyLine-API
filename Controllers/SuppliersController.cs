@@ -1,16 +1,11 @@
-﻿using BiyLineApi.Features.Contractor;
-using BiyLineApi.Features.ContractOrder;
-using BiyLineApi.Features.SupplierInvoice;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
-namespace BiyLineApi.Controllers;
-
+﻿namespace BiyLineApi.Controllers;
 
 [Route("api/v{version:apiVersion}/suppliers")]
 [ApiController]
 [ApiVersion("2.0")]
 [Authorize(Policy = Constants.Policies.MustBeTrader)]
 [EnsureSingleStore]
+[EnsureStoreProfileCompleteness]
 public sealed class SuppliersController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -58,7 +53,6 @@ public sealed class SuppliersController : ControllerBase
 
         return Ok(response);
     }
-
 
     [HttpPost]
     public async Task<IActionResult> CreateOutsideSupplier(
@@ -185,19 +179,22 @@ public sealed class SuppliersController : ControllerBase
         return Ok(response.Value);
     }
 
-
     [HttpPut("contractOrders/{contractOrderId}/shipping-status")]
-
     public async Task<IActionResult> UpdateContractOrderStatusToShipping([FromBody] CreateSupplierInvoiceFeature.Request request)
     {
-        var updatedStatusResponse = await _mediator.Send(new UpdateContractOrderStateToShippingFeature.Request { });
+        var updatedStatusResponse = await _mediator.Send(
+            new UpdateContractOrderStateToShippingFeature.Request { });
 
         if (!updatedStatusResponse.IsSuccess)
         {
             return NotFound();
         }
 
-        var createdSupplierInvoiceResponse = await _mediator.Send(new CreateSupplierInvoiceFeature.Request { PaidAmount = request.PaidAmount, ShippingPrice = request.ShippingPrice });
+        var createdSupplierInvoiceResponse = await _mediator.Send(new CreateSupplierInvoiceFeature.Request
+        {
+            PaidAmount = request.PaidAmount,
+            ShippingPrice = request.ShippingPrice
+        });
 
         if (!createdSupplierInvoiceResponse.IsSuccess)
         {
@@ -208,7 +205,6 @@ public sealed class SuppliersController : ControllerBase
     }
 
     [HttpPut("contractOrders/{contractOrderId}/rejected-status")]
-
     public async Task<IActionResult> UpdateContractOrderStatusToRejected([FromBody] UpdateContractOrderStateToRejectedFeature.Request request)
     {
         var response = await _mediator.Send(request);
@@ -222,24 +218,30 @@ public sealed class SuppliersController : ControllerBase
     }
 
     [HttpGet("contractors")]
-
-    public async Task<ActionResult<IReadOnlyList<GetAllContractorsFeature.Response>>> GetAllContractors([FromQuery] PaginationParams paginationParams)
+    public async Task<ActionResult<IReadOnlyList<GetContractorsFeature.Response>>> GetAllContractors(
+        [FromQuery] PaginationParams paginationParams)
     {
-        var response = await _mediator.Send(new GetAllContractorsFeature.Request
+        var response = await _mediator.Send(new GetContractorsFeature.Request
         {
             PageNumber = paginationParams.PageNumber,
-            PageSize = paginationParams.PageSize,
+            PageSize = paginationParams.PageSize
         });
 
-        Response.AddPaginationHeader(
-            response.CurrentPage,
-            response.PageSize,
-            response.TotalPages,
-            response.TotalCount);
+        return response.Match<ActionResult<IReadOnlyList<GetContractorsFeature.Response>>>(
+            successResponse =>
+            {
+                Response.AddPaginationHeader(
+                    successResponse.CurrentPage,
+                    successResponse.PageSize,
+                    successResponse.TotalPages,
+                    successResponse.TotalCount);
 
-        return Ok(response);
+                return Ok(successResponse);
+            },
+            errorResponse =>
+            {
+                return NotFound(errorResponse.Errors);
+            });
     }
 
-
 }
-

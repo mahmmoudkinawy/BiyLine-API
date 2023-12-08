@@ -1,9 +1,12 @@
-﻿
-
-namespace BiyLineApi.Features.Supplier;
-
+﻿namespace BiyLineApi.Features.Supplier;
 public sealed class CreateContractOrderFeature
 {
+    public sealed class Request : IRequest<Result<Response>>
+    {
+        public string? Note { get; set; }
+        public List<ContractOrderProductRequest> ContractOrderProducts { get; set; }
+    }
+
     public sealed class VariationRequest
     {
         public int Quantity { get; set; }
@@ -13,15 +16,8 @@ public sealed class CreateContractOrderFeature
     public sealed class ContractOrderProductRequest
     {
         public int ProductId { get; set; }
-
         public int QuantityPricingTierId { get; set; }
-
         public List<VariationRequest> Variations { get; set; }
-    }
-    public sealed class Request : IRequest<Result<Response>>
-    {
-        public string? Note { get; set; }
-        public List<ContractOrderProductRequest> ContractOrderProducts { get; set; }
     }
 
     public sealed class Response { }
@@ -34,7 +30,7 @@ public sealed class CreateContractOrderFeature
         }
     }
 
-    public sealed class ContractOrderProductValidator : AbstractValidator<CreateContractOrderFeature.ContractOrderProductRequest>
+    public sealed class ContractOrderProductValidator : AbstractValidator<ContractOrderProductRequest>
     {
         public ContractOrderProductValidator()
         {
@@ -43,7 +39,7 @@ public sealed class CreateContractOrderFeature
         }
     }
 
-    public sealed class VariationValidator : AbstractValidator<CreateContractOrderFeature.VariationRequest>
+    public sealed class VariationValidator : AbstractValidator<VariationRequest>
     {
         public VariationValidator()
         {
@@ -55,19 +51,26 @@ public sealed class CreateContractOrderFeature
     {
         private readonly BiyLineDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public Handler(BiyLineDbContext context, IHttpContextAccessor httpContextAccessor)
+        public Handler(BiyLineDbContext context, 
+            IHttpContextAccessor httpContextAccessor, 
+            IDateTimeProvider dateTimeProvider)
         {
             _context = context ??
                 throw new ArgumentNullException(nameof(context));
             _httpContextAccessor = httpContextAccessor ??
                 throw new ArgumentNullException(nameof(httpContextAccessor));
+            _dateTimeProvider = dateTimeProvider ??
+                throw new ArgumentNullException(nameof(dateTimeProvider));
         }
         public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
             var supplierId = _httpContextAccessor.GetValueFromRoute("supplierId");
 
-            var supplierFromDb = await _context.Users.Include(s => s.Store).FirstOrDefaultAsync(s => (s.Id == supplierId) && (s.StoreId != null) && (s.Store.Activity != StoreActivityEnum.Sectional.ToString()));
+            var supplierFromDb = await _context.Users
+                .Include(s => s.Store)
+                .FirstOrDefaultAsync(s => s.Id == supplierId && (s.Store.Activity != StoreActivityEnum.Sectional.ToString()), cancellationToken: cancellationToken);
 
             if (supplierFromDb is null)
             {
@@ -76,7 +79,8 @@ public sealed class CreateContractOrderFeature
 
             var traderId = _httpContextAccessor.GetUserById();
 
-            var store = await _context.Stores.FirstOrDefaultAsync(s => s.OwnerId == traderId);
+            var store = await _context.Stores
+                .FirstOrDefaultAsync(s => s.OwnerId == traderId, cancellationToken: cancellationToken);
 
             if (store == null)
             {
@@ -89,15 +93,15 @@ public sealed class CreateContractOrderFeature
                 ToStoreId = supplierId,
                 Status = ContractOrderStatus.Pending.ToString(),
                 Note = request.Note,
-                Date = DateTime.UtcNow,
-
+                Date = _dateTimeProvider.GetCurrentDateTimeUtc()
             };
 
             foreach (var item in request.ContractOrderProducts)
             {
                 decimal productprice = 0;
 
-                var quantityPricingTier = await _context.QuantityPricingTiers.FirstOrDefaultAsync(t => t.Id == item.QuantityPricingTierId && t.ProductId == item.ProductId);
+                var quantityPricingTier = await _context.QuantityPricingTiers
+                    .FirstOrDefaultAsync(t => t.Id == item.QuantityPricingTierId && t.ProductId == item.ProductId, cancellationToken: cancellationToken);
 
                 if (quantityPricingTier == null)
                 {
@@ -106,7 +110,8 @@ public sealed class CreateContractOrderFeature
 
                 foreach (var variation in item.Variations)
                 {
-                    var productVariation = await _context.ProductVariations.FirstOrDefaultAsync(pv => (pv.Id == variation.ProductVariationId) && (pv.ProductId == item.ProductId));
+                    var productVariation = await _context.ProductVariations
+                        .FirstOrDefaultAsync(pv => (pv.Id == variation.ProductVariationId) && (pv.ProductId == item.ProductId), cancellationToken: cancellationToken);
 
                     if (productVariation is null)
                     {
@@ -133,7 +138,7 @@ public sealed class CreateContractOrderFeature
             }
 
             _context.ContractOrders.Add(contractOrder);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return Result<Response>.Success(new Response { });
         }

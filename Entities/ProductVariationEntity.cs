@@ -9,5 +9,4 @@ public sealed class ProductVariationEntity
     public int ProductId { get; set; }
     public ProductEntity Product { get; set; }
     public ICollection<ContractOrderVariationEntity> ContractOrderVariations { get; set; } = new List<ContractOrderVariationEntity>();
-
 }

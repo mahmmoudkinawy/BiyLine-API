@@ -49,6 +49,12 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<ProductEntity>()
+            .HasOne(p => p.Supplier)
+            .WithMany(s => s.Products)
+            .HasForeignKey(p => p.SupplierId)
+            .OnDelete(DeleteBehavior.NoAction);
+
         builder.Entity<StockTrackerEntity>()
             .HasOne(st => st.Store)
             .WithMany()

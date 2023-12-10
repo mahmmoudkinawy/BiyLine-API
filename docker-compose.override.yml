@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  biylinedb:
+    container_name: biylinedb
+    environment:
+      SA_PASSWORD: "SwN12345678"
+      ACCEPT_EULA: "Y"  
+    restart: always 
+    ports:
+      - "1433:1433"
+    volumes:
+      - biylinedb_data:/var/opt/mssql
+
+  biylineapi:
+    container_name: biylineapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:DefaultConnection=Server=biylinedb,1433;Database=BiyLineDevelopment;User Id=SA;Password=SwN12345678;Integrated Security=False;Trusted_Connection=False;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;MultipleActiveResultSets=True;"
+    depends_on:
+      - biylinedb
+    ports:
+      - "2001:80"

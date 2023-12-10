@@ -49,10 +49,29 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<CashDepositePermissionEntity> CashDepositePermissions { get; set; }
     public DbSet<CashDiscountPermissionEntity> CashDiscountPermissions { get; set; }
     public DbSet<SalaryPaymentEntity> SalaryPayments { get; set; }
+    public DbSet<StockTrackerEntity> StockTrackers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<ProductEntity>()
+            .HasOne(p => p.Supplier)
+            .WithMany(s => s.Products)
+            .HasForeignKey(p => p.SupplierId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<StockTrackerEntity>()
+            .HasOne(st => st.Store)
+            .WithMany()
+            .HasForeignKey(st => st.StoreId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<StockTrackerEntity>()
+            .HasOne(st => st.Warehouse)
+            .WithMany()
+            .HasForeignKey(st => st.WarehouseId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<StockEntity>()
             .HasOne(s => s.Store)

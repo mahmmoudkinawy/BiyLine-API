@@ -7,6 +7,7 @@ public sealed class GetRetailTradersFeature
         public int? PageSize { get; set; }
         public string? Predicate { get; set; }
     }
+
     public sealed class Response
     {
         public string? Name { get; set; }
@@ -16,7 +17,6 @@ public sealed class GetRetailTradersFeature
         public string? RegionName { get; set; }
         public string? StoreName { get; set; }
         public string? ImageUrl { get; set; }
-
     }
 
     public sealed class Handler : IRequestHandler<Request, PagedList<Response>>

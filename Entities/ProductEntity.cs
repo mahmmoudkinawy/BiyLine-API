@@ -30,6 +30,8 @@ public sealed class ProductEntity
     public int? WarehouseId { get; set; }
     public WarehouseEntity? Warehouse { get; set; }
 
+    public int? SupplierId { get; set; }
+    public SupplierEntity? Supplier { get; set; }
 
     public ICollection<ImageEntity> Images { get; set; }
     public ICollection<RateEntity> Rates { get; set; }

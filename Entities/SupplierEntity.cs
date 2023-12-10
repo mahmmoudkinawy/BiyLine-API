@@ -1,5 +1,4 @@
 ﻿namespace BiyLineApi.Entities;
-
 public sealed class SupplierEntity
 {
     public int Id { get; set; }
@@ -20,4 +19,6 @@ public sealed class SupplierEntity
 
     public int StoreId { get; set; }
     public StoreEntity? Store { get; set; }
+
+    public ICollection<ProductEntity> Products { get; set; } = new List<ProductEntity>();
 }

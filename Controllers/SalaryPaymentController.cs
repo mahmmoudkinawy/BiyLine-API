@@ -1,12 +1,4 @@
-﻿using BiyLineApi.Features.CashDepostiePermission;
-using BiyLineApi.Features.CashDiscountPermission;
-using BiyLineApi.Features.SalaryPayment;
-using BiyLineApi.Features.StoreWallet;
-using BiyLineApi.Helpers;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-
-namespace BiyLineApi.Controllers;
+﻿namespace BiyLineApi.Controllers;
 
 [Route("api/v{version:apiVersion}/salaryPayment")]
 [ApiController]
@@ -14,7 +6,6 @@ namespace BiyLineApi.Controllers;
 [Authorize(Policy = Constants.Policies.MustBeTraderOrEmployee)]
 [EnsureSingleStore]
 [EnsureStoreProfileCompleteness]
-
 public class SalaryPaymentController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -43,9 +34,7 @@ public class SalaryPaymentController : ControllerBase
     }
 
     [HttpGet("{storeWalletId}")]
-    public async Task<ActionResult<IReadOnlyList<GetAllEmployeesWithLastSalaryPaymentFeature.Response>>> GetAllEmployeesWithLastSalaryPayment(
-               [FromQuery] FilterParams filterParams
-           )
+    public async Task<ActionResult<IReadOnlyList<GetAllEmployeesWithLastSalaryPaymentFeature.Response>>> GetAllEmployeesWithLastSalaryPayment([FromQuery] FilterParams filterParams)
     {
         var response = await _mediator.Send(new GetAllEmployeesWithLastSalaryPaymentFeature.Request
         {
@@ -65,9 +54,7 @@ public class SalaryPaymentController : ControllerBase
 
 
     [HttpGet("employees/{employeeId}")]
-
-    public async Task <ActionResult<IReadOnlyList<GetSalaryPaymentsForEmployeeFeature.Response>>> GetSalaryPaymentsForEmployee (
-        [FromQuery] PaginationParams paginationParams)
+    public async Task<ActionResult<IReadOnlyList<GetSalaryPaymentsForEmployeeFeature.Response>>> GetSalaryPaymentsForEmployee([FromQuery] PaginationParams paginationParams)
     {
         var response = await _mediator.Send(new GetSalaryPaymentsForEmployeeFeature.Request
         {
@@ -94,19 +81,19 @@ public class SalaryPaymentController : ControllerBase
 
 
     [HttpGet("employees/{employeeId}/last-payment-salary")]
-
-    public async Task <ActionResult<GetLastSalaryPaymentForEmployeeFeature.Response>> GetLastSalaryPaymentForEmployeeFeature(
-        [FromRoute] int employeeId)
+    public async Task<ActionResult<GetLastSalaryPaymentForEmployeeFeature.Response>> GetLastSalaryPaymentForEmployeeFeature([FromRoute] int employeeId)
     {
-        var response = await _mediator.Send(new GetLastSalaryPaymentForEmployeeFeature.Request { EmployeeId = employeeId });
+        var response = await _mediator.Send(new GetLastSalaryPaymentForEmployeeFeature.Request
+        {
+            EmployeeId = employeeId
+        });
 
         if (!response.IsSuccess)
         {
             return NotFound(response.Errors);
         }
 
-       return Ok(response.Value); 
+        return Ok(response.Value);
     }
-
 
 }

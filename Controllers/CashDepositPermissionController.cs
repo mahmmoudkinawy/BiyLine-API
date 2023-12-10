@@ -1,29 +1,21 @@
-﻿using BiyLineApi.Attributes;
-using BiyLineApi.DbContexts.Migrations;
-using BiyLineApi.Features.CashDepostiePermission;
-using BiyLineApi.Features.StoreWallet;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿namespace BiyLineApi.Controllers;
 
-namespace BiyLineApi.Controllers;
-
-[Route("api/v{version:apiVersion}/cashDepositePermission")]
+[Route("api/v{version:apiVersion}/cashDepositPermission")]
 [ApiController]
 [ApiVersion("2.0")]
 [Authorize(Policy = Constants.Policies.MustBeTraderOrEmployee)]
 [EnsureSingleStore]
 [EnsureStoreProfileCompleteness]
-
-public class CashDepositePermissionController : ControllerBase
+public class CashDepositPermissionController : ControllerBase
 {
     private readonly IMediator _mediator;
-    public CashDepositePermissionController(IMediator mediator)
+    public CashDepositPermissionController(IMediator mediator)
     {
         _mediator = mediator ??
             throw new ArgumentNullException(nameof(mediator));
     }
 
-    [HttpPost("{storeWalletId}")]   
+    [HttpPost("{storeWalletId}")]
     public async Task<IActionResult> CreateCashDepositePermission([FromBody] CreateCashDepostiePermissionFeature.Request request)
     {
         var response = await _mediator.Send(request);
@@ -32,14 +24,12 @@ public class CashDepositePermissionController : ControllerBase
         {
             return NotFound(response.Errors);
         }
+
         return NoContent();
     }
 
     [HttpGet("{storeWalletId}")]
-
-    public async Task<ActionResult<IReadOnlyList<GetAllCashDepositePermissionsFeature.Response>>> GetAllCashDepositePermissions(
-                [FromQuery] FilterParams filterParams
-            )
+    public async Task<ActionResult<IReadOnlyList<GetAllCashDepositePermissionsFeature.Response>>> GetAllCashDepositePermissions([FromQuery] FilterParams filterParams)
     {
         var response = await _mediator.Send(new GetAllCashDepositePermissionsFeature.Request
         {

@@ -1,6 +1,4 @@
-﻿
-namespace BiyLineApi.Features.CashDepostiePermission;
-
+﻿namespace BiyLineApi.Features.CashDepositPermission;
 public sealed class GetAllCashDepositePermissionsFeature
 {
     public sealed class Request : IRequest<PagedList<Response>>
@@ -9,7 +7,6 @@ public sealed class GetAllCashDepositePermissionsFeature
         public int? PageNumber { get; set; }
         public int? PageSize { get; set; }
     }
-
     public sealed class Response
     {
         public int Id { get; set; }
@@ -19,12 +16,10 @@ public sealed class GetAllCashDepositePermissionsFeature
         public string StoreWalletName { get; set; }
         public string EmployeeName { get; set; }
     }
-
     public sealed class Handler : IRequestHandler<Request, PagedList<Response>>
     {
         private readonly BiyLineDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
-
         public Handler(BiyLineDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context ??
@@ -32,11 +27,12 @@ public sealed class GetAllCashDepositePermissionsFeature
             _httpContextAccessor = httpContextAccessor ??
                 throw new ArgumentNullException(nameof(httpContextAccessor));
         }
-
         public async Task<PagedList<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
             var storeWalletId = _httpContextAccessor.GetValueFromRoute("storeWalletId");
+
             var userId = _httpContextAccessor.GetUserById();
+
             var role = _httpContextAccessor.GetUserRole();
 
             IQueryable<CashDepositePermissionEntity> query = null;
@@ -51,13 +47,10 @@ public sealed class GetAllCashDepositePermissionsFeature
                 {
                     query = query.Where(s => s.StoreWallet.Name.Contains(request.Predicate));
                 }
-
-
-
             }
             else if (role == Constants.Roles.Employee)
             {
-                query =  _context.CashDepositePermissions
+                query = _context.CashDepositePermissions
                    .Where(s => s.StoreWalletId == storeWalletId && s.StoreWallet.Employee.User.Id == userId && s.StoreWallet.EmployeeId == s.StoreWallet.Employee.Id)
                    .AsQueryable();
 
@@ -65,10 +58,9 @@ public sealed class GetAllCashDepositePermissionsFeature
                 {
                     query = query.Where(s => s.StoreWallet.Name.Contains(request.Predicate));
                 }
-
             }
 
-            var cashDeposites = query.Select(s => new Response
+            var cashDeposits = query.Select(s => new Response
             {
                 Id = s.Id,
                 Amount = s.Amount,
@@ -79,7 +71,7 @@ public sealed class GetAllCashDepositePermissionsFeature
             });
 
             return await PagedList<Response>.CreateAsync(
-               cashDeposites.AsNoTracking(),
+               cashDeposits.AsNoTracking(),
                request.PageNumber.Value,
                request.PageSize.Value);
 

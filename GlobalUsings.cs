@@ -7,8 +7,12 @@ global using BiyLineApi.Entities;
 global using BiyLineApi.Enums;
 global using BiyLineApi.Extensions;
 global using BiyLineApi.Features.Account;
+global using BiyLineApi.Features.SalaryPayment;
 global using BiyLineApi.Features.Basket;
+global using BiyLineApi.Features.CashDepositPermission;
+global using BiyLineApi.Features.CashDiscountPermission;
 global using BiyLineApi.Features.Categories;
+global using BiyLineApi.Features.Contractor;
 global using BiyLineApi.Features.ContractOrder;
 global using BiyLineApi.Features.Coupons;
 global using BiyLineApi.Features.Documents;
@@ -56,5 +60,4 @@ global using System.Security.Claims;
 global using System.Text;
 global using System.Text.Json;
 global using System.Text.RegularExpressions;
-global using BiyLineApi.Features.Contractor;
 

@@ -1,7 +1,4 @@
-﻿using BiyLineApi.Entities;
-
-namespace BiyLineApi.Features.CashDiscountPermission;
-
+﻿namespace BiyLineApi.Features.CashDiscountPermission;
 public sealed class CreateCashDiscountPermissionFeature
 {
     public sealed class Request : IRequest<Result<Response>>
@@ -34,7 +31,6 @@ public sealed class CreateCashDiscountPermissionFeature
 
         public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
-
             var storeWalletId = _httpContextAccessor.GetValueFromRoute("storeWalletId");
 
             var userId = _httpContextAccessor.GetUserById();
@@ -52,21 +48,17 @@ public sealed class CreateCashDiscountPermissionFeature
                 if (storeWallet == null)
                 {
                     return Result<Response>.Failure(new List<string> { "this store wallet not found" });
-
                 }
-
             }
             else if (role == Constants.Roles.Employee)
             {
-
                 storeWallet = await _context.StoreWallets
                            .Include(s => s.Store)
-                           .FirstOrDefaultAsync(s=>s.Id == storeWalletId && s.Employee.User.Id==userId&& s.EmployeeId==s.Employee.Id);
+                           .FirstOrDefaultAsync(s => s.Id == storeWalletId && s.Employee.User.Id == userId && s.EmployeeId == s.Employee.Id, cancellationToken: cancellationToken);
 
                 if (storeWallet == null)
                 {
                     return Result<Response>.Failure(new List<string> { "this store wallet not found" });
-
                 }
             }
 
@@ -80,15 +72,14 @@ public sealed class CreateCashDiscountPermissionFeature
 
             _context.CashDiscountPermissions.Add(cashDiscount);
 
-            if(storeWallet.TotalBalance < request.Amount)
+            if (storeWallet?.TotalBalance < request.Amount)
             {
                 return Result<Response>.BadRequest("invalid operation");
-
             }
 
             storeWallet.TotalBalance -= request.Amount;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return Result<Response>.Success(new Response { });
         }

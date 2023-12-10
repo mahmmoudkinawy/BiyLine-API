@@ -1,7 +1,7 @@
 ﻿using Microsoft.Identity.Client;
 using System.Runtime.InteropServices;
 
-namespace BiyLineApi.Features.CashDepostiePermission;
+namespace BiyLineApi.Features.CashDepositPermission;
 
 public sealed class CreateCashDepostiePermissionFeature
 {

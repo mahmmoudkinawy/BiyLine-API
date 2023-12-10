@@ -1,9 +1,4 @@
-﻿using BiyLineApi.Features.CashDepostiePermission;
-using BiyLineApi.Features.CashDiscountPermission;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-
-namespace BiyLineApi.Controllers;
+﻿namespace BiyLineApi.Controllers;
 
 [Route("api/v{version:apiVersion}/cashDiscountPermission")]
 [ApiController]
@@ -11,8 +6,7 @@ namespace BiyLineApi.Controllers;
 [Authorize(Policy = Constants.Policies.MustBeTraderOrEmployee)]
 [EnsureSingleStore]
 [EnsureStoreProfileCompleteness]
-
-public class CashDiscountPermissionController : ControllerBase
+public sealed class CashDiscountPermissionController : ControllerBase
 {
     private readonly IMediator _mediator;
     public CashDiscountPermissionController(IMediator mediator)
@@ -22,7 +16,8 @@ public class CashDiscountPermissionController : ControllerBase
     }
 
     [HttpPost("{storeWalletId}")]
-    public async Task<IActionResult> CreateCashDiscountPermission([FromBody]  CreateCashDiscountPermissionFeature.Request request)
+    public async Task<IActionResult> CreateCashDiscountPermission(
+        [FromBody] CreateCashDiscountPermissionFeature.Request request)
     {
         var response = await _mediator.Send(request);
 
@@ -31,7 +26,7 @@ public class CashDiscountPermissionController : ControllerBase
             return NotFound(response.Errors);
         }
 
-        if(response.IsBadRequest)
+        if (response.IsBadRequest)
         {
             return BadRequest(response.Errors);
         }
@@ -40,10 +35,7 @@ public class CashDiscountPermissionController : ControllerBase
     }
 
     [HttpGet("{storeWalletId}")]
-
-    public async Task<ActionResult<IReadOnlyList<GetAllCashDiscountPermissionsFeature.Response>>> GetAllCashDepositePermissions(
-                [FromQuery] FilterParams filterParams
-            )
+    public async Task<ActionResult<IReadOnlyList<GetAllCashDiscountPermissionsFeature.Response>>> GetAllCashDepositePermissions([FromQuery] FilterParams filterParams)
     {
         var response = await _mediator.Send(new GetAllCashDiscountPermissionsFeature.Request
         {

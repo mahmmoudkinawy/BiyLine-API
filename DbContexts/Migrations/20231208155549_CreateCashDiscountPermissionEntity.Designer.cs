@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231208155549_CreateCashDiscountPermissionEntity")]
+    partial class CreateCashDiscountPermissionEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -780,38 +783,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.SalaryPaymentEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StoreWalletId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("StoreWalletId");
-
-                    b.ToTable("SalaryPayments");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.ShippingCompanyEntity", b =>
@@ -1784,25 +1755,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Governorate");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.SalaryPaymentEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.EmployeeEntity", "Employee")
-                        .WithMany("SalaryPayments")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.StoreWalletEntity", "StoreWallet")
-                        .WithMany("SalaryPayments")
-                        .HasForeignKey("StoreWalletId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("StoreWallet");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.ShippingCompanyEntity", b =>
                 {
                     b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
@@ -2149,8 +2101,6 @@ namespace BiyLineApi.DbContexts.Migrations
 
             modelBuilder.Entity("BiyLineApi.Entities.EmployeeEntity", b =>
                 {
-                    b.Navigation("SalaryPayments");
-
                     b.Navigation("StoreWallets");
                 });
 
@@ -2246,8 +2196,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("CashDepositePermissions");
 
                     b.Navigation("CashDiscountPermissions");
-
-                    b.Navigation("SalaryPayments");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.SubcategoryEntity", b =>

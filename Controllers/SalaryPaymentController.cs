@@ -13,7 +13,7 @@ namespace BiyLineApi.Controllers;
 [ApiVersion("2.0")]
 [Authorize(Policy = Constants.Policies.MustBeTraderOrEmployee)]
 [EnsureSingleStore]
-//[EnsureStoreProfileCompleteness]
+[EnsureStoreProfileCompleteness]
 
 public class SalaryPaymentController : ControllerBase
 {

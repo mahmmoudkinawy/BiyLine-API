@@ -48,6 +48,11 @@ public static class IdentityServiceExtensions
             {
                 policy.RequireClaim(ClaimTypes.Role, Constants.Roles.Trader);
             });
+            configure.AddPolicy(Constants.Policies.MustBeTraderOrEmployee, policy =>
+            {
+                policy.RequireClaim(ClaimTypes.Role, Constants.Roles.Trader,Constants.Roles.Employee);
+            });
+
         });
 
         return services;

@@ -17,6 +17,10 @@ public abstract class Constants
     public abstract class Policies
     {
         public const string MustBeTrader = "MustBeTrader";
+        public const string MustBeEmployee = "MustBeEmployee";
+        public const string MustBeTraderOrEmployee = "MustBeTraderOrEmployee";
+
+
     }
 
     public abstract class Cors

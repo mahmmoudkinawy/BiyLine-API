@@ -22,4 +22,9 @@ public sealed class EmployeeEntity
 
     public int UserId { get; set; }
     public UserEntity User { get; set; }
+
+    public ICollection<StoreWalletEntity> StoreWallets { get; set; } = new List<StoreWalletEntity>();
+
+    public ICollection<SalaryPaymentEntity> SalaryPayments { get; set; } = new List<SalaryPaymentEntity>();
+
 }

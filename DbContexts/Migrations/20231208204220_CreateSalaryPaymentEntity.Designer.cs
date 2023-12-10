@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231208204220_CreateSalaryPaymentEntity")]
+    partial class CreateSalaryPaymentEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,9 +189,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PaymentMethod")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -229,7 +229,7 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<decimal>("ProductPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("QuantityPricingTierId")
+                    b.Property<int>("QuantityPricingTierId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -582,9 +582,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<int?>("SubcategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("SupplierId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ThresholdReached")
                         .HasColumnType("int");
 
@@ -611,8 +608,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.HasIndex("StoreId");
 
                     b.HasIndex("SubcategoryId");
-
-                    b.HasIndex("SupplierId");
 
                     b.HasIndex("WarehouseId");
 
@@ -807,9 +802,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("StoreWalletId")
                         .HasColumnType("int");
 
@@ -927,35 +919,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.HasIndex("StoreId");
 
                     b.ToTable("Stocks");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.StockTrackerEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("StockTrackerNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WarehouseId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StoreId");
-
-                    b.HasIndex("WarehouseId");
-
-                    b.ToTable("StockTrackers");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.StoreCategoryEntity", b =>
@@ -1617,7 +1580,9 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     b.HasOne("BiyLineApi.Entities.QuantityPricingTierEntity", "QuantityPricingTier")
                         .WithMany("ContractOrderProducts")
-                        .HasForeignKey("QuantityPricingTierId");
+                        .HasForeignKey("QuantityPricingTierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Product");
 
@@ -1749,11 +1714,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .WithMany("Products")
                         .HasForeignKey("SubcategoryId");
 
-                    b.HasOne("BiyLineApi.Entities.SupplierEntity", "Supplier")
-                        .WithMany("Products")
-                        .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("BiyLineApi.Entities.WarehouseEntity", "Warehouse")
                         .WithMany("Products")
                         .HasForeignKey("WarehouseId")
@@ -1766,8 +1726,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Store");
 
                     b.Navigation("Subcategory");
-
-                    b.Navigation("Supplier");
 
                     b.Navigation("Warehouse");
                 });
@@ -1919,25 +1877,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("SourceWarehouse");
 
                     b.Navigation("Store");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.StockTrackerEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
-                        .WithMany()
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.WarehouseEntity", "Warehouse")
-                        .WithMany()
-                        .HasForeignKey("WarehouseId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Store");
-
-                    b.Navigation("Warehouse");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.StoreCategoryEntity", b =>
@@ -2312,11 +2251,6 @@ namespace BiyLineApi.DbContexts.Migrations
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.SubcategoryEntity", b =>
-                {
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.SupplierEntity", b =>
                 {
                     b.Navigation("Products");
                 });

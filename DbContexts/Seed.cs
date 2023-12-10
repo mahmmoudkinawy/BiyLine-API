@@ -120,6 +120,20 @@ public static class Seed
 
         await userManager.CreateAsync(supplier, "Pa$$w0rd");
         await userManager.AddToRoleAsync(supplier, Constants.Roles.Trader);
+
+        var employee = new UserEntity
+        {
+            Name = "employee",
+            Email = "employee@test.com",
+            UserName = "employee@test.com",
+            EmailConfirmed = true
+        };
+
+        await userManager.CreateAsync(employee, "Pa$$w0rd");
+        await userManager.AddToRoleAsync(employee, Constants.Roles.Employee);
+
+
+
     }
 
     public static async Task SeedCategoriesWithRelatedDataAsync(BiyLineDbContext context)

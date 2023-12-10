@@ -24,6 +24,7 @@ public sealed class StoreEntity
     public ICollection<ContractOrderEntity> ContractOrdersToStore { get; set; } = new List<ContractOrderEntity>();
     public ICollection<ContractOrderEntity> ContractOrdersFromStore { get; set; } = new List<ContractOrderEntity>();
     public ICollection<SupplierEntity> Suppliers { get; set; } = new List<SupplierEntity>();
+    public ICollection<StoreWalletEntity> StoreWallets { get; set; } = new List<StoreWalletEntity>();
 
     public int? TaxRegistrationDocumentImageId { get; set; }
     public ImageEntity? TaxRegistrationDocumentImage { get; set; }

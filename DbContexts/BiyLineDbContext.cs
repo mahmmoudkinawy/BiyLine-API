@@ -1,6 +1,4 @@
-﻿using Microsoft.Identity.Client;
-
-namespace BiyLineApi.DbContexts;
+﻿namespace BiyLineApi.DbContexts;
 public sealed class BiyLineDbContext : IdentityDbContext<
     UserEntity, RoleEntity, int, IdentityUserClaim<int>,
     UserRoleEntity, IdentityUserLogin<int>, IdentityRoleClaim<int>,
@@ -50,10 +48,21 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<CashDiscountPermissionEntity> CashDiscountPermissions { get; set; }
     public DbSet<SalaryPaymentEntity> SalaryPayments { get; set; }
     public DbSet<StockTrackerEntity> StockTrackers { get; set; }
+    public DbSet<ExpenseTypeEntity> ExpenseTypes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<ExpenseTypeEntity>()
+            .HasOne(e => e.Store)
+            .WithMany()
+            .HasForeignKey(e => e.StoreId);
+
+        builder.Entity<ExpenseTypeEntity>()
+            .HasOne(e => e.StoreWallet)
+            .WithMany()
+            .HasForeignKey(e => e.StoreWalletId);
 
         builder.Entity<ProductEntity>()
             .HasOne(p => p.Supplier)

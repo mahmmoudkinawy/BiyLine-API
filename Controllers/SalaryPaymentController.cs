@@ -52,7 +52,6 @@ public class SalaryPaymentController : ControllerBase
         return Ok(response);
     }
 
-
     [HttpGet("employees/{employeeId}")]
     public async Task<ActionResult<IReadOnlyList<GetSalaryPaymentsForEmployeeFeature.Response>>> GetSalaryPaymentsForEmployee([FromQuery] PaginationParams paginationParams)
     {
@@ -78,7 +77,6 @@ public class SalaryPaymentController : ControllerBase
                 return NotFound(errorResponse.Errors);
             });
     }
-
 
     [HttpGet("employees/{employeeId}/last-payment-salary")]
     public async Task<ActionResult<GetLastSalaryPaymentForEmployeeFeature.Response>> GetLastSalaryPaymentForEmployeeFeature([FromRoute] int employeeId)

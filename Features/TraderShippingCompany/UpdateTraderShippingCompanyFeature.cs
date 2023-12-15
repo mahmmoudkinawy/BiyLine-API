@@ -1,5 +1,4 @@
-﻿
-namespace BiyLineApi.Features.TraderShippingCompany;
+﻿namespace BiyLineApi.Features.TraderShippingCompany;
 public sealed class UpdateTraderShippingCompanyFeature
 {
     public sealed class Request : IRequest<Result<Response>>
@@ -38,13 +37,13 @@ public sealed class UpdateTraderShippingCompanyFeature
             var shippingCompanyId = _httpContextAccessor.GetValueFromRoute("traderShippingCompanyId");
 
             var shippingCompany = await _context.TraderShippingCompanies.FirstOrDefaultAsync(s => s.Id == shippingCompanyId);
-            
-            if(shippingCompany == null)
+
+            if (shippingCompany == null)
             {
-                return Result<Response>.Failure(new List<string> { "this shipping company not found "});
+                return Result<Response>.Failure(new List<string> { "this shipping company not found " });
             }
 
-            if (_context.TraderShippingCompanies.Any(ts => ts.Name == request.ShippingCompanyName && ts.StoreId == store.Id&& ts.Id != shippingCompanyId))
+            if (_context.TraderShippingCompanies.Any(ts => ts.Name == request.ShippingCompanyName && ts.StoreId == store.Id && ts.Id != shippingCompanyId))
             {
                 return Result<Response>.BadRequest(new List<string> { "A shipping company with the same name already exists for this store" });
             }

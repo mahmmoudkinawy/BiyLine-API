@@ -1,7 +1,4 @@
-﻿using Microsoft.Identity.Client;
-
-namespace BiyLineApi.Features.TraderShippingCompany;
-
+﻿namespace BiyLineApi.Features.TraderShippingCompany;
 public sealed class GetTraderShippingCompanyByIdFeature
 {
     public sealed class Request : IRequest<Result<Response>>
@@ -11,7 +8,7 @@ public sealed class GetTraderShippingCompanyByIdFeature
     public sealed class Response
     {
         public string TraderShippingCompanyName { get; set; }
-        public List<shippingGovernorateResponse> shippingGovernorates { get; set; } = new List<shippingGovernorateResponse>();
+        public List<shippingGovernorateResponse> ShippingGovernorates { get; set; } = new List<shippingGovernorateResponse>();
     }
     public sealed class shippingGovernorateResponse
     {
@@ -68,7 +65,7 @@ public sealed class GetTraderShippingCompanyByIdFeature
             var response = new Response
             {
                 TraderShippingCompanyName = traderShippingCompany.Name,
-                shippingGovernorates = traderShippingCompany.GovernorateShippings.Select(gs => new shippingGovernorateResponse
+                ShippingGovernorates = traderShippingCompany.GovernorateShippings.Select(gs => new shippingGovernorateResponse
                 {
                     Id = gs.Id,
                     PickupPrice = gs.PickupPrice,

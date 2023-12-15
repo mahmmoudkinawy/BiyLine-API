@@ -1,6 +1,4 @@
-﻿
-namespace BiyLineApi.Features.TraderShippingCompany;
-
+﻿namespace BiyLineApi.Features.TraderShippingCompany;
 public sealed class GetShippingGovernorateByIdFeature
 {
     public sealed class Request : IRequest<Result<Response>>

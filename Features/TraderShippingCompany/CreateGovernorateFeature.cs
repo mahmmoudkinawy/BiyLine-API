@@ -1,5 +1,4 @@
-﻿
-namespace BiyLineApi.Features.TraderShippingCompany;
+﻿namespace BiyLineApi.Features.TraderShippingCompany;
 
 public sealed class CreateGovernorateFeature
 {
@@ -12,27 +11,27 @@ public sealed class CreateGovernorateFeature
         public decimal PricePerExtraKilo { get; set; }
     }
     public sealed class Response { }
-    public sealed class Validator: AbstractValidator<Request>
+    public sealed class Validator : AbstractValidator<Request>
     {
         public Validator()
         {
             RuleFor(s => s.PickupPrice)
                 .GreaterThanOrEqualTo(0);
 
-            RuleFor(s=>s.ReturnCost)
+            RuleFor(s => s.ReturnCost)
                 .GreaterThanOrEqualTo(0);
 
-            RuleFor(s=>s.WeightTo)
+            RuleFor(s => s.WeightTo)
                 .GreaterThanOrEqualTo(0);
 
-            RuleFor(s=>s.ShippingPrice)
+            RuleFor(s => s.ShippingPrice)
                 .GreaterThanOrEqualTo(0);
 
-            RuleFor(s=>s.PricePerExtraKilo)
+            RuleFor(s => s.PricePerExtraKilo)
                 .GreaterThanOrEqualTo(0);
         }
     }
-    public sealed class Handler : IRequestHandler<Request,Result<Response>>
+    public sealed class Handler : IRequestHandler<Request, Result<Response>>
     {
         private readonly BiyLineDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -55,9 +54,9 @@ public sealed class CreateGovernorateFeature
             }
 
             var governorateId = _httpContextAccessor.GetValueFromRoute("governorateId");
-            var governorate = await _context.Governments.FirstOrDefaultAsync(g=>g.Id== governorateId);
+            var governorate = await _context.Governments.FirstOrDefaultAsync(g => g.Id == governorateId);
 
-            if(governorate == null)
+            if (governorate == null)
             {
                 return Result<Response>.Failure(new List<string> { "this governorate not exist" });
             }
@@ -65,7 +64,7 @@ public sealed class CreateGovernorateFeature
 
             var traderShippingCompany = await _context.TraderShippingCompanies.FirstOrDefaultAsync(s => s.Id == traderShippingCompanyId && s.StoreId == store.Id);
 
-            if(traderShippingCompany == null)
+            if (traderShippingCompany == null)
             {
                 return Result<Response>.Failure(new List<string> { "this shipping company not exist" });
             }
@@ -80,7 +79,7 @@ public sealed class CreateGovernorateFeature
                 GovernorateId = governorateId,
                 TraderShippingCompanyId = traderShippingCompanyId,
             };
-            
+
             _context.GovernorateShippings.Add(shippingGovernorate);
             await _context.SaveChangesAsync();
 

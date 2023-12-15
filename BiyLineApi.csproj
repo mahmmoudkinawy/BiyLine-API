@@ -45,12 +45,4 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <EditorConfigFiles Remove="D:\last-version-byline\BiyLine-API\.editorconfig" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Include="D:\last-version-byline\BiyLine-API\.editorconfig" />
-	</ItemGroup>
-
 </Project>

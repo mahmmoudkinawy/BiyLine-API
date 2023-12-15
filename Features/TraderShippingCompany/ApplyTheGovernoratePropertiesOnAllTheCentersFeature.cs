@@ -1,6 +1,4 @@
-﻿
-namespace BiyLineApi.Features.TraderShippingCompany;
-
+﻿namespace BiyLineApi.Features.TraderShippingCompany;
 public sealed class ApplyTheGovernoratePropertiesOnAllCentersFeature
 {
     public sealed class Request : IRequest<Result<Response>>
@@ -40,7 +38,7 @@ public sealed class ApplyTheGovernoratePropertiesOnAllCentersFeature
 
             var governorateShipping = await _context.GovernorateShippings
                 .Include(g => g.TraderShippingCompany)
-                .Include(g=>g.CenterShippings)
+                .Include(g => g.CenterShippings)
                 .FirstOrDefaultAsync(g => g.Id == request.ShippingGovernorateId && g.TraderShippingCompany.StoreId == store.Id);
 
             if (governorateShipping == null)
@@ -48,7 +46,7 @@ public sealed class ApplyTheGovernoratePropertiesOnAllCentersFeature
                 return Result<Response>.Failure(new List<string> { "this governorate not exist" });
             }
 
-            foreach(var shippingCenter in  governorateShipping.CenterShippings)
+            foreach (var shippingCenter in governorateShipping.CenterShippings)
             {
                 shippingCenter.ReturnCost = governorateShipping.ReturnCost;
                 shippingCenter.ShippingPrice = governorateShipping.ShippingPrice;

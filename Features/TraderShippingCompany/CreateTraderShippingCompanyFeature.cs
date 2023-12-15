@@ -1,7 +1,4 @@
-﻿using Microsoft.Identity.Client;
-
-namespace BiyLineApi.Features.TraderShippingCompany;
-
+﻿namespace BiyLineApi.Features.TraderShippingCompany;
 public sealed class CreateTraderShippingCompanyFeature
 {
     public sealed class Request : IRequest<Result<Response>>

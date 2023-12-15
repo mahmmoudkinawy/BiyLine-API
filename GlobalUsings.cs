@@ -17,6 +17,7 @@ global using BiyLineApi.Features.Coupons;
 global using BiyLineApi.Features.Documents;
 global using BiyLineApi.Features.employees;
 global using BiyLineApi.Features.Expenses;
+global using BiyLineApi.Features.TraderShippingCompany;
 global using BiyLineApi.Features.ExpensesTypes;
 global using BiyLineApi.Features.Images;
 global using BiyLineApi.Features.Inventories;

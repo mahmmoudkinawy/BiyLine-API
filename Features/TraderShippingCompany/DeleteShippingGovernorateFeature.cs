@@ -1,5 +1,4 @@
 ﻿namespace BiyLineApi.Features.TraderShippingCompany;
-
 public sealed class DeleteShippingGovernorateFeature
 {
     public sealed class Request : IRequest<Result<Response>>

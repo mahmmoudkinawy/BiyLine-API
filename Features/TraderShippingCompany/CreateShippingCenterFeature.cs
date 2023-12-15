@@ -1,6 +1,4 @@
-﻿
-namespace BiyLineApi.Features.TraderShippingCompany;
-
+﻿namespace BiyLineApi.Features.TraderShippingCompany;
 public sealed class CreateShippingCenterFeature
 {
     public sealed class Request : IRequest<Result<Response>>
@@ -36,7 +34,7 @@ public sealed class CreateShippingCenterFeature
                 .GreaterThanOrEqualTo(0);
         }
     }
-    public sealed class Handler: IRequestHandler<Request,Result<Response>>
+    public sealed class Handler : IRequestHandler<Request, Result<Response>>
     {
         private readonly BiyLineDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -59,7 +57,7 @@ public sealed class CreateShippingCenterFeature
             }
             var shippingGovernorateId = _httpContextAccessor.GetValueFromRoute("shippingGovernorateId");
             var shippingGovernorate = await _context.GovernorateShippings
-                .Include(g=>g.TraderShippingCompany)
+                .Include(g => g.TraderShippingCompany)
                 .FirstOrDefaultAsync(g => g.Id == shippingGovernorateId && g.TraderShippingCompany.StoreId == store.Id);
 
             if (shippingGovernorate == null)

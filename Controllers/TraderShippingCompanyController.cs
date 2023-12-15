@@ -1,9 +1,6 @@
-﻿using BiyLineApi.Features.TraderShippingCompany;
-using OneOf.Types;
+﻿namespace BiyLineApi.Controllers;
 
-namespace BiyLineApi.Controllers;
-
-[Route("api/v{version:apiVersion}/TraderShippingCompany")]
+[Route("api/v{version:apiVersion}/traderShippingCompany")]
 [ApiController]
 [ApiVersion("2.0")]
 [Authorize(Policy = Constants.Policies.MustBeTrader)]
@@ -14,11 +11,12 @@ public class TraderShippingCompanyController : ControllerBase
     private readonly IMediator _mediator;
     public TraderShippingCompanyController(IMediator mediator)
     {
-        _mediator = mediator;
+        _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateTraderShippingCompany([FromBody] CreateTraderShippingCompanyFeature.Request request)
+    public async Task<IActionResult> CreateTraderShippingCompany(
+        [FromBody] CreateTraderShippingCompanyFeature.Request request)
     {
         var response = await _mediator.Send(request);
 
@@ -65,11 +63,13 @@ public class TraderShippingCompanyController : ControllerBase
         {
             return NotFound(response.Errors);
         }
+
         return Ok(response.Value);
     }
 
     [HttpPut("{traderShippingCompanyId}")]
-    public async Task<IActionResult> UpdateTraderShippingCompany([FromBody] UpdateTraderShippingCompanyFeature.Request request)
+    public async Task<IActionResult> UpdateTraderShippingCompany(
+        [FromBody] UpdateTraderShippingCompanyFeature.Request request)
     {
         var response = await _mediator.Send(request);
 
@@ -87,7 +87,8 @@ public class TraderShippingCompanyController : ControllerBase
     }
 
     [HttpPost("{traderShippingCompanyId}/governorate/{governorateId}")]
-    public async Task<IActionResult> CreateGovernorate([FromBody] CreateGovernorateFeature.Request request)
+    public async Task<IActionResult> CreateGovernorate(
+        [FromBody] CreateGovernorateFeature.Request request)
     {
         var response = await _mediator.Send(request);
 
@@ -95,12 +96,12 @@ public class TraderShippingCompanyController : ControllerBase
         {
             return NotFound(response.Errors);
         }
+
         return NoContent();
     }
 
     [HttpGet("{traderShippingCompanyId}/governorates")]
-    public async Task<ActionResult<IReadOnlyList<GetAllGovernoratesForTraderShippingCompanyFeature.Response>>> GetAllGovernoratesForTraderShippingCompany(
-        [FromQuery] PaginationParams paginationParams)
+    public async Task<ActionResult<IReadOnlyList<GetAllGovernoratesForTraderShippingCompanyFeature.Response>>> GetAllGovernoratesForTraderShippingCompany([FromQuery] PaginationParams paginationParams)
     {
         var response = await _mediator.Send(new GetAllGovernoratesForTraderShippingCompanyFeature.Request
         {
@@ -126,8 +127,7 @@ public class TraderShippingCompanyController : ControllerBase
     }
 
     [HttpGet("governorates/{shippingGovernorateId}")]
-    public async Task<ActionResult<GetShippingGovernorateByIdFeature.Response>> GetShippingGovernorateById(
-        [FromRoute] int shippingGovernorateId)
+    public async Task<ActionResult<GetShippingGovernorateByIdFeature.Response>> GetShippingGovernorateById([FromRoute] int shippingGovernorateId)
     {
         var response = await _mediator.Send(new GetShippingGovernorateByIdFeature.Request
         {
@@ -138,26 +138,30 @@ public class TraderShippingCompanyController : ControllerBase
         {
             return NotFound(response.Errors);
         }
+
         return Ok(response.Value);
     }
 
     [HttpPut("governorates/{shippingGovernorateId}")]
-    public async Task<IActionResult> UpdateShippingGovernorator([FromBody] UpdateShippingGovernoratorFeature.Request request)
+    public async Task<IActionResult> UpdateShippingGovernorator(
+        [FromBody] UpdateShippingGovernoratorFeature.Request request)
     {
         var response = await _mediator.Send(request);
+
         if (!response.IsSuccess)
         {
             return NotFound(response.Errors);
         }
+
         return NoContent();
     }
 
     [HttpPost("shippingGovernorate/{shippingGovernorateId}/shippingCenter")]
-
     public async Task<IActionResult> CreateShippingCenterForShippingGovernorate(
         [FromBody] CreateShippingCenterFeature.Request request)
     {
         var response = await _mediator.Send(request);
+
         if (!response.IsSuccess)
         {
             return NotFound(response.Errors);
@@ -214,10 +218,12 @@ public class TraderShippingCompanyController : ControllerBase
     public async Task<IActionResult> UpdateShippingCenter([FromBody] UpdateShippingCenterFeature.Request request)
     {
         var response = await _mediator.Send(request);
+
         if (!response.IsSuccess)
         {
             return NotFound(response.Errors);
         }
+
         if (response.IsBadRequest)
         {
             return BadRequest(response.Errors);
@@ -235,6 +241,7 @@ public class TraderShippingCompanyController : ControllerBase
         {
             return NotFound(response.Errors);
         }
+
         if (response.IsBadRequest)
         {
             return BadRequest(response.Errors);
@@ -251,10 +258,11 @@ public class TraderShippingCompanyController : ControllerBase
             ShippingGovernorateId = shippingGovernorateId
         });
 
-        if (!response.IsSuccess) 
+        if (!response.IsSuccess)
         {
             return NotFound(response.Errors);
         }
+
         return NoContent();
     }
 
@@ -270,6 +278,7 @@ public class TraderShippingCompanyController : ControllerBase
         {
             return NotFound(response.Errors);
         }
+
         return NoContent();
     }
 
@@ -278,16 +287,17 @@ public class TraderShippingCompanyController : ControllerBase
     {
         var response = await _mediator.Send(new DeleteShippingGovernorateFeature.Request
         {
-            ShippingGovernorateId= shippingGovernorateId
+            ShippingGovernorateId = shippingGovernorateId
         });
 
         if (!response.IsSuccess)
         {
             return NotFound(response.Errors);
         }
+
         return NoContent();
     }
-    
+
     [HttpDelete("{traderShippingCompanyId}")]
     public async Task<IActionResult> DeleteTraderShippingCompany([FromRoute] int traderShippingCompanyId)
     {
@@ -300,7 +310,7 @@ public class TraderShippingCompanyController : ControllerBase
         {
             return NotFound(response.Errors);
         }
+
         return NoContent();
     }
-
 }

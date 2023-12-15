@@ -1,5 +1,4 @@
 ﻿namespace BiyLineApi.Features.TraderShippingCompany;
-
 public sealed class UpdateShippingCenterStatusFeature
 {
     public sealed class Request : IRequest<Result<Response>>

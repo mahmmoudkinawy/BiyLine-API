@@ -1,6 +1,4 @@
-﻿
-namespace BiyLineApi.Features.TraderShippingCompany;
-
+﻿namespace BiyLineApi.Features.TraderShippingCompany;
 public sealed class GetAllGovernoratesForTraderShippingCompanyFeature
 {
     public sealed class Request : IRequest<OneOf<PagedList<Response>,Result<Response>>>

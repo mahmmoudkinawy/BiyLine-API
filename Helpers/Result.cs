@@ -15,4 +15,7 @@ public sealed class Result<T> where T : class
         new() { IsSuccess = false, Error = error };
     public static Result<T> BadRequest(string error) =>
         new() { IsBadRequest = true, Error = error, StatusCode = 400 };
+     public static Result<T> BadRequest(List<string> errors) =>
+        new() { IsBadRequest = true, Errors = errors, StatusCode = 400 };
+
 }

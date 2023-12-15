@@ -50,6 +50,9 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<CashDiscountPermissionEntity> CashDiscountPermissions { get; set; }
     public DbSet<SalaryPaymentEntity> SalaryPayments { get; set; }
     public DbSet<StockTrackerEntity> StockTrackers { get; set; }
+    public DbSet<TraderShippingCompanyEntity> TraderShippingCompanies {  get; set; }
+    public DbSet<GovernorateShippingEntity> GovernorateShippings { get; set; }
+    public DbSet<CenterShippingEntity> CenterShippings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

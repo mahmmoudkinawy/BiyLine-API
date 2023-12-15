@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231212203514_createTraderShippingCompany")]
+    partial class createTraderShippingCompany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,47 +170,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.HasIndex("Name");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.CenterShippingEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("GovernorateShippingId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("PickupPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("PricePerExtraKilo")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ReturnCost")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ShippingPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("WeightTo")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GovernorateShippingId");
-
-                    b.ToTable("CenterShippings");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.ContractOrderEntity", b =>
@@ -443,44 +405,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.HasIndex("CountryId");
 
                     b.ToTable("Governments");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.GovernorateShippingEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("GovernorateId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("PickupPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("PricePerExtraKilo")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ReturnCost")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ShippingPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("TraderShippingCompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("WeightTo")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GovernorateId");
-
-                    b.HasIndex("TraderShippingCompanyId");
-
-                    b.ToTable("GovernorateShippings");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.ImageEntity", b =>
@@ -1366,28 +1290,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.ToTable("SupplierInvoices");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.TraderShippingCompanyEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StoreId");
-
-                    b.ToTable("TraderShippingCompanies");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.UserEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -1683,17 +1585,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("StoreWallet");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.CenterShippingEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.GovernorateShippingEntity", "GovernorateShipping")
-                        .WithMany("CenterShippings")
-                        .HasForeignKey("GovernorateShippingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GovernorateShipping");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.ContractOrderEntity", b =>
                 {
                     b.HasOne("BiyLineApi.Entities.StoreEntity", "FromStore")
@@ -1797,25 +1688,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .IsRequired();
 
                     b.Navigation("Country");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.GovernorateShippingEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.GovernorateEntity", "Governorate")
-                        .WithMany()
-                        .HasForeignKey("GovernorateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.TraderShippingCompanyEntity", "TraderShippingCompany")
-                        .WithMany("GovernorateShippings")
-                        .HasForeignKey("TraderShippingCompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Governorate");
-
-                    b.Navigation("TraderShippingCompany");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.ImageEntity", b =>
@@ -2220,17 +2092,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.TraderShippingCompanyEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
-                        .WithMany("TraderShippingCompanies")
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Store");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.UserRoleEntity", b =>
                 {
                     b.HasOne("BiyLineApi.Entities.RoleEntity", "Role")
@@ -2364,11 +2225,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("ShippingCompanyGovernorates");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.GovernorateShippingEntity", b =>
-                {
-                    b.Navigation("CenterShippings");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.ImageEntity", b =>
                 {
                     b.Navigation("SubSpecializationImage");
@@ -2447,8 +2303,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("StoreWallets");
 
                     b.Navigation("Suppliers");
-
-                    b.Navigation("TraderShippingCompanies");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.StoreWalletEntity", b =>
@@ -2474,11 +2328,6 @@ namespace BiyLineApi.DbContexts.Migrations
                 {
                     b.Navigation("ContractOrder")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.TraderShippingCompanyEntity", b =>
-                {
-                    b.Navigation("GovernorateShippings");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.UserEntity", b =>

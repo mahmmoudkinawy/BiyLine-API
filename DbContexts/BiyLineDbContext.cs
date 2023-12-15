@@ -49,10 +49,35 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<SalaryPaymentEntity> SalaryPayments { get; set; }
     public DbSet<StockTrackerEntity> StockTrackers { get; set; }
     public DbSet<ExpenseTypeEntity> ExpenseTypes { get; set; }
+    public DbSet<ExpenseEntity> Expenses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<ExpenseEntity>()
+            .HasOne(e => e.ExpenseType)
+            .WithOne()
+            .HasForeignKey<ExpenseEntity>(e => e.ExpenseTypeId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<ExpenseEntity>()
+            .HasOne(e => e.Store)
+            .WithMany()
+            .HasForeignKey(e => e.StoreId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<ExpenseEntity>()
+            .HasOne(e => e.StoreWallet)
+            .WithMany()
+            .HasForeignKey(e => e.StoreWalletId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<ExpenseEntity>()
+            .HasOne(e => e.ReceiptImage)
+            .WithOne()
+            .HasForeignKey<ExpenseEntity>(e => e.ReceiptImageId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<ExpenseTypeEntity>()
             .HasOne(e => e.Store)

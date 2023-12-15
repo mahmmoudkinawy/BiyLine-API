@@ -45,25 +45,37 @@ public sealed class ExpensesTypesController : ControllerBase
             });
     }
 
+    [HttpGet("current-store-expenses-types")]
+    public async Task<ActionResult<IReadOnlyList<GetCurrentStoreExpensesTypesFeature.Response>>> GetCurrentStoreExpenseTypes(
+        [FromQuery] PaginationParams paginationParams)
+    {
+        var response = await _mediator.Send(new GetCurrentStoreExpensesTypesFeature.Request
+        {
+            PageNumber = paginationParams.PageNumber,
+            PageSize = paginationParams.PageSize
+        });
+
+        return response.Match<ActionResult<IReadOnlyList<GetCurrentStoreExpensesTypesFeature.Response>>>(
+            successResponse =>
+            {
+                Response.AddPaginationHeader(
+                    successResponse.CurrentPage,
+                    successResponse.PageSize,
+                    successResponse.TotalPages,
+                    successResponse.TotalCount);
+
+                return Ok(successResponse);
+            },
+            errorResponse =>
+            {
+                return NotFound(errorResponse.Errors);
+            });
+    }
+
     [HttpPost("{storeWalletId}")]
     public async Task<IActionResult> CreateExpenseType(
         [FromRoute] int storeWalletId,
         [FromBody] CreateExpenseTypeFeature.Request request)
-    {
-        var response = await _mediator.Send(request);
-
-        if (!response.IsSuccess)
-        {
-            return NotFound(response.Errors);
-        }
-
-        return NoContent();
-    }
-
-    [HttpPut("{storeWalletId}")]
-    public async Task<IActionResult> UpdateExpenseType(
-        [FromRoute] int storeWalletId,
-        [FromBody] UpdateExpenseTypeFeature.Request request)
     {
         var response = await _mediator.Send(request);
 

@@ -162,7 +162,7 @@ public sealed class UpdateEmployeeForStoreByTraderFeature
 
             if (request.NationalIdImage != null)
             {
-                var imageUrl = await _imageService.UploadImageAsync(request.NationalIdImage, "EmployeesNationalIds");
+                var imageUrl = await _imageService.UploadImageAsync(request.NationalIdImage, "EmployeesNationalIdsImages");
                 employee.NationalIdImage.ImageUrl = imageUrl;
             }
 

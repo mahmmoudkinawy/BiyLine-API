@@ -22,6 +22,9 @@ public sealed class ImageEntity
     public int? OwnerId { get; set; }
     public UserEntity? Owner { get; set; }
 
+    public int? ExpenseId { get; set; }
+    public ExpenseEntity? Expense { get; set; }
+
     public int? SubSpecializationId { get; set; }
     public SubSpecializationEntity? SubSpecializationImage { get; set; }
 }

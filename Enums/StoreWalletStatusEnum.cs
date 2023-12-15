@@ -1,7 +1,6 @@
 ﻿namespace BiyLineApi.Enums;
-
-public enum StoreWalletStatus
+public enum StoreWalletStatusEnum
 {
-    Active ,
+    Active,
     Inactive
 }

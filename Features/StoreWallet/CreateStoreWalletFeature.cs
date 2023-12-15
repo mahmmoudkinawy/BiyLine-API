@@ -60,7 +60,7 @@ public sealed class CreateStoreWalletFeature
                 EmployeeId = request.EmployeeId,
                 StoreId = trader.Store.Id,
                 TotalBalance = 0,
-                StoreWalletStatus = StoreWalletStatus.Active.ToString(),
+                StoreWalletStatus = StoreWalletStatusEnum.Active.ToString(),
                 DateTime = DateTime.UtcNow,
             };
 

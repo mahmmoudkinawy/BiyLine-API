@@ -153,7 +153,7 @@ public sealed class CreateEmployeerForStoreByTraderFeature
                 return Result<Response>.Failure(new List<string> { "Current trader does not have store" });
             }
 
-            var imageUrl = await _imageService.UploadImageAsync(request.NationalIdImage, "EmployeesNationalIds");
+            var imageUrl = await _imageService.UploadImageAsync(request.NationalIdImage, "EmployeesNationalIdsImages");
 
             var employeeToCreate = new UserEntity
             {
@@ -187,7 +187,7 @@ public sealed class CreateEmployeerForStoreByTraderFeature
                             FileName = request.NationalIdImage.FileName,
                             ImageUrl = imageUrl,
                             DateUploaded = DateTime.UtcNow,
-                            Type = "EmployeesNationalIds"
+                            Type = "EmployeesNationalIdsImages"
                         }
                     });
 

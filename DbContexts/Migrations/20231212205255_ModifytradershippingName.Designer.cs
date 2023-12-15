@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231212205255_ModifytradershippingName")]
+    partial class ModifytradershippingName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -179,10 +182,6 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     b.Property<int>("GovernorateShippingId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("PickupPrice")
                         .HasColumnType("decimal(18,2)");
@@ -421,83 +420,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.ExpenseEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ExpenseTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ReceiptImageId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StoreWalletId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExpenseTypeId")
-                        .IsUnique();
-
-                    b.HasIndex("ReceiptImageId")
-                        .IsUnique()
-                        .HasFilter("[ReceiptImageId] IS NOT NULL");
-
-                    b.HasIndex("StoreId");
-
-                    b.HasIndex("StoreWalletId");
-
-                    b.ToTable("Expenses");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.ExpenseTypeEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StoreWalletId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StoreId");
-
-                    b.HasIndex("StoreWalletId");
-
-                    b.ToTable("ExpenseTypes");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.GovernorateEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -577,9 +499,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ExpenseId")
-                        .HasColumnType("int");
-
                     b.Property<string>("FileName")
                         .HasColumnType("nvarchar(max)");
 
@@ -612,8 +531,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("ExpenseId");
 
                     b.HasIndex("OwnerId");
 
@@ -1870,59 +1787,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.ExpenseEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.ExpenseTypeEntity", "ExpenseType")
-                        .WithOne()
-                        .HasForeignKey("BiyLineApi.Entities.ExpenseEntity", "ExpenseTypeId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.ImageEntity", "ReceiptImage")
-                        .WithOne()
-                        .HasForeignKey("BiyLineApi.Entities.ExpenseEntity", "ReceiptImageId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
-                        .WithMany()
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.StoreWalletEntity", "StoreWallet")
-                        .WithMany()
-                        .HasForeignKey("StoreWalletId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("ExpenseType");
-
-                    b.Navigation("ReceiptImage");
-
-                    b.Navigation("Store");
-
-                    b.Navigation("StoreWallet");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.ExpenseTypeEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
-                        .WithMany()
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.StoreWalletEntity", "StoreWallet")
-                        .WithMany()
-                        .HasForeignKey("StoreWalletId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Store");
-
-                    b.Navigation("StoreWallet");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.GovernorateEntity", b =>
                 {
                     b.HasOne("BiyLineApi.Entities.CountryEntity", "Country")
@@ -1960,10 +1824,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("BiyLineApi.Entities.ExpenseEntity", "Expense")
-                        .WithMany()
-                        .HasForeignKey("ExpenseId");
-
                     b.HasOne("BiyLineApi.Entities.UserEntity", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId");
@@ -1979,8 +1839,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Category");
-
-                    b.Navigation("Expense");
 
                     b.Navigation("Owner");
 

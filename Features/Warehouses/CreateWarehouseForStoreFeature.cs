@@ -18,17 +18,6 @@ public sealed class CreateWarehouseForStoreFeature
                 .NotEmpty()
                 .NotNull()
                 .MaximumLength(255);
-
-            RuleFor(r => r.ShippingAddress)
-                .NotEmpty()
-                .NotNull()
-                .MaximumLength(500);
-
-            RuleFor(r => r.WarehouseStatus)
-                .NotEmpty()
-                .NotNull()
-                .Must(activity => Enum.TryParse<WarehouseStatusEnum>(activity, out _))
-                    .WithMessage($"Please provide a valid warehouse from WarehouseStatusEnum. Valid options are: Active, Main.");
         }
     }
 

@@ -1,7 +1,4 @@
-using System.Text.Json.Serialization;
-
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddSwaggerServices();
 
@@ -35,6 +32,8 @@ app.UseRequestLocalization(
     app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
 app.MapControllers();
+
+app.MapHub<StoreChatHub>("/hubs/storechathub");
 
 await app.ApplyDatabaseMigrations();
 

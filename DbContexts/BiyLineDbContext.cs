@@ -50,13 +50,32 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<StockTrackerEntity> StockTrackers { get; set; }
     public DbSet<ExpenseTypeEntity> ExpenseTypes { get; set; }
     public DbSet<ExpenseEntity> Expenses { get; set; }
-    public DbSet<TraderShippingCompanyEntity> TraderShippingCompanies {  get; set; }
+    public DbSet<TraderShippingCompanyEntity> TraderShippingCompanies { get; set; }
     public DbSet<GovernorateShippingEntity> GovernorateShippings { get; set; }
     public DbSet<CenterShippingEntity> CenterShippings { get; set; }
+    public DbSet<StoreChatMessageEntity> StoreMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<StoreChatMessageEntity>()
+            .HasOne(e => e.SenderUser)
+            .WithMany()
+            .HasForeignKey(e => e.SenderUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<StoreChatMessageEntity>()
+            .HasOne(e => e.ReceiverUser)
+            .WithMany()
+            .HasForeignKey(e => e.ReceiverUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<StoreChatMessageEntity>()
+            .HasOne(e => e.Store)
+            .WithMany()
+            .HasForeignKey(e => e.StoreId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<ExpenseEntity>()
             .HasOne(e => e.ExpenseType)

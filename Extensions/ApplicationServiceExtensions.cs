@@ -36,6 +36,8 @@ public static class ApplicationServiceExtensions
 
         services.AddScoped<IAcceptLanguageService, AcceptLanguageService>();
 
+        services.AddSignalR();
+
         services.AddTransient<ITokenService, TokenService>();
 
         services.AddTransient<IMailService, MailService>();

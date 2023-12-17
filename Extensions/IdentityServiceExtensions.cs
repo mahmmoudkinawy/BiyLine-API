@@ -35,6 +35,23 @@ public static class IdentityServiceExtensions
                         Encoding.UTF8.GetBytes(config[Constants.TokenKey]!)),
                     ClockSkew = TimeSpan.Zero
                 };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        var path = context.HttpContext.Request.Path;
+
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
             })
             .AddGoogle(googleOptions =>
             {
@@ -50,7 +67,7 @@ public static class IdentityServiceExtensions
             });
             configure.AddPolicy(Constants.Policies.MustBeTraderOrEmployee, policy =>
             {
-                policy.RequireClaim(ClaimTypes.Role, Constants.Roles.Trader,Constants.Roles.Employee);
+                policy.RequireClaim(ClaimTypes.Role, Constants.Roles.Trader, Constants.Roles.Employee);
             });
 
         });

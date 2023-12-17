@@ -20,6 +20,13 @@ public static class SwaggerServiceExtensions
 
             opts.IncludeXmlComments(xmlCommentsFullPath, true);
 
+            opts.AddSignalRSwaggerGen(_ =>
+            {
+                _.UseHubXmlCommentsSummaryAsTagDescription = true;
+                _.UseHubXmlCommentsSummaryAsTag = true;
+                _.UseXmlComments(xmlCommentsFullPath);
+            });
+
             opts.CustomSchemaIds(opts => opts.FullName?.Replace("+", "."));
 
             opts.AddSecurityDefinition("BiyLineApiBearerAuth", new OpenApiSecurityScheme()

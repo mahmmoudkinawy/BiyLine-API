@@ -54,6 +54,7 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<GovernorateShippingEntity> GovernorateShippings { get; set; }
     public DbSet<CenterShippingEntity> CenterShippings { get; set; }
     public DbSet<StoreChatMessageEntity> StoreMessages { get; set; }
+    public DbSet<AddressEntity> Addresses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -456,5 +457,6 @@ public sealed class BiyLineDbContext : IdentityDbContext<
             .WithMany(s => s.StoreWallets)
             .HasForeignKey(s => s.StoreId)
             .OnDelete(DeleteBehavior.NoAction);
+
     }
 }

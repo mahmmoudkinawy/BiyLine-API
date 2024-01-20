@@ -13,11 +13,12 @@ public class GetAddressesForCustomerFeature
     public sealed class Response
     {
         public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string Name { get; set; }
         public string PhoneNumber { get; set; }
         public string AddressDetails { get; set; }
         public string Governorate { get; set; }
+        public int GovernorateId { get; set; }
+
 
     }
     public sealed class Handler : IRequestHandler<Request, PagedList<Response>>
@@ -39,11 +40,11 @@ public class GetAddressesForCustomerFeature
 
             var  addresses = query.Select(s => new Response
             {
-                FirstName = s.FirstName,
-                LastName = s.LastName,
+                Name = s.User.Name,
                 PhoneNumber = s.PhoneNumber,
                 AddressDetails = s.AddressDetails,
-                Governorate = s.Governorate.Name
+                Governorate = s.Governorate.Name,
+                GovernorateId = s.GovernorateId
             });
 
             return await PagedList<Response>.CreateAsync(addresses, request.PageNumber.Value, request.PageSize.Value);

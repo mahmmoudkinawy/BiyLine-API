@@ -15,7 +15,6 @@ public sealed class GetShippingGovernorateByIdFeature
         public decimal PricePerExtraKilo { get; set; }
         public string GovernorateName { get; set; }
         public string TraderShippingCompanyName { get; set; }
-        public List<shippingCenterResponse> ShippingCenters { get; set; } = new List<shippingCenterResponse>();
     }
     public sealed class shippingCenterResponse
     {
@@ -63,7 +62,6 @@ public sealed class GetShippingGovernorateByIdFeature
                 .Include(g=>g.Governorate)
                 .Include(g=>g.TraderShippingCompany)
                        .ThenInclude(t => t.Store)
-                 .Include(g=>g.CenterShippings)
                 .FirstOrDefaultAsync(s=>s.Id== request.ShippingGovernorateId && s.TraderShippingCompany.StoreId==store.Id);
 
             if(governorate == null)
@@ -81,17 +79,6 @@ public sealed class GetShippingGovernorateByIdFeature
                 ShippingPrice = governorate.ShippingPrice,
                 WeightTo = governorate.WeightTo,
                 TraderShippingCompanyName = governorate.TraderShippingCompany.Name,
-                ShippingCenters = governorate.CenterShippings.Select(c => new shippingCenterResponse
-                {
-                    Id = c.Id,
-                    PickupPrice = c.PickupPrice,
-                    PricePerExtraKilo = c.PricePerExtraKilo,
-                    ReturnCost = c.ReturnCost,
-                    ShippingPrice = c.ShippingPrice,
-                    WeightTo = c.WeightTo,
-                    Status = c.Status,
-                    ShippingCenterName = c.Name
-                }).ToList()
             };
 
             return Result<Response>.Success(response);

@@ -52,7 +52,6 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<ExpenseEntity> Expenses { get; set; }
     public DbSet<TraderShippingCompanyEntity> TraderShippingCompanies { get; set; }
     public DbSet<GovernorateShippingEntity> GovernorateShippings { get; set; }
-    public DbSet<CenterShippingEntity> CenterShippings { get; set; }
     public DbSet<StoreChatMessageEntity> StoreMessages { get; set; }
     public DbSet<AddressEntity> Addresses { get; set; }
 

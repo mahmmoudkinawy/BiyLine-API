@@ -5,8 +5,6 @@ public sealed class CreateAddressFeature
 {
     public sealed class Request : IRequest<Result<Response>>
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
         public string PhoneNumber { get; set; }
         public string AddressDetails { get; set; }
         public int GovernorateId { get; set; }
@@ -17,8 +15,6 @@ public sealed class CreateAddressFeature
 
         public Validator()
         {
-            RuleFor(s => s.FirstName).NotEmpty();
-            RuleFor(s => s.LastName).NotEmpty();
             RuleFor(s => s.PhoneNumber).NotEmpty();
             RuleFor(s => s.AddressDetails).NotEmpty();
             RuleFor(s => s.GovernorateId).GreaterThan(0);
@@ -46,8 +42,6 @@ public sealed class CreateAddressFeature
 
             var addressToCreate = new AddressEntity
             {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
                 PhoneNumber = request.PhoneNumber,
                 AddressDetails = request.AddressDetails,
                 GovernorateId = request.GovernorateId,

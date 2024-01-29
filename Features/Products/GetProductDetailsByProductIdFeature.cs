@@ -79,7 +79,6 @@ public sealed class GetProductDetailsByProductIdFeature
             {
                 return Result<Response>.Failure(new List<string> { "There is not store for the current user." });
             }
-            var products = await _context.Products.ToListAsync();
             var productBelongsToCurrentUserStore = await _context.Products
                 .Include(c => c.Category)
                 .FirstOrDefaultAsync(product =>

@@ -16,6 +16,7 @@ app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "Customer - API Version 1");
     options.SwaggerEndpoint("/swagger/v2/swagger.json", "Trader - API Version 2");
+    options.SwaggerEndpoint("/swagger/v3/swagger.json", "ShippingCompany - API Version 3");
 });
 
 app.UseHttpsRedirection();

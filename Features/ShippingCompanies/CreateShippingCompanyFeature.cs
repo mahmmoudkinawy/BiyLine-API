@@ -1,16 +1,24 @@
-﻿namespace BiyLineApi.Features.ShippingCompanies;
+﻿using BiyLineApi.Services;
+using Microsoft.AspNetCore.Identity;
+
+namespace BiyLineApi.Features.ShippingCompanies;
 public sealed class CreateShippingCompanyFeature
 {
     public sealed class Request : IRequest<Result<Response>>
     {
         public string? Name { get; set; }
-        public string? Email { get; set; }
-        public string? PhoneNumber { get; set; }
+        public string? Address { get; set; }
         public string? CountryCode { get; set; }
-        public int? GovernorateId { get; set; }
+
+        public IFormFile? CommercialRegisterImage { get; set; }
+        public IFormFile? ProfileImage { get; set; }
+        public IFormFile? IDImage { get; set; }
     }
 
-    public sealed class Response { }
+    public sealed class Response
+    {
+        public ShippingCompanyEntity ShippinCompany { get; internal set; }
+    }
 
     public sealed class Validator : AbstractValidator<Request>
     {
@@ -21,27 +29,42 @@ public sealed class CreateShippingCompanyFeature
                 .MinimumLength(2)
                 .MaximumLength(255);
 
-            RuleFor(r => r.Email)
-                .NotEmpty()
-                .EmailAddress();
 
-            RuleFor(r => r.GovernorateId)
-                .NotEmpty()
-                .GreaterThan(0)
-                .Must(governorateId => context.Governments.Any(g => g.Id == governorateId))
-                    .WithMessage(localizer[CommonResources.GovernorateWithIdDoesNotExist].Value);
 
             RuleFor(r => r.CountryCode)
                 .NotEmpty()
                     .WithMessage(localizer[CommonResources.CountryCodeIsRequired].Value);
 
-            RuleFor(r => r.PhoneNumber)
+            RuleFor(r => r.Address)
                 .NotEmpty()
-                    .WithMessage(localizer[CommonResources.PhoneNumberIsRequired].Value)
-                .Must((req, phoneNumber, context) => IsPhoneNumberValid(phoneNumber, req.CountryCode))
-                    .WithMessage(localizer[CommonResources.PhoneNumberIsValid].Value);
-        }
+                    .WithMessage(localizer[CommonResources.CountryCodeIsRequired].Value);
+            RuleFor(r => r.IDImage)
+    .Must(IsValidImage)
+        .WithMessage("Invalid image format or size. Maximum size is 2MB, and valid extensions are .jpg, .jpeg, .png, .gif");
+            RuleFor(r => r.ProfileImage)
+    .Must(IsValidImage)
+        .WithMessage("Invalid image format or size. Maximum size is 2MB, and valid extensions are .jpg, .jpeg, .png, .gif");
+            RuleFor(r => r.CommercialRegisterImage)
+    .Must(IsValidImage)
+        .WithMessage("Invalid image format or size. Maximum size is 2MB, and valid extensions are .jpg, .jpeg, .png, .gif");
 
+        }
+        private static bool IsValidImage(IFormFile image)
+        {
+            if (image == null || image.Length == 0)
+            {
+                return false;
+            }
+
+            if (image.Length > 2 * 1024 * 1024)
+            {
+                return false;
+            }
+
+            var validExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+            var fileExtension = Path.GetExtension(image.FileName);
+            return validExtensions.Any(ext => ext.Equals(fileExtension, StringComparison.OrdinalIgnoreCase));
+        }
         private static bool IsPhoneNumberValid(string phoneNumber, string countryCode)
         {
             try
@@ -63,66 +86,111 @@ public sealed class CreateShippingCompanyFeature
     {
         private readonly BiyLineDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly UserManager<UserEntity> _userManager;
+        private readonly IImageService _imageService;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
         public Handler(
             BiyLineDbContext context,
+            UserManager<UserEntity> userManager,
+                        IImageService imageService,
+                                    IDateTimeProvider dateTimeProvider,
+
             IHttpContextAccessor httpContextAccessor)
         {
+            _userManager = userManager ??
+    throw new ArgumentNullException(nameof(userManager));
             _context = context ??
                 throw new ArgumentNullException(nameof(context));
             _httpContextAccessor = httpContextAccessor ??
                 throw new ArgumentNullException(nameof(httpContextAccessor));
+            _imageService = imageService ?? throw new ArgumentNullException(nameof(imageService));
+            _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
         }
 
         public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
-            var userId = _httpContextAccessor.GetUserById();
-
-            var store = await _context.Stores
-                .FirstOrDefaultAsync(s => s.OwnerId == userId, cancellationToken: cancellationToken);
-
-            if (store is null)
+            try
             {
-                return Result<Response>.Failure(new List<string> { "No store for current user." });
+                var userId = _httpContextAccessor.GetUserById();
+
+
+                var user = await _userManager.FindByIdAsync(userId.ToString());
+                if (user == null)
+                {
+                    return Result<Response>.Failure("User Not Found");
+                }
+                bool isShippingCompany = await _userManager.IsInRoleAsync(user, Constants.Roles.ShippingCompany);
+                if (!isShippingCompany)
+                {
+                    return Result<Response>.Failure("this account is not a shipping company");
+                }
+
+                var shippingCompany = new ShippingCompanyEntity
+                {
+                    CountryCode = request.CountryCode,
+                    Name = request.Name,
+                    Address = request.Address,
+                    UserEntityId = userId,
+
+                };
+                _context.ShippingCompanies.Add(shippingCompany);
+
+                await _context.SaveChangesAsync(cancellationToken);
+
+                if(request.IDImage != null)
+                {
+                    var IDIMG = await _imageService.UploadImageAsync(request.IDImage, "ShippingCompanyImages");
+
+                    var IDImageToCreate = new ImageEntity
+                    {
+                        FileName = request.IDImage.FileName,
+                        ImageMimeType = request.IDImage.ContentType,
+                        DateUploaded = _dateTimeProvider.GetCurrentDateTimeUtc(),
+                        ImageUrl = IDIMG,
+                        Type = "ShippingCompanyImage",
+                        ShippingCompanyEntityID = shippingCompany.Id
+                    };
+                    await _context.Images.AddAsync(IDImageToCreate);
+                }
+                if (request.ProfileImage != null)
+                {
+                    var ProfileIMG = await _imageService.UploadImageAsync(request.IDImage, "ShippingCompanyImages");
+                    var ProfileIMGToCreate = new ImageEntity
+                    {
+                        FileName = request.ProfileImage.FileName,
+                        ImageMimeType = request.ProfileImage.ContentType,
+                        DateUploaded = _dateTimeProvider.GetCurrentDateTimeUtc(),
+                        ImageUrl = ProfileIMG,
+                        Type = "ShippingCompanyImage",
+                        ShippingCompanyEntityID = shippingCompany.Id
+
+                    };
+                    await _context.Images.AddAsync(ProfileIMGToCreate);
+                }
+                if (request.CommercialRegisterImage != null)
+                {
+                    var CommercialRegisterIMG = await _imageService.UploadImageAsync(request.IDImage, "ShippingCompanyImages");
+                    var CommercialRegisterIMGToCreate = new ImageEntity
+                    {
+                        FileName = request.CommercialRegisterImage.FileName,
+                        ImageMimeType = request.CommercialRegisterImage.ContentType,
+                        DateUploaded = _dateTimeProvider.GetCurrentDateTimeUtc(),
+                        ImageUrl = CommercialRegisterIMG,
+                        Type = "ShippingCompanyImage",
+                        ShippingCompanyEntityID = shippingCompany.Id
+                    };
+                    await _context.Images.AddAsync(CommercialRegisterIMGToCreate);
+
+                }
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return Result<Response>.Success(new Response { ShippinCompany = shippingCompany });
             }
-
-            var shippingCompany = new ShippingCompanyEntity
+            catch (Exception ex)
             {
-                StoreId = store.Id,
-                Email = request.Email,
-                CountryCode = request.CountryCode,
-                Name = request.Name,
-                PhoneNumber = request.PhoneNumber,
-            };
-
-            shippingCompany.ShippingCompanyGovernorates.Add(new ShippingCompanyGovernorateEntity
-            {
-                GovernorateId = request.GovernorateId.Value,
-                ShippingCompanyId = shippingCompany.Id
-            });
-
-            var shippingCompanyFromDb = await _context.ShippingCompanies
-                .Include(sc => sc.ShippingCompanyGovernorates)
-                .FirstOrDefaultAsync(s =>
-                    s.StoreId == shippingCompany.StoreId &&
-                    s.Name.ToLower().Equals(shippingCompany.Name) &&
-                    s.ShippingCompanyGovernorates.Any(scg => scg.GovernorateId == request.GovernorateId),
-                        cancellationToken: cancellationToken);
-
-            // Did not handle shipping company got the same 
-            if (shippingCompanyFromDb == null)
-            {
-                return Result<Response>.Failure(new List<string> {
-                    "There is already a shipping company with this name associated with your store." });
+                return Result<Response>.Failure(new List<string> { ex.Message });
             }
-
-            var shippingCompanyExists = await _context.ShippingCompanyGovernorates
-                .FirstOrDefaultAsync(scg => scg.ShippingCompanyId == shippingCompanyFromDb.Id && scg.GovernorateId == request.GovernorateId, cancellationToken: cancellationToken);
-
-            _context.ShippingCompanies.Add(shippingCompany);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return Result<Response>.Success(new Response { });
         }
     }
 }

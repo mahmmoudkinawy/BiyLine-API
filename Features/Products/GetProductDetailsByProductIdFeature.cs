@@ -20,7 +20,8 @@ public sealed class GetProductDetailsByProductIdFeature
         public decimal Discount { get; set; }
         public decimal Vat { get; set; }
         public string ImageUrl { get; set; }
-        public List<ProductVariationResponse> Variations { get; set; }
+        //public List<ProductVariationResponse> Variations { get; set; }
+        public List<VariationColorVM> Variations { get; set; }
     }
 
     public sealed class ProductVariationResponse
@@ -30,6 +31,19 @@ public sealed class GetProductDetailsByProductIdFeature
         public string Size { get; set; }
         public int Quantity { get; set; }
         public decimal Price { get; set; }
+    }
+
+
+    public record VariationColorVM
+    {
+        public string? Color { get; set; }
+        public List<VariationSizeVM> Sizes { get; set; }
+    }
+    public record VariationSizeVM
+    {
+        public int Id {get; set; }
+        public string? Size { get; set; }
+        public int? Quantity { get; set; }
     }
 
     public sealed class Mapper : Profile
@@ -65,7 +79,7 @@ public sealed class GetProductDetailsByProductIdFeature
             {
                 return Result<Response>.Failure(new List<string> { "There is not store for the current user." });
             }
-
+            var products = await _context.Products.ToListAsync();
             var productBelongsToCurrentUserStore = await _context.Products
                 .Include(c => c.Category)
                 .FirstOrDefaultAsync(product =>
@@ -76,9 +90,21 @@ public sealed class GetProductDetailsByProductIdFeature
                 return Result<Response>.Failure(new List<string> { "This product does not belong to current logged in user." });
             }
 
-            productBelongsToCurrentUserStore.ProductVariations = await _context
-                .ProductVariations
+            //productBelongsToCurrentUserStore.ProductVariations = await _context
+            //    .ProductVariations
+            //    .Where(pv => pv.ProductId == request.ProductId)
+            //    .ToListAsync();
+
+
+
+            var productVariationsGrouped = await _context.ProductVariations
                 .Where(pv => pv.ProductId == request.ProductId)
+                .GroupBy(pv => pv.Color)
+                .Select(g => new VariationColorVM
+                     {
+                        Color = g.Key,
+                        Sizes = g.Select(pv => new VariationSizeVM{ Size = pv.Size, Quantity = pv.Quantity, Id = pv.Id }).ToList()
+                     })
                 .ToListAsync();
 
             productBelongsToCurrentUserStore.Images = await _context
@@ -95,7 +121,7 @@ public sealed class GetProductDetailsByProductIdFeature
             var result = _mapper.Map<Response>(productBelongsToCurrentUserStore);
             result.Name = productBelongsToCurrentUserStore.ProductTranslations.FirstOrDefault().Name;
             result.Category = productBelongsToCurrentUserStore.Category?.Name;
-
+            result.Variations = productVariationsGrouped;
             return Result<Response>.Success(result);
         }
     }

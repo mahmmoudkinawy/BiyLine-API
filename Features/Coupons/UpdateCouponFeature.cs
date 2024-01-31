@@ -1,20 +1,22 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BiyLineApi.Features.Coupons;
-public sealed class CreateCouponFeature
+public sealed class UpdateCouponFeature
 {
-    public sealed class Request : IRequest
+    public sealed class Request : IRequest<Result<Response>>
     {
+        public int Id { get; set; }
         public string? Code { get; set; }
         public decimal? DiscountAmount { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 
         public List<int> CategoriesId { get; set; } = new List<int>();
+
         public decimal? DiscountPercentage { get; set; }
         public decimal? CommissionRate { get; set; }
     }
-
+    public sealed class Response { }
     public sealed class Validator : AbstractValidator<Request>
     {
         private readonly BiyLineDbContext _context;
@@ -58,7 +60,7 @@ public sealed class CreateCouponFeature
         }
     }
 
-    public sealed class Handler : IRequestHandler<Request>
+    public sealed class Handler : IRequestHandler<Request,Result<Response>>
     {
         private readonly BiyLineDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -71,25 +73,31 @@ public sealed class CreateCouponFeature
                 throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
-        public async Task Handle(Request request, CancellationToken cancellationToken)
+        public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
+            
             var userId = _httpContextAccessor.HttpContext.User.GetUserById();
 
             var store = await _context.Stores
                 .FirstOrDefaultAsync(s => s.OwnerId == userId, cancellationToken: cancellationToken);
-           
-            var coupon = new CouponEntity
-            {
-                StoreId = store.Id,
-                Code = request.Code,
-                DiscountAmount = request.DiscountAmount.Value,
-                StartDate = request.StartDate,
-                EndDate = request.EndDate,
-                CommissionRate = request.CommissionRate,
-                DiscountPercentage = request.DiscountPercentage
-            };
 
-            _context.Coupons.Add(coupon);
+            var coupon = await _context.Coupons.FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken: cancellationToken);
+            if (coupon == null)
+            {
+                return Result<Response>.Failure(new List<string> {
+                    "Cupon Not Found" });
+            }
+      
+                coupon.StoreId = store.Id;
+                coupon.Code = request.Code;
+                coupon.DiscountAmount = request.DiscountAmount.Value;
+                coupon.StartDate = request.StartDate;
+                coupon.EndDate = request.EndDate;
+                coupon.CommissionRate = request.CommissionRate;
+                coupon.DiscountPercentage = request.DiscountPercentage;
+          
+
+            _context.Coupons.Update(coupon);
             await _context.SaveChangesAsync(cancellationToken);
             foreach (var item in request.CategoriesId)
             {
@@ -104,7 +112,7 @@ public sealed class CreateCouponFeature
                 }
             }
             await _context.SaveChangesAsync(cancellationToken);
-
+            return Result<Response>.Success(new Response { });
         }
     }
 }

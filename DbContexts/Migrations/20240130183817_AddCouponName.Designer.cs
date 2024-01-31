@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    [Migration("20240120140156_AddShippingPriceForShippingCompanyGovernorates")]
-    partial class AddShippingPriceForShippingCompanyGovernorates
+    [Migration("20240130183817_AddCouponName")]
+    partial class AddCouponName
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -342,11 +342,20 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<decimal>("DiscountAmount")
+                    b.Property<decimal?>("CommissionRate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("DiscountAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("DiscountPercentage")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
@@ -363,6 +372,35 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.HasIndex("StoreId");
 
                     b.ToTable("Coupons");
+                });
+
+            modelBuilder.Entity("BiyLineApi.Entities.CouponUsageEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CouponId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ProductName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CouponId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CouponsUsages");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.EmployeeEntity", b =>
@@ -1899,6 +1937,25 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Store");
                 });
 
+            modelBuilder.Entity("BiyLineApi.Entities.CouponUsageEntity", b =>
+                {
+                    b.HasOne("BiyLineApi.Entities.CouponEntity", "Coupon")
+                        .WithMany("Usage")
+                        .HasForeignKey("CouponId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BiyLineApi.Entities.UserEntity", "User")
+                        .WithMany("CouponUsages")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Coupon");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BiyLineApi.Entities.EmployeeEntity", b =>
                 {
                     b.HasOne("BiyLineApi.Entities.ImageEntity", "ImageOwner")
@@ -2583,6 +2640,11 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Stores");
                 });
 
+            modelBuilder.Entity("BiyLineApi.Entities.CouponEntity", b =>
+                {
+                    b.Navigation("Usage");
+                });
+
             modelBuilder.Entity("BiyLineApi.Entities.EmployeeEntity", b =>
                 {
                     b.Navigation("SalaryPayments");
@@ -2718,6 +2780,8 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Addresses");
 
                     b.Navigation("Basket");
+
+                    b.Navigation("CouponUsages");
 
                     b.Navigation("Employees");
 

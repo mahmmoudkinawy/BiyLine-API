@@ -1,4 +1,6 @@
-﻿namespace BiyLineApi.DbContexts;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace BiyLineApi.DbContexts;
 public sealed class BiyLineDbContext : IdentityDbContext<
     UserEntity, RoleEntity, int, IdentityUserClaim<int>,
     UserRoleEntity, IdentityUserLogin<int>, IdentityRoleClaim<int>,
@@ -21,6 +23,8 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<BasketItemEntity> BasketItems { get; set; }
     public DbSet<ProductTranslationEntity> ProductTranslations { get; set; }
     public DbSet<CouponEntity> Coupons { get; set; }
+    public DbSet<CouponUsageEntity> CouponsUsages { get; set; }
+    public DbSet<CouponCategory> CouponCategory { get; set; }
     public DbSet<LegalDocumentEntity> LegalDocuments { get; set; }
     public DbSet<GovernorateEntity> Governments { get; set; }
     public DbSet<CountryEntity> Countries { get; set; }
@@ -456,6 +460,14 @@ public sealed class BiyLineDbContext : IdentityDbContext<
             .WithMany(s => s.StoreWallets)
             .HasForeignKey(s => s.StoreId)
             .OnDelete(DeleteBehavior.NoAction);
+        builder.Entity<CouponCategory>()
+       .HasOne(cc => cc.Coupon)
+       .WithMany(c => c.CouponCategories)
+        .HasForeignKey(cc => cc.CouponId);
 
+        builder.Entity<CouponCategory>()
+            .HasOne(cc => cc.Category)
+            .WithMany(c => c.CouponCategories)
+            .HasForeignKey(cc => cc.CategoryId);
     }
 }

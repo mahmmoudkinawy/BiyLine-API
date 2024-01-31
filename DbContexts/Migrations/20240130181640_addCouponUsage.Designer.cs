@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240130181640_addCouponUsage")]
+    partial class addCouponUsage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -328,29 +331,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.ToTable("Countries");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.CouponCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CouponId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("CouponId");
-
-                    b.ToTable("CouponCategory");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.CouponEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -373,9 +353,6 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
@@ -1947,25 +1924,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("ProductVariation");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.CouponCategory", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.CategoryEntity", "Category")
-                        .WithMany("CouponCategories")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.CouponEntity", "Coupon")
-                        .WithMany("CouponCategories")
-                        .HasForeignKey("CouponId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Coupon");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.CouponEntity", b =>
                 {
                     b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
@@ -2663,8 +2621,6 @@ namespace BiyLineApi.DbContexts.Migrations
 
             modelBuilder.Entity("BiyLineApi.Entities.CategoryEntity", b =>
                 {
-                    b.Navigation("CouponCategories");
-
                     b.Navigation("Images");
 
                     b.Navigation("Products");
@@ -2683,8 +2639,6 @@ namespace BiyLineApi.DbContexts.Migrations
 
             modelBuilder.Entity("BiyLineApi.Entities.CouponEntity", b =>
                 {
-                    b.Navigation("CouponCategories");
-
                     b.Navigation("Usage");
                 });
 

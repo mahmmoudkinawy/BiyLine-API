@@ -1,4 +1,5 @@
-﻿namespace BiyLineApi.Features.Coupons;
+﻿
+namespace BiyLineApi.Features.Coupons;
 public sealed class GetCouponsByTraderFeature
 {
     public sealed class Request : IRequest<PagedList<Response>>
@@ -13,12 +14,16 @@ public sealed class GetCouponsByTraderFeature
     public sealed class Response
     {
         public int Id { get; set; }
+        public string Name { get; set; }
         public string Code { get; set; }
         public decimal DiscountAmount { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public bool IsActive { get; set; }
-        public int UsageCount { get; set; } = new Random().Next(1, 500); // will be replaced
+        public CuponStatus IsActive { get; set; }
+        public int UsageCount { get; set; }  // will be replaced
+        public decimal? DiscountPercentage { get; set; }
+        public decimal? CommissionRate { get; set; }
+        public List<CategoryEntity> categories { get; internal set; }
     }
 
     public sealed class Validator : AbstractValidator<Request>
@@ -61,6 +66,7 @@ public sealed class GetCouponsByTraderFeature
 
             var query = _context.Coupons
                 .Where(c => c.StoreId == store.Id)
+                .Include(c => c.Usage)
                 .OrderByDescending(c => c.EndDate)
                     .ThenByDescending(c => c.StartDate)
                 .AsQueryable();
@@ -75,10 +81,18 @@ public sealed class GetCouponsByTraderFeature
                 Id = coupon.Id,
                 Code = coupon.Code,
                 StartDate = coupon.StartDate.Value,
-                DiscountAmount = coupon.DiscountAmount,
+                DiscountAmount = coupon.DiscountAmount.Value,
                 EndDate = coupon.EndDate.Value,
-                IsActive = coupon.IsCouponActive()
-            });
+                IsActive = coupon.Status,
+                UsageCount = coupon.Usage.Count,
+                Name = coupon.Name,
+                CommissionRate = coupon.CommissionRate,
+                DiscountPercentage = coupon.DiscountPercentage,
+                categories = _context.CouponCategory
+                .Where(cc => cc.CouponId == coupon.Id)
+                .Select(cc => cc.Category)
+                .ToList()
+        });
 
             return await PagedList<Response>.CreateAsync(
                 result.AsNoTracking(),

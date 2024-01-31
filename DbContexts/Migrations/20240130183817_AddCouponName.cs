@@ -5,25 +5,24 @@
 namespace BiyLineApi.DbContexts.Migrations
 {
     /// <inheritdoc />
-    public partial class AddShippingPriceForShippingCompanyGovernorates : Migration
+    public partial class AddCouponName : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<decimal>(
-                name: "ShippingPrice",
-                table: "ShippingCompanyGovernorates",
-                type: "decimal(18,2)",
-                nullable: false,
-                defaultValue: 0m);
+            migrationBuilder.AddColumn<string>(
+                name: "Name",
+                table: "Coupons",
+                type: "nvarchar(max)",
+                nullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "ShippingPrice",
-                table: "ShippingCompanyGovernorates");
+                name: "Name",
+                table: "Coupons");
         }
     }
 }

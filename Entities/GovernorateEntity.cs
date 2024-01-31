@@ -11,4 +11,5 @@ public sealed class GovernorateEntity
     public ICollection<ShippingCompanyGovernorateDetailsEntity> ShippingCompanyGovernorates { get; set; }
         = new List<ShippingCompanyGovernorateDetailsEntity>();
     public ICollection<RegionEntity> Regions { get; set; }
+    public ICollection<AddressEntity> Addresses { get; set; } = new List<AddressEntity>();
 }

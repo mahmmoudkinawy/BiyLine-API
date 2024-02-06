@@ -33,6 +33,8 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<SubcategoryEntity> Subcategories { get; set; }
     public DbSet<SubSpecializationEntity> SubSpecializations { get; set; }
     public DbSet<ShippingCompanyEntity> ShippingCompanies { get; set; }
+    public DbSet<ShippingCompanyGovernorateEntity> ShippingCompanyGovernorates { get; set; }
+
     public DbSet<ShippingCompanyGovernorateDetailsEntity> ShippingCompanyGovernorateDetails { get; set; }
     public DbSet<EmployeeEntity> Employees { get; set; }
     public DbSet<WarehouseEntity> Warehouses { get; set; }

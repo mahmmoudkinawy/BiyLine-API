@@ -471,6 +471,8 @@ public sealed class BiyLineDbContext : IdentityDbContext<
             .HasOne(cc => cc.Category)
             .WithMany(c => c.CouponCategories)
             .HasForeignKey(cc => cc.CategoryId);
+
+
         builder.Entity<ShippingCompanyGovernorateDetailsEntity>().HasOne(s => s.ShippingCompany)
             .WithMany(s => s.ShippingCompanyGovernorateDetails)
             .HasForeignKey(s => s.ShippingCompanyId);

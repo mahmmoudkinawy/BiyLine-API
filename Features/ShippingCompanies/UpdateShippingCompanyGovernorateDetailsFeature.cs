@@ -12,6 +12,8 @@
             public double Weight { get; set; }
             public decimal OverweightFees { get; set; }
             public bool Status { get; set; }
+            public int GovernorateId { get; set; }
+
         }
 
         public sealed class Response
@@ -62,13 +64,13 @@
 
 
                     details.Status = request.Status;
-                    details.Name = request.Name;
+                    //details.Name = request.Name;
                     details.ReturnCost = request.ReturnCost;
                     details.PickUpCost = request.PickUpCost;
                     details.ShippingCost = request.ShippingCost;
                     details.Weight = request.Weight;
                     details.OverweightFees = request.OverweightFees;
-
+                    details.GovernorateId = request.GovernorateId;
                     _context.ShippingCompanyGovernorateDetails.Update(details);
                     await _context.SaveChangesAsync(cancellationToken);
                     return Result<Response>.Success(new Response { ShippingCompanyGovernorateDetails = details });

@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240206184339_updataShipping")]
+    partial class updataShipping
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1082,6 +1085,7 @@ namespace BiyLineApi.DbContexts.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("StoreId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int>("UserEntityId")
@@ -1090,8 +1094,7 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("StoreId")
-                        .IsUnique()
-                        .HasFilter("[StoreId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("UserEntityId");
 
@@ -2329,7 +2332,9 @@ namespace BiyLineApi.DbContexts.Migrations
                 {
                     b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
                         .WithOne()
-                        .HasForeignKey("BiyLineApi.Entities.ShippingCompanyEntity", "StoreId");
+                        .HasForeignKey("BiyLineApi.Entities.ShippingCompanyEntity", "StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BiyLineApi.Entities.UserEntity", "UserEntity")
                         .WithMany("shippingCompanyEntities")

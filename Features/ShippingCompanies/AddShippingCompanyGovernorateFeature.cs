@@ -1,4 +1,9 @@
-﻿namespace BiyLineApi.Features.ShippingCompanies
+﻿using Bogus.DataSets;
+using System.Collections.Generic;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace BiyLineApi.Features.ShippingCompanies
 {
     public sealed class AddShippingCompanyGovernorateFeature
     {
@@ -10,7 +15,7 @@
             public decimal ReturnCost { get; set; }
             public double Weight { get; set; }
             public decimal OverweightFees { get; set; }
-
+            public int GovernorateId { get; set; }
             public int ShippingCompanyId { get; set; }
         }
 
@@ -53,13 +58,14 @@
             private readonly UserManager<UserEntity> _userManager;
             private readonly IImageService _imageService;
             private readonly IDateTimeProvider _dateTimeProvider;
+            private readonly IStringLocalizer<CommonResources> _localizer;
 
             public Handler(
                 BiyLineDbContext context,
                 UserManager<UserEntity> userManager,
                             IImageService imageService,
                                         IDateTimeProvider dateTimeProvider,
-
+                                                    IStringLocalizer<CommonResources> localizer,
                 IHttpContextAccessor httpContextAccessor)
             {
                 _userManager = userManager ??
@@ -70,6 +76,7 @@
                     throw new ArgumentNullException(nameof(httpContextAccessor));
                 _imageService = imageService ?? throw new ArgumentNullException(nameof(imageService));
                 _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
+                this._localizer = localizer;
             }
 
             public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
@@ -80,30 +87,31 @@
 
                     if (shippingCompany == null)
                     {
-                        return Result<Response>.Failure(new List<string> { "shipping company not found" });
+                        return Result<Response>.Failure(_localizer[CommonResources.ShippingCompanyNotFound].Value);
                     }
                     if(shippingCompany.PaymentMethod == null)
                     {
-                        return Result<Response>.Failure(new List<string> { "shipping company must have Payment Method first" });
+                        return Result<Response>.Failure(_localizer[CommonResources.ShippingCompanyMustHavePaymentMethodFirst].Value);
                     }
                     if(shippingCompany.PhoneNumber == null)
                     {
-                        return Result<Response>.Failure(new List<string> { "shipping company must have Phone Number first" });
+                        return Result<Response>.Failure(_localizer[CommonResources.ShippingCompanyMustHavePhoneNumberFirst].Value);
                     }
                     if(shippingCompany.DeliveryCases == null)
                     {
-                        return Result<Response>.Failure(new List<string> { "shipping company must have delivery case first" });
+                        return Result<Response>.Failure(_localizer[CommonResources.ShippingCompanyMustHaveDeliveryCaseFirst].Value);
                     }
                     var shippingCompanyGovernorate = new ShippingCompanyGovernorateDetailsEntity
                     {
                         ShippingCompanyId = request.ShippingCompanyId,
-                        Name = request.Name,
+                        //Name = request.Name,
                         OverweightFees = request.OverweightFees,
                         PickUpCost = request.PickUpCost,
                         ReturnCost = request.ReturnCost,
                         ShippingCost = request.ShippingCost,
                         Status = true,
-                        Weight = request.Weight
+                        Weight = request.Weight,
+                        GovernorateId = request.GovernorateId
                     };
                     await _context.ShippingCompanyGovernorateDetails.AddAsync(shippingCompanyGovernorate);
 

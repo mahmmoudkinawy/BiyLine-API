@@ -62,6 +62,12 @@ public static class SwaggerServiceExtensions
                 Description = "Trader endpoints and logic for API Version 2",
                 Version = "v2"
             });
+            opts.SwaggerDoc("v3", new OpenApiInfo
+            {
+                Title = "ShippingCompany - API Version 3",
+                Description = "Shipping Company endpoints and logic for API Version 3",
+                Version = "v3"
+            });
 
             opts.OperationFilter<AcceptLanguageHeaderOperationFilter>();
         });

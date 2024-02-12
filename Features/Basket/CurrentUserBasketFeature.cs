@@ -24,19 +24,15 @@ public class CurrentUserBasketFeature
     public sealed class Handler : IRequestHandler<Request, Response>
     {
         private readonly BiyLineDbContext _context;
-        private readonly IMapper _mapper;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public Handler(BiyLineDbContext context,
-            IMapper mapper,
             IDateTimeProvider dateTimeProvider,
             IHttpContextAccessor httpContextAccessor)
         {
             _context = context ??
                 throw new ArgumentNullException(nameof(context));
-            _mapper = mapper ??
-                throw new ArgumentNullException(nameof(mapper));
             _dateTimeProvider = dateTimeProvider ??
                 throw new ArgumentNullException(nameof(dateTimeProvider));
             _httpContextAccessor = httpContextAccessor ??

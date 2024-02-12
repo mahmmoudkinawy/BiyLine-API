@@ -96,7 +96,7 @@ public sealed class AddItemToBasketFeature
                 return Result<Response>.Failure("Not enough stock available for this product.");
             }
 
-            if (productInBasket is not null)
+            if (productInBasket is not null)   // the same product
             {
                 if (product.CountInStock < request.Quantity + productInBasket.Quantity)
                 {
@@ -106,11 +106,33 @@ public sealed class AddItemToBasketFeature
                 productInBasket.Quantity += request.Quantity;
                 basket.UpdatedAt = _dateTimeProvider.GetCurrentDateTimeUtc();
             }
-            else
+            else   // another product in the basket or no product in basket
             {
-                if (product.CountInStock < request.Quantity)
+
+                // 1 - no product in basket 
+                if (basket.BasketItems.Count() == 0)
                 {
-                    return Result<Response>.Failure("Not enough stock available for this product.");
+
+                    if (product.CountInStock < request.Quantity)
+                    {
+                        return Result<Response>.Failure("Not enough stock available for this product.");
+                    }
+                    basket.StoreId = product.StoreId;
+
+                }
+                else
+                {
+                    if (product.StoreId != basket.StoreId)
+                    {
+                        return Result<Response>.Failure("The all products must are from the same store");
+                    }
+
+
+                    if (product.CountInStock < request.Quantity)
+                    {
+                        return Result<Response>.Failure("Not enough stock available for this product.");
+                    }
+
                 }
 
                 var productTranslation = await _context.ProductTranslations

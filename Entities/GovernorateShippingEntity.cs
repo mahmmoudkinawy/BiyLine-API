@@ -12,5 +12,4 @@ public sealed class GovernorateShippingEntity
     public GovernorateEntity Governorate { get; set; }
     public int TraderShippingCompanyId { get; set; }
     public TraderShippingCompanyEntity TraderShippingCompany { get; set; }
-    public ICollection<CenterShippingEntity> CenterShippings { get; set; } = new List<CenterShippingEntity>();
 }

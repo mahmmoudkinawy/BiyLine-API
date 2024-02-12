@@ -88,4 +88,19 @@ public sealed class BasketController : ControllerBase
         return Ok(response);
     }
 
+    [HttpGet("{addressId}")]
+    public async Task<ActionResult<GetCurrentUserBasketWithAddressAndShippingCostFeature.Response>>
+        GetAddressAndTotalShippingPrice([FromRoute] int addressId)
+    {
+        var request =  new GetCurrentUserBasketWithAddressAndShippingCostFeature.Request { AddressId = addressId };
+        var response = await _mediator.Send(request);
+
+        if (!response.IsSuccess)
+        {
+            return NotFound(response.Errors);
+        }
+        return Ok(response.Value) ;
+    }
+
+
 }

@@ -5,6 +5,4 @@ public static class ProductExtensions
     {
         return price - ((price * discountPercentage) / 100);
     }
-
-    public static decimal CalculateBasketTotalPrice(this BasketEntity basket) => basket.BasketItems.Sum(bi => (bi.Price * bi.Quantity.Value));
 }

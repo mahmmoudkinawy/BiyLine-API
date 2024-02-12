@@ -77,16 +77,8 @@ public sealed class GetCouponsByTraderFeature
                 StartDate = coupon.StartDate.Value,
                 DiscountAmount = coupon.DiscountAmount,
                 EndDate = coupon.EndDate.Value,
-                IsActive = coupon.Status,
-                UsageCount = coupon.Usage.Count,
-                Name = coupon.Name,
-                CommissionRate = coupon.CommissionRate,
-                DiscountPercentage = coupon.DiscountPercentage,
-                categories = _context.CouponCategory
-                .Where(cc => cc.CouponId == coupon.Id)
-                .Select(cc => cc.Category)
-                .ToList()
-        });
+                IsActive = coupon.IsCouponActive()
+            });
 
             return await PagedList<Response>.CreateAsync(
                 result.AsNoTracking(),

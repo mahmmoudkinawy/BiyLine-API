@@ -7,6 +7,10 @@ public sealed class CreateCouponFeature
         public decimal? DiscountAmount { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public decimal? CommissionRate { get;  set; }
+        public decimal? DiscountPercentage { get;  set; }
+        public string? Name { get; internal set; }
+        public List<int> CategoriesIds { get; set; } = new List<int>();
     }
 
     public sealed class Validator : AbstractValidator<Request>
@@ -78,11 +82,21 @@ public sealed class CreateCouponFeature
                 Code = request.Code,
                 DiscountAmount = request.DiscountAmount.Value,
                 StartDate = request.StartDate,
-                EndDate = request.EndDate
+                EndDate = request.EndDate,CommissionRate = request.CommissionRate,
+                DiscountPercentage = request.DiscountPercentage,
+                Name = request.Name
             };
 
             _context.Coupons.Add(coupon);
             await _context.SaveChangesAsync(cancellationToken);
+            foreach (var item in request.CategoriesIds)
+            {
+                _context.CouponCategory.Add(new CouponCategory
+                {
+                    CategoryId = item,
+                    CouponId = coupon.Id
+                });
+            }
         }
     }
 }

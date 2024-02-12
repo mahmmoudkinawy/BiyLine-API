@@ -1,4 +1,5 @@
-﻿namespace BiyLineApi.Features.Coupons;
+﻿
+namespace BiyLineApi.Features.Coupons;
 public sealed class GetCouponsByTraderFeature
 {
     public sealed class Request : IRequest<PagedList<Response>>
@@ -17,8 +18,12 @@ public sealed class GetCouponsByTraderFeature
         public decimal DiscountAmount { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public bool IsActive { get; set; }
+        public CouponStatus IsActive { get; set; }
         public int UsageCount { get; set; } = new Random().Next(1, 500); // will be replaced
+        public string? Name { get; internal set; }
+        public decimal? CommissionRate { get; internal set; }
+        public decimal? DiscountPercentage { get; internal set; }
+        public List<CategoryEntity> categories { get; internal set; }
     }
 
     public sealed class Validator : AbstractValidator<Request>

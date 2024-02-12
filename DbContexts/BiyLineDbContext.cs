@@ -17,6 +17,7 @@ public sealed class BiyLineDbContext : IdentityDbContext<
 
     public DbSet<ProductEntity> Products { get; set; }
     public DbSet<CategoryEntity> Categories { get; set; }
+    public DbSet<CouponCategory> CouponCategory { get; set; }
     public DbSet<OfferEntity> Offers { get; set; }
     public DbSet<StoreEntity> Stores { get; set; }
     public DbSet<RateEntity> Rates { get; set; }
@@ -37,6 +38,8 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<SubSpecializationEntity> SubSpecializations { get; set; }
     public DbSet<ShippingCompanyEntity> ShippingCompanies { get; set; }
     public DbSet<ShippingCompanyGovernorateDetailsEntity> ShippingCompanyGovernorateDetails { get; set; }
+    public DbSet<ShippingCompanyGovernorateEntity> ShippingCompanyGovernorates { get; set; }
+
     public DbSet<EmployeeEntity> Employees { get; set; }
     public DbSet<WarehouseEntity> Warehouses { get; set; }
     public DbSet<SupplierEntity> Suppliers { get; set; }

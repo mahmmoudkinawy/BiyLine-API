@@ -79,7 +79,16 @@ public sealed class ApplyCouponFeature
             }
             var totalBeforeDiscount = basket.BasketItems.Sum(bi => bi.Price * bi.Quantity.Value);
 
-            basket.TotalPrice -= coupon.DiscountAmount;
+            var couponCat = _context.CouponCategory.Where(cc => cc.CouponId == coupon.Id).ToList();
+            foreach (var item in basket.BasketItems)
+            {
+                var category = couponCat.FirstOrDefault(c => c.CategoryId == item.Product.CategoryId);
+                if (category is not null)
+                {
+                    item.Price -= coupon.DiscountPercentage.Value * item.Price;
+                }
+            }
+            basket.TotalPrice = basket.CalculateBasketTotalPrice();
 
             CouponUsageEntity couponUsage = new CouponUsageEntity
             {

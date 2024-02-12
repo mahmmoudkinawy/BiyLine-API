@@ -25,6 +25,7 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<BasketItemEntity> BasketItems { get; set; }
     public DbSet<ProductTranslationEntity> ProductTranslations { get; set; }
     public DbSet<CouponEntity> Coupons { get; set; }
+    public DbSet<CouponUsageEntity> CouponsUsages { get; set; }
     public DbSet<LegalDocumentEntity> LegalDocuments { get; set; }
     public DbSet<GovernorateEntity> Governments { get; set; }
     public DbSet<CountryEntity> Countries { get; set; }

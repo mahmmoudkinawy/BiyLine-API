@@ -1,4 +1,6 @@
-﻿namespace BiyLineApi.Features.Coupons;
+﻿using BiyLineApi.Extensions;
+
+namespace BiyLineApi.Features.Coupons;
 public sealed class ApplyCouponFeature
 {
     public sealed class Request : IRequest<Result<Response>>
@@ -51,7 +53,7 @@ public sealed class ApplyCouponFeature
 
             var basket = await _context.Baskets
                 .IgnoreQueryFilters()
-                .Include(b => b.BasketItems)
+                .Include(b => b.BasketItems).ThenInclude(bi => bi.Product)
                 .FirstOrDefaultAsync(b => b.UserId == userId, cancellationToken: cancellationToken);
 
             if (basket is null)
@@ -75,12 +77,21 @@ public sealed class ApplyCouponFeature
                     "Coupon does not found or expired."
                 });
             }
+            var totalBeforeDiscount = basket.BasketItems.Sum(bi => bi.Price * bi.Quantity.Value);
 
             basket.TotalPrice -= coupon.DiscountAmount;
 
+            CouponUsageEntity couponUsage = new CouponUsageEntity
+            {
+                CouponId = coupon.Id,
+                ItemCount = basket.BasketItems.Count,
+                Price = basket.TotalPrice * coupon.CommissionRate.Value,
+                UserId = userId.Value
+            };
+            _context.CouponsUsages.Add(couponUsage);
             await _context.SaveChangesAsync(cancellationToken);
 
-            var totalBeforeDiscount = basket.BasketItems.Sum(bi => bi.Price * bi.Quantity.Value);
+            //var totalBeforeDiscount = basket.BasketItems.Sum(bi => bi.Price * bi.Quantity.Value);
 
             return Result<Response>.Success(new Response
             {

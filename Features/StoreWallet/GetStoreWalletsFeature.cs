@@ -12,7 +12,7 @@ public sealed class GetStoreWalletsFeature
     {
         public int Id { get; set; }
         public string StoreWalletName { get; set; }
-        public decimal TotalBalance { get; set; }
+        public decimal? TotalBalance { get; set; }
         public DateTime DateTime { get; set; }
         public string StoreWalletStatus { get; set; }
         public string EmployeeName { get; set; }

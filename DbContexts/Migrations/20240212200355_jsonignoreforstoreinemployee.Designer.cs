@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240212200355_jsonignoreforstoreinemployee")]
+    partial class jsonignoreforstoreinemployee
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -328,29 +331,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.ToTable("Countries");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.CouponCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CouponId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("CouponId");
-
-                    b.ToTable("CouponCategory");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.CouponEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -362,20 +342,11 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<decimal?>("CommissionRate")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("DiscountAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("DiscountPercentage")
+                    b.Property<decimal>("DiscountAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
@@ -392,35 +363,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.HasIndex("StoreId");
 
                     b.ToTable("Coupons");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.CouponUsageEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CouponId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("ProductName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CouponId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CouponsUsages");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.EmployeeEntity", b =>
@@ -634,9 +576,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ShippingCompanyEntityID")
-                        .HasColumnType("int");
-
                     b.Property<int?>("StoreId")
                         .HasColumnType("int");
 
@@ -655,8 +594,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.HasIndex("OwnerId");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("ShippingCompanyEntityID");
 
                     b.HasIndex("StoreId");
 
@@ -1057,17 +994,8 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Collection")
-                        .HasColumnType("int");
-
                     b.Property<string>("CountryCode")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("DeliveryCases")
-                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
@@ -1075,68 +1003,36 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PaymentMethod")
-                        .HasColumnType("int");
-
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("StoreId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserEntityId")
+                    b.Property<int>("StoreId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("StoreId")
-                        .IsUnique()
-                        .HasFilter("[StoreId] IS NOT NULL");
-
-                    b.HasIndex("UserEntityId");
+                        .IsUnique();
 
                     b.ToTable("ShippingCompanies");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.ShippingCompanyGovernorateDetailsEntity", b =>
+            modelBuilder.Entity("BiyLineApi.Entities.ShippingCompanyGovernorateEntity", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ShippingCompanyId")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("GovernorateId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("OverweightFees")
+                    b.Property<decimal>("ShippingPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("PickUpCost")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ReturnCost")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("ShippingCompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("ShippingCost")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
-                    b.Property<double>("Weight")
-                        .HasColumnType("float");
-
-                    b.HasKey("Id");
+                    b.HasKey("ShippingCompanyId", "GovernorateId");
 
                     b.HasIndex("GovernorateId");
 
-                    b.HasIndex("ShippingCompanyId");
-
-                    b.ToTable("ShippingCompanyGovernorateDetails");
+                    b.ToTable("ShippingCompanyGovernorates");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.SpecializationEntity", b =>
@@ -2008,25 +1904,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("ProductVariation");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.CouponCategory", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.CategoryEntity", "Category")
-                        .WithMany("CouponCategories")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.CouponEntity", "Coupon")
-                        .WithMany("CouponCategories")
-                        .HasForeignKey("CouponId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Coupon");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.CouponEntity", b =>
                 {
                     b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
@@ -2035,25 +1912,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Store");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.CouponUsageEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.CouponEntity", "Coupon")
-                        .WithMany("Usage")
-                        .HasForeignKey("CouponId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.UserEntity", "User")
-                        .WithMany("CouponUsages")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Coupon");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.EmployeeEntity", b =>
@@ -2178,10 +2036,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("BiyLineApi.Entities.ShippingCompanyEntity", "ShippingCompanyEntity")
-                        .WithMany("Images")
-                        .HasForeignKey("ShippingCompanyEntityID");
-
                     b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
                         .WithMany("Images")
                         .HasForeignKey("StoreId")
@@ -2194,8 +2048,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Owner");
 
                     b.Navigation("Product");
-
-                    b.Navigation("ShippingCompanyEntity");
 
                     b.Navigation("Store");
                 });
@@ -2330,20 +2182,14 @@ namespace BiyLineApi.DbContexts.Migrations
                 {
                     b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
                         .WithOne()
-                        .HasForeignKey("BiyLineApi.Entities.ShippingCompanyEntity", "StoreId");
-
-                    b.HasOne("BiyLineApi.Entities.UserEntity", "UserEntity")
-                        .WithMany("shippingCompanyEntities")
-                        .HasForeignKey("UserEntityId")
+                        .HasForeignKey("BiyLineApi.Entities.ShippingCompanyEntity", "StoreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Store");
-
-                    b.Navigation("UserEntity");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.ShippingCompanyGovernorateDetailsEntity", b =>
+            modelBuilder.Entity("BiyLineApi.Entities.ShippingCompanyGovernorateEntity", b =>
                 {
                     b.HasOne("BiyLineApi.Entities.GovernorateEntity", "Governorate")
                         .WithMany("ShippingCompanyGovernorates")
@@ -2352,7 +2198,7 @@ namespace BiyLineApi.DbContexts.Migrations
                         .IsRequired();
 
                     b.HasOne("BiyLineApi.Entities.ShippingCompanyEntity", "ShippingCompany")
-                        .WithMany("ShippingCompanyGovernorateDetails")
+                        .WithMany("ShippingCompanyGovernorates")
                         .HasForeignKey("ShippingCompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2737,8 +2583,6 @@ namespace BiyLineApi.DbContexts.Migrations
 
             modelBuilder.Entity("BiyLineApi.Entities.CategoryEntity", b =>
                 {
-                    b.Navigation("CouponCategories");
-
                     b.Navigation("Images");
 
                     b.Navigation("Products");
@@ -2753,13 +2597,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Governorates");
 
                     b.Navigation("Stores");
-                });
-
-            modelBuilder.Entity("BiyLineApi.Entities.CouponEntity", b =>
-                {
-                    b.Navigation("CouponCategories");
-
-                    b.Navigation("Usage");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.EmployeeEntity", b =>
@@ -2822,9 +2659,7 @@ namespace BiyLineApi.DbContexts.Migrations
 
             modelBuilder.Entity("BiyLineApi.Entities.ShippingCompanyEntity", b =>
                 {
-                    b.Navigation("Images");
-
-                    b.Navigation("ShippingCompanyGovernorateDetails");
+                    b.Navigation("ShippingCompanyGovernorates");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.SpecializationEntity", b =>
@@ -2900,15 +2735,11 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     b.Navigation("Basket");
 
-                    b.Navigation("CouponUsages");
-
                     b.Navigation("Employees");
 
                     b.Navigation("Store");
 
                     b.Navigation("UserRoles");
-
-                    b.Navigation("shippingCompanyEntities");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.WarehouseEntity", b =>

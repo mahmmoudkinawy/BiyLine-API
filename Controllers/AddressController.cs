@@ -8,7 +8,6 @@ namespace BiyLineApi.Controllers;
 [ApiVersion(2.0)]
 [ApiVersion(1.0)]
 [Route("api/v{version:apiVersion}/address")]
-[Authorize]
 [ApiController]
 public sealed class AddressController : ControllerBase
 {
@@ -20,6 +19,7 @@ public sealed class AddressController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Constants.Policies.AddressRead)]
     public async Task<ActionResult<IReadOnlyList<GetAddressesForCustomerFeature.Response>>> GetAddresses(
         [FromQuery] PaginationParams paginationParams)
     {
@@ -39,6 +39,9 @@ public sealed class AddressController : ControllerBase
     }
 
     [HttpGet("{addressId}")]
+    [Authorize( Constants.Policies.AddressRead)]
+
+
     public async Task<ActionResult<GetAddressByIdFeature.Response>> GetAddressById([FromRoute] int addressId)
     {
         var response = await _mediator.Send(new GetAddressByIdFeature.Request { Id = addressId });
@@ -51,7 +54,9 @@ public sealed class AddressController : ControllerBase
         return NoContent();
     }
 
+
     [HttpPost]
+    [Authorize(Constants.Policies.AddressWrite)]
     public async Task<IActionResult> CreateAddress([FromBody] CreateAddressFeature.Request request)
     {
         var response = await _mediator.Send(request);
@@ -65,6 +70,8 @@ public sealed class AddressController : ControllerBase
     }
 
     [HttpPut("{addressId}")]
+    [Authorize( Constants.Policies.AddressWrite)]
+
     public async Task<IActionResult> UpdateAddress([FromBody] UpdateAddressFeature.Request request)
     {
         var response = await _mediator.Send(request);
@@ -78,6 +85,8 @@ public sealed class AddressController : ControllerBase
     }
 
     [HttpDelete("{addressId}")]
+    [Authorize( Constants.Policies.AddressWrite)]
+
     public async Task<IActionResult> DeleteAddress([FromRoute] int addressId)
     {
         var response = await _mediator.Send(new DeleteAddressFeature.Request { AddressId = addressId });

@@ -63,7 +63,7 @@ public class GetCurrentUserBasketWithAddressAndShippingCostFeature
                 .Include(g=>g.TraderShippingCompany)
                 .Where(g => g.GovernorateId == address.GovernorateId && g.TraderShippingCompany.StoreId == basket.StoreId);
 
-            var governorateShippings = _context.ShippingCompanyGovernorates
+            var governorateShippings = _context.ShippingCompanyGovernorateDetails
                 .Include(g=>g.ShippingCompany)
                 .Where(g=>g.GovernorateId == address.GovernorateId && g.ShippingCompany.StoreId == basket.StoreId);
 
@@ -80,12 +80,12 @@ public class GetCurrentUserBasketWithAddressAndShippingCostFeature
             }
              else if(governorateShippingsForTrader.Count() <= 0 && governorateShippings.Count() > 0 )
             {
-                shippingPrice = governorateShippings.Max(g => g.ShippingPrice);
+                shippingPrice = governorateShippings.Max(g => g.ShippingCost);
             }
             else
             {
                 var shippingPriceForTrader = governorateShippingsForTrader.Max(g => g.ShippingPrice);
-                var shippingPriceForCompany = governorateShippings.Max(g => g.ShippingPrice);
+                var shippingPriceForCompany = governorateShippings.Max(g => g.ShippingCost);
 
                 shippingPrice = shippingPriceForTrader > shippingPriceForCompany ? shippingPriceForTrader : shippingPriceForCompany;
             }

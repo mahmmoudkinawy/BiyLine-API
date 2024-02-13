@@ -49,7 +49,7 @@ public sealed class GetShippingCompaniesFeature
 
             var query = _context
                 .ShippingCompanies
-                .Where(sc => sc.StoreId == store.Id)
+                //.Where(sc => sc.StoreId == store.Id)
                 .OrderBy(sc => sc.Id)
                 .AsQueryable();
 

@@ -73,6 +73,20 @@ public sealed class AccountController : ControllerBase
 
         return Ok(response.Value);
     }
+    [ApiVersion(3.0)]
+    [HttpPost("register-shippingCompany")]
+    public async Task<ActionResult<RegisterStoreFeature.Response>> RegisterShippingCompany(
+       [FromBody] ShippingCompanyRegisterFeature.Request request)
+    {
+        var response = await _mediator.Send(request);
+
+        if (!response.IsSuccess)
+        {
+            return BadRequest(response.Errors);
+        }
+
+        return Ok(response.Value);
+    }
 
     [ApiVersion(1.0)]
     [ApiVersion(2.0)]

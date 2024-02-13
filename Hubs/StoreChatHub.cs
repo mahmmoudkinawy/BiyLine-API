@@ -1,7 +1,8 @@
 ﻿namespace BiyLineApi.Hubs;
 
+/// Authorized Message Hub that's accessed via hubs/storechathub.
 /// <summary>
-/// Authorized Message Hub that's accessed via 'hubs/storechathub'.
+/// Authorized Message Hub
 /// </summary>///
 [SignalRHub]
 [Authorize]
@@ -18,8 +19,9 @@ public sealed class StoreChatHub : Hub
         _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
     }
 
-    /// <summary>
     /// ReceiveMessageThread Hub method method that's used for receiving a message.
+    /// <summary>
+    /// ReceiveMessageThread Hub
     /// </summary>
     [SignalRMethod("StoreReceiveMessage")]
     public async Task SendMessage(string storeOwner, string message)
@@ -48,8 +50,9 @@ public sealed class StoreChatHub : Hub
             .SendAsync("StoreReceiveMessage", Context.User.Identity.Name, message);
     }
 
-    /// <summary>
     /// JoinStoreOwnerGroup Hub method method that's used jointing a customer with store owner.
+    /// <summary>
+    /// JoinStoreOwnerGroup
     /// </summary>
     [SignalRMethod("JoinStoreOwnerGroup")]
     public async Task JoinStoreOwnerGroup(string storeOwnerId)
@@ -57,8 +60,9 @@ public sealed class StoreChatHub : Hub
         await Groups.AddToGroupAsync(Context.ConnectionId, storeOwnerId);
     }
 
-    /// <summary>
     /// LeaveStoreOwnerGroup Hub method method that's used disconnecting a customer with store owner.
+    /// <summary>
+    /// LeaveStoreOwnerGroup Hub
     /// </summary>
     [SignalRMethod("LeaveStoreOwnerGroup")]
     public async Task LeaveStoreOwnerGroup(string storeOwnerId)

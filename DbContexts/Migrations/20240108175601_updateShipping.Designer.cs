@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240108175601_updateShipping")]
+    partial class updateShipping
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,37 +24,6 @@ namespace BiyLineApi.DbContexts.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("BiyLineApi.Entities.AddressEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AddressDetails")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("GovernorateId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GovernorateId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Addresses");
-                });
 
             modelBuilder.Entity("BiyLineApi.Entities.BasketEntity", b =>
                 {
@@ -61,14 +33,8 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AddressId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<int?>("StoreId")
-                        .HasColumnType("int");
 
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18,2)");
@@ -80,10 +46,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AddressId");
-
-                    b.HasIndex("StoreId");
 
                     b.HasIndex("UserId")
                         .IsUnique()
@@ -210,6 +172,47 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("BiyLineApi.Entities.CenterShippingEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("GovernorateShippingId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("PickupPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PricePerExtraKilo")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ReturnCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ShippingPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("WeightTo")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GovernorateShippingId");
+
+                    b.ToTable("CenterShippings");
+                });
+
             modelBuilder.Entity("BiyLineApi.Entities.ContractOrderEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -328,29 +331,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.ToTable("Countries");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.CouponCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CouponId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("CouponId");
-
-                    b.ToTable("CouponCategory");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.CouponEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -362,20 +342,11 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<decimal?>("CommissionRate")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("DiscountAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("DiscountPercentage")
+                    b.Property<decimal>("DiscountAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
@@ -394,35 +365,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.ToTable("Coupons");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.CouponUsageEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CouponId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("ProductName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CouponId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CouponsUsages");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.EmployeeEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -437,6 +379,21 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<DateTime?>("EmploymentDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("ImageOwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("NationalIdImageId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentMethod")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentPeriod")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal?>("Salary")
                         .HasColumnType("decimal(18,2)");
 
@@ -446,7 +403,19 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<string>("VisaNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("WorkingHours")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ImageOwnerId")
+                        .IsUnique()
+                        .HasFilter("[ImageOwnerId] IS NOT NULL");
+
+                    b.HasIndex("NationalIdImageId");
 
                     b.HasIndex("StoreId");
 
@@ -738,23 +707,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.ToTable("Offers");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.PermissionEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("PermissionName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Permissions");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.ProductEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -1015,29 +967,19 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal?>("Deduction")
+                    b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("Increase")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Notes")
+                    b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("PaidAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("PaymentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("StoreWalletId")
+                    b.Property<int>("StoreWalletId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1082,6 +1024,7 @@ namespace BiyLineApi.DbContexts.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("StoreId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int>("UserEntityId")
@@ -1090,8 +1033,7 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("StoreId")
-                        .IsUnique()
-                        .HasFilter("[StoreId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("UserEntityId");
 
@@ -1106,8 +1048,12 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("GovernorateId")
+                    b.Property<int?>("GovernorateEntityId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("OverweightFees")
                         .HasColumnType("decimal(18,2)");
@@ -1132,7 +1078,7 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GovernorateId");
+                    b.HasIndex("GovernorateEntityId");
 
                     b.HasIndex("ShippingCompanyId");
 
@@ -1441,7 +1387,7 @@ namespace BiyLineApi.DbContexts.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("TotalBalance")
+                    b.Property<decimal>("TotalBalance")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -1772,21 +1718,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.ToTable("ContractOrderProductEntityContractOrderVariationEntity");
                 });
 
-            modelBuilder.Entity("EmployeeEntityPermissionEntity", b =>
-                {
-                    b.Property<int>("EmployeePermissionsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PermissionsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("EmployeePermissionsId", "PermissionsId");
-
-                    b.HasIndex("PermissionsId");
-
-                    b.ToTable("EmployeeEntityPermissionEntity");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -1875,43 +1806,12 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.AddressEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.GovernorateEntity", "Governorate")
-                        .WithMany("Addresses")
-                        .HasForeignKey("GovernorateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.UserEntity", "User")
-                        .WithMany("Addresses")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Governorate");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.BasketEntity", b =>
                 {
-                    b.HasOne("BiyLineApi.Entities.AddressEntity", "Address")
-                        .WithMany("baskets")
-                        .HasForeignKey("AddressId");
-
-                    b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
-                        .WithMany("Baskets")
-                        .HasForeignKey("StoreId");
-
                     b.HasOne("BiyLineApi.Entities.UserEntity", "User")
                         .WithOne("Basket")
                         .HasForeignKey("BiyLineApi.Entities.BasketEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Address");
-
-                    b.Navigation("Store");
 
                     b.Navigation("User");
                 });
@@ -1953,6 +1853,17 @@ namespace BiyLineApi.DbContexts.Migrations
                         .IsRequired();
 
                     b.Navigation("StoreWallet");
+                });
+
+            modelBuilder.Entity("BiyLineApi.Entities.CenterShippingEntity", b =>
+                {
+                    b.HasOne("BiyLineApi.Entities.GovernorateShippingEntity", "GovernorateShipping")
+                        .WithMany("CenterShippings")
+                        .HasForeignKey("GovernorateShippingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GovernorateShipping");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.ContractOrderEntity", b =>
@@ -2008,25 +1919,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("ProductVariation");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.CouponCategory", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.CategoryEntity", "Category")
-                        .WithMany("CouponCategories")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.CouponEntity", "Coupon")
-                        .WithMany("CouponCategories")
-                        .HasForeignKey("CouponId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Coupon");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.CouponEntity", b =>
                 {
                     b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
@@ -2037,27 +1929,16 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Store");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.CouponUsageEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.CouponEntity", "Coupon")
-                        .WithMany("Usage")
-                        .HasForeignKey("CouponId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.UserEntity", "User")
-                        .WithMany("CouponUsages")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Coupon");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.EmployeeEntity", b =>
                 {
+                    b.HasOne("BiyLineApi.Entities.ImageEntity", "ImageOwner")
+                        .WithOne()
+                        .HasForeignKey("BiyLineApi.Entities.EmployeeEntity", "ImageOwnerId");
+
+                    b.HasOne("BiyLineApi.Entities.ImageEntity", "NationalIdImage")
+                        .WithMany()
+                        .HasForeignKey("NationalIdImageId");
+
                     b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
                         .WithMany("Employees")
                         .HasForeignKey("StoreId")
@@ -2069,6 +1950,10 @@ namespace BiyLineApi.DbContexts.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ImageOwner");
+
+                    b.Navigation("NationalIdImage");
 
                     b.Navigation("Store");
 
@@ -2319,7 +2204,9 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     b.HasOne("BiyLineApi.Entities.StoreWalletEntity", "StoreWallet")
                         .WithMany("SalaryPayments")
-                        .HasForeignKey("StoreWalletId");
+                        .HasForeignKey("StoreWalletId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Employee");
 
@@ -2330,7 +2217,9 @@ namespace BiyLineApi.DbContexts.Migrations
                 {
                     b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
                         .WithOne()
-                        .HasForeignKey("BiyLineApi.Entities.ShippingCompanyEntity", "StoreId");
+                        .HasForeignKey("BiyLineApi.Entities.ShippingCompanyEntity", "StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BiyLineApi.Entities.UserEntity", "UserEntity")
                         .WithMany("shippingCompanyEntities")
@@ -2345,19 +2234,15 @@ namespace BiyLineApi.DbContexts.Migrations
 
             modelBuilder.Entity("BiyLineApi.Entities.ShippingCompanyGovernorateDetailsEntity", b =>
                 {
-                    b.HasOne("BiyLineApi.Entities.GovernorateEntity", "Governorate")
+                    b.HasOne("BiyLineApi.Entities.GovernorateEntity", null)
                         .WithMany("ShippingCompanyGovernorates")
-                        .HasForeignKey("GovernorateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GovernorateEntityId");
 
                     b.HasOne("BiyLineApi.Entities.ShippingCompanyEntity", "ShippingCompany")
                         .WithMany("ShippingCompanyGovernorateDetails")
                         .HasForeignKey("ShippingCompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Governorate");
 
                     b.Navigation("ShippingCompany");
                 });
@@ -2674,21 +2559,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("EmployeeEntityPermissionEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.EmployeeEntity", null)
-                        .WithMany()
-                        .HasForeignKey("EmployeePermissionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.PermissionEntity", null)
-                        .WithMany()
-                        .HasForeignKey("PermissionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("BiyLineApi.Entities.RoleEntity", null)
@@ -2725,11 +2595,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.AddressEntity", b =>
-                {
-                    b.Navigation("baskets");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.BasketEntity", b =>
                 {
                     b.Navigation("BasketItems");
@@ -2737,8 +2602,6 @@ namespace BiyLineApi.DbContexts.Migrations
 
             modelBuilder.Entity("BiyLineApi.Entities.CategoryEntity", b =>
                 {
-                    b.Navigation("CouponCategories");
-
                     b.Navigation("Images");
 
                     b.Navigation("Products");
@@ -2755,13 +2618,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Stores");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.CouponEntity", b =>
-                {
-                    b.Navigation("CouponCategories");
-
-                    b.Navigation("Usage");
-                });
-
             modelBuilder.Entity("BiyLineApi.Entities.EmployeeEntity", b =>
                 {
                     b.Navigation("SalaryPayments");
@@ -2771,11 +2627,14 @@ namespace BiyLineApi.DbContexts.Migrations
 
             modelBuilder.Entity("BiyLineApi.Entities.GovernorateEntity", b =>
                 {
-                    b.Navigation("Addresses");
-
                     b.Navigation("Regions");
 
                     b.Navigation("ShippingCompanyGovernorates");
+                });
+
+            modelBuilder.Entity("BiyLineApi.Entities.GovernorateShippingEntity", b =>
+                {
+                    b.Navigation("CenterShippings");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.ImageEntity", b =>
@@ -2834,8 +2693,6 @@ namespace BiyLineApi.DbContexts.Migrations
 
             modelBuilder.Entity("BiyLineApi.Entities.StoreEntity", b =>
                 {
-                    b.Navigation("Baskets");
-
                     b.Navigation("ContractOrdersFromStore");
 
                     b.Navigation("ContractOrdersToStore");
@@ -2896,11 +2753,7 @@ namespace BiyLineApi.DbContexts.Migrations
 
             modelBuilder.Entity("BiyLineApi.Entities.UserEntity", b =>
                 {
-                    b.Navigation("Addresses");
-
                     b.Navigation("Basket");
-
-                    b.Navigation("CouponUsages");
 
                     b.Navigation("Employees");
 

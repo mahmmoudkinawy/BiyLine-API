@@ -25,6 +25,11 @@ public sealed class ImageEntity
     public int? ExpenseId { get; set; }
     public ExpenseEntity? Expense { get; set; }
 
+
+
+    public int? ShippingCompanyEntityID { get; set; }
+    public  ShippingCompanyEntity? ShippingCompanyEntity { get; set; }
+
     public int? SubSpecializationId { get; set; }
     public SubSpecializationEntity? SubSpecializationImage { get; set; }
 }

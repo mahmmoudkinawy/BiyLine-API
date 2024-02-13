@@ -8,8 +8,8 @@ public sealed class GovernorateEntity
     public int CountryId { get; set; }
     public CountryEntity Country { get; set; }
 
-    public ICollection<ShippingCompanyGovernorateEntity> ShippingCompanyGovernorates { get; set; }
-        = new List<ShippingCompanyGovernorateEntity>();
+    public ICollection<ShippingCompanyGovernorateDetailsEntity> ShippingCompanyGovernorates { get; set; }
+        = new List<ShippingCompanyGovernorateDetailsEntity>();
     public ICollection<RegionEntity> Regions { get; set; }
     public ICollection<AddressEntity> Addresses { get; set; } = new List<AddressEntity>();
 }

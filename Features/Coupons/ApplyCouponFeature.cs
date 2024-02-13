@@ -76,7 +76,7 @@ public sealed class ApplyCouponFeature
                 });
             }
 
-            basket.TotalPrice -= coupon.DiscountAmount;
+            basket.TotalPrice -= coupon.DiscountAmount.Value;
 
             await _context.SaveChangesAsync(cancellationToken);
 

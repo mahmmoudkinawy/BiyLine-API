@@ -6,6 +6,8 @@ public sealed class CustomerRegisterFeature
         public string? Name { get; set; }
         public string? Email { get; set; }
         public string? Password { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? CountryCode { get; set; }
     }
 
     public sealed class Response
@@ -103,7 +105,7 @@ public sealed class CustomerRegisterFeature
             var data = new
             {
                 username = userToCreate.Name ?? userToCreate.Email,
-                verificationLink = $"https://biyline.vercel.app/account/verify-email?userId={userToCreate.Id}&token={WebUtility.UrlEncode(tokenToVerify)}" // will be replaced
+                verificationLink = $"http://173.249.40.131:2004/account/verify-email?userId={userToCreate.Id}&token={WebUtility.UrlEncode(tokenToVerify)}" // will be replaced
             };
 
             var emailTemplate = _mailService.LoadEmailTemplate("VerificationEmailTemplate.html");

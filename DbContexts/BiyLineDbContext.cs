@@ -21,6 +21,8 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<BasketItemEntity> BasketItems { get; set; }
     public DbSet<ProductTranslationEntity> ProductTranslations { get; set; }
     public DbSet<CouponEntity> Coupons { get; set; }
+    public DbSet<CouponUsageEntity> CouponsUsages { get; set; }
+    public DbSet<CouponCategory> CouponCategory { get; set; }
     public DbSet<LegalDocumentEntity> LegalDocuments { get; set; }
     public DbSet<GovernorateEntity> Governments { get; set; }
     public DbSet<CountryEntity> Countries { get; set; }
@@ -31,7 +33,9 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<SubcategoryEntity> Subcategories { get; set; }
     public DbSet<SubSpecializationEntity> SubSpecializations { get; set; }
     public DbSet<ShippingCompanyEntity> ShippingCompanies { get; set; }
-    public DbSet<ShippingCompanyGovernorateEntity> ShippingCompanyGovernorates { get; set; }
+    //public DbSet<ShippingCompanyGovernorateEntity> ShippingCompanyGovernorates { get; set; }
+
+    public DbSet<ShippingCompanyGovernorateDetailsEntity> ShippingCompanyGovernorateDetails { get; set; }
     public DbSet<EmployeeEntity> Employees { get; set; }
     public DbSet<WarehouseEntity> Warehouses { get; set; }
     public DbSet<SupplierEntity> Suppliers { get; set; }
@@ -101,6 +105,23 @@ public sealed class BiyLineDbContext : IdentityDbContext<
             .WithOne()
             .HasForeignKey<ExpenseEntity>(e => e.ReceiptImageId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        //builder.Entity<ShippingCompanyEntity>()
+        //    .HasOne(e => e.IDImage)
+        //    .WithMany()
+        //    .HasForeignKey(e => e.IDImageId)
+        //    .OnDelete(DeleteBehavior.NoAction);
+
+        //builder.Entity<ShippingCompanyEntity>()
+        //    .HasOne(e => e.CommercialRegisterImage)
+        //    .WithMany()
+        //    .HasForeignKey(e => e.CommercialRegisterImageId)
+        //    .OnDelete(DeleteBehavior.NoAction);
+        //builder.Entity<ShippingCompanyEntity>()
+        //    .HasOne(e => e.ProfileImage)
+        //    .WithMany()
+        //    .HasForeignKey(e => e.ProfileImageId)
+        //    .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<ExpenseTypeEntity>()
             .HasOne(e => e.Store)
@@ -179,23 +200,10 @@ public sealed class BiyLineDbContext : IdentityDbContext<
         builder.Entity<CategoryEntity>()
             .HasIndex(c => c.Name);
 
-        builder.Entity<ShippingCompanyGovernorateEntity>()
-            .HasKey(scg => new { scg.ShippingCompanyId, scg.GovernorateId });
+        //builder.Entity<ShippingCompanyGovernorateEntity>()
+        //    .HasKey(scg => new { scg.ShippingCompanyId, scg.GovernorateId });
 
-        builder.Entity<ShippingCompanyGovernorateEntity>()
-            .HasOne(scg => scg.ShippingCompany)
-            .WithMany(sc => sc.ShippingCompanyGovernorates)
-            .HasForeignKey(scg => scg.ShippingCompanyId);
 
-        builder.Entity<ShippingCompanyGovernorateEntity>()
-            .HasOne(scg => scg.Governorate)
-            .WithMany(g => g.ShippingCompanyGovernorates)
-            .HasForeignKey(scg => scg.GovernorateId);
-
-        builder.Entity<ShippingCompanyEntity>()
-            .HasOne(sc => sc.Store)
-            .WithOne()
-            .HasForeignKey<ShippingCompanyEntity>(k => k.StoreId);
 
         builder.Entity<CouponEntity>()
             .HasIndex(c => c.Code)
@@ -453,7 +461,55 @@ public sealed class BiyLineDbContext : IdentityDbContext<
             .WithMany(s => s.StoreWallets)
             .HasForeignKey(s => s.StoreId)
             .OnDelete(DeleteBehavior.NoAction);
+        builder.Entity<CouponCategory>()
+       .HasOne(cc => cc.Coupon)
+       .WithMany(c => c.CouponCategories)
+        .HasForeignKey(cc => cc.CouponId);
+
+        builder.Entity<CouponCategory>()
+            .HasOne(cc => cc.Category)
+            .WithMany(c => c.CouponCategories)
+            .HasForeignKey(cc => cc.CategoryId);
 
 
+        builder.Entity<ShippingCompanyGovernorateDetailsEntity>().HasOne(s => s.ShippingCompany)
+            .WithMany(s => s.ShippingCompanyGovernorateDetails)
+            .HasForeignKey(s => s.ShippingCompanyId);
+
+
+
+
+
+        builder.Entity<ShippingCompanyEntity>()
+            .HasOne(sc => sc.Store)
+            .WithOne()
+            .HasForeignKey<ShippingCompanyEntity>(k => k.StoreId);
+
+        builder.Entity<ShippingCompanyEntity>().HasOne(s => s.UserEntity)
+            .WithMany(s => s.shippingCompanyEntities)
+            .HasForeignKey(s => s.UserEntityId);
+
+
+
+        builder.Entity<ImageEntity>().HasOne(s => s.ShippingCompanyEntity)
+           .WithMany(s => s.Images)
+           .HasForeignKey(s => s.ShippingCompanyEntityID);
+
+
+        //builder.Entity<ImageEntity>()
+        //.HasOne(i => i.ShippingCompanyEntity)
+        //.WithOne(c => c.IDImage)
+        //.HasForeignKey<ShippingCompanyEntity>(c => c.IDImageId);
+
+        //builder.Entity<ImageEntity>()
+        //    .HasOne(i => i.ShippingCompanyEntity)
+        //    .WithOne(c => c.ProfileImage)
+        //    .HasForeignKey<ShippingCompanyEntity>(c => c.ProfileImageId);
+
+        //builder.Entity<ImageEntity>()
+        //    .HasOne(i => i.ShippingCompanyEntity)
+        //    .WithOne(c => c.CommercialRegisterImage)
+        //    .HasForeignKey<ShippingCompanyEntity>(c => c.CommercialRegisterImageId);
     }
 }
+

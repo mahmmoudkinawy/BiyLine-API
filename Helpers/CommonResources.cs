@@ -25,4 +25,8 @@ public sealed class CommonResources
     public const string GovernorateWithIdDoesNotExist = "GovernorateWithIdDoesNotExist";
 
     public const string NoStoreAssociatedWithUser = "NoStoreAssociatedWithUser";
+    public const string ShippingCompanyNotFound = "Shipping Company Not Found";
+    public const string ShippingCompanyMustHavePaymentMethodFirst = "ShippingCompanyMustHavePaymentMethodFirst";
+    public const string ShippingCompanyMustHavePhoneNumberFirst = "ShippingCompanyMustHavePhoneNumberFirst";
+    public const string ShippingCompanyMustHaveDeliveryCaseFirst = "ShippingCompanyMustHaveDeliveryCaseFirst";
 }

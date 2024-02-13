@@ -16,13 +16,10 @@ public sealed class GetEmployeeForStoreByTraderByEmployeeIdFeature
         public DateTime? LastLogIn { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Address { get; set; }
-        public string? ImageUrl { get; set; }
-        public DateTime? JoinedAt { get; set; }
-        public int? WorkHours { get; set; }
-        public string? PaymentPeriod { get; set; }
-        public string? PaymentMethod { get; set; }
-        public string? AccountNumber { get; set; }
+        public DateTime? EmploymentDate { get; set; }
         public List<string>? Roles { get; set; }
+        public List<string> Permissions { get; set; }
+
     }
 
     public sealed class Handler : IRequestHandler<Request, Result<Response>>
@@ -50,7 +47,7 @@ public sealed class GetEmployeeForStoreByTraderByEmployeeIdFeature
                 .Include(e => e.User)
                     .ThenInclude(u => u.UserRoles)
                         .ThenInclude(ur => ur.Role)
-                .Include(e => e.ImageOwner)
+                .Include(e=>e.Permissions)
                 .FirstOrDefaultAsync(u => u.StoreId == store.Id && u.UserId != currentUserId && u.Id == request.EmployeeId, cancellationToken: cancellationToken);
 
             if (employee == null)
@@ -67,14 +64,10 @@ public sealed class GetEmployeeForStoreByTraderByEmployeeIdFeature
                 Username = employee.User?.UserName,
                 Email = employee?.User?.Email,
                 Name = employee?.User?.Name,
-                AccountNumber = employee.VisaNumber,
                 Address = employee.Address,
-                PaymentMethod = employee.PaymentMethod,
-                PaymentPeriod = employee.PaymentPeriod,
                 PhoneNumber = employee.User?.PhoneNumber,
-                WorkHours = employee.WorkingHours,
-                JoinedAt = employee.JoinedAt,
-                ImageUrl = employee.ImageOwner?.ImageUrl
+                EmploymentDate = employee.EmploymentDate,
+                Permissions = employee.Permissions.Select(p => p.PermissionName).ToList(),
             });
 
         }

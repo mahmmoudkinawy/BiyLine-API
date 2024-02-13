@@ -1,30 +1,19 @@
-﻿namespace BiyLineApi.Features.SalaryPayment;
+﻿using HandlebarsDotNet;
+using Hangfire;
+
+namespace BiyLineApi.Features.SalaryPayment;
 
 public sealed class CreateSalaryPaymentFeature
 {
     public sealed class Request : IRequest<Result<Response>>
     {
-        public decimal Amount { get; set; }
+        public int EmployeeId { get; set; }
 
-        public DateTime? Date { get; set; }
-
-        public int StoreWalletId { get; set; }
-
-        public string? Note { get; set; }
     }
 
-    public sealed class Response { }
-
-    public sealed class Validator : AbstractValidator<Request>
+    public sealed class Response
     {
-        public Validator()
-        {
-            RuleFor(s => s.Amount)
-                .GreaterThan(0);
 
-            RuleFor(s => s.StoreWalletId)
-                .GreaterThan(0);
-        }
     }
 
     public sealed class Handler : IRequestHandler<Request, Result<Response>>
@@ -41,9 +30,8 @@ public sealed class CreateSalaryPaymentFeature
         }
         public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
-            var employeeId = _httpContextAccessor.GetValueFromRoute("employeeId");
 
-            var employee = await _context.Employees.FirstOrDefaultAsync(e=>e.Id==employeeId);
+            var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == request.EmployeeId);
 
             if (employee == null)
             {
@@ -52,56 +40,38 @@ public sealed class CreateSalaryPaymentFeature
 
             var userId = _httpContextAccessor.GetUserById();
 
-            var role = _httpContextAccessor.GetUserRole();
-
-            StoreWalletEntity? storeWallet = null;
-
-            if (role == Constants.Roles.Trader)
-            {
-                storeWallet = await _context.StoreWallets
-                  .Include(s => s.Store)
-                  .ThenInclude(s=>s.Employees)
-                  .FirstOrDefaultAsync(s => s.Id == request.StoreWalletId && s.Store.OwnerId == userId && s.Store.Employees.Any(s=>s.Id==employeeId));
-
-                if (storeWallet == null)
-                {
-                    return Result<Response>.Failure(new List<string> { "this store wallet not found" });
-                }
-            }
-            else if (role == Constants.Roles.Employee)
-            {
-                storeWallet = await _context.StoreWallets
-                   .Include(s => s.Store)
-                   .ThenInclude(s => s.Employees)
-                   .FirstOrDefaultAsync(s => s.Id == request.StoreWalletId && s.Employee.User.Id == userId && s.EmployeeId == s.Employee.Id && s.Store.Employees.Any(s => s.Id == employeeId));
-
-                if (storeWallet == null)
-                {
-                    return Result<Response>.Failure(new List<string> { "this store wallet not found" });
-                }
-            }
 
             var salaryPayment = new SalaryPaymentEntity
             {
-                Amount = request.Amount,
-                Note = request.Note,
-                EmployeeId = employeeId,
-                StoreWalletId = request.StoreWalletId,
-                Date = request.Date ?? DateTime.UtcNow,
+                EmployeeId = request.EmployeeId,
+                PaymentDate = employee.EmploymentDate?.AddMonths(11),
+                Status = SalaryPaymentEnum.Unpaid.ToString()
             };
 
             _context.SalaryPayments.Add(salaryPayment);
 
-            if (storeWallet.TotalBalance < request.Amount)
-            {
-                return Result<Response>.BadRequest("invalid operation");
-            }
-
-            storeWallet.TotalBalance -= request.Amount;
             await _context.SaveChangesAsync();
+
+
+            RecurringJob.AddOrUpdate("job", () => CreateSalaryPayment(salaryPayment.EmployeeId), Cron.Monthly);
 
             return Result<Response>.Success(new Response { });
         }
-    }
 
+        public async Task CreateSalaryPayment(int employeeId)
+        {
+            var latestSalaryPaymentForEmployee =await _context.SalaryPayments.Where(s => s.EmployeeId == employeeId).OrderByDescending(s => s.PaymentDate).FirstOrDefaultAsync();
+            var salaryPayment = new SalaryPaymentEntity
+            {
+
+                EmployeeId = employeeId,
+                PaymentDate = latestSalaryPaymentForEmployee.PaymentDate.Value.AddMonths(1),
+                Status = SalaryPaymentEnum.Unpaid.ToString()
+            };
+
+            _context.SalaryPayments.Add(salaryPayment);
+            await _context.SaveChangesAsync();
+
+        }
+    }
 }

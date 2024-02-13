@@ -15,6 +15,7 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Constants.Policies.ProductRead)]
     public async Task<ActionResult<IReadOnlyList<GetProductsFeature.Response>>> GetProducts(
         [FromQuery] ProductParams productParams)
     {
@@ -36,6 +37,8 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpGet("{productId}")]
+    [Authorize(Policy = Constants.Policies.ProductRead)]
+
     public async Task<ActionResult<GetProductByIdFeature.Response>> GetProductById(
         [FromRoute] int productId)
     {
@@ -59,7 +62,7 @@ public sealed class ProductsController : ControllerBase
 
     [EnsureStoreProfileCompleteness]
     [EnsureSingleStore]
-    [Authorize(Policy = Constants.Policies.MustBeTrader)]
+    [Authorize(Policy = Constants.Policies.ProductRead)]
     [HttpGet("{productId}/details")]
     public async Task<ActionResult<GetProductDetailsByProductIdFeature.Response>> GetProductDetailsById(
         [FromRoute] int productId)
@@ -79,6 +82,8 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpGet("{productId}/rating-statistics")]
+    [Authorize(Policy = Constants.Policies.ProductRead)]
+
     public async Task<IActionResult> GetRatingStatisticsForProductByProductId(
         [FromRoute] int productId)
     {
@@ -92,6 +97,8 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpGet("recent-views")]
+    [Authorize(Policy = Constants.Policies.ProductRead)]
+
     public async Task<ActionResult<IReadOnlyList<GetRecentViewedProductsFeature.Response>>> GetRecentViews()
     {
         var response = await _mediator.Send(new GetRecentViewedProductsFeature.Request { });
@@ -100,6 +107,8 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpGet("{productId}/rates")]
+    [Authorize(Policy = Constants.Policies.ProductRead)]
+
     public async Task<ActionResult<IReadOnlyList<GetProductRatesByProductIdFeature.Response>>> GetProductRatesByProductId(
         [FromRoute] int productId,
         [FromQuery] PaginationParams paginationParams)
@@ -121,6 +130,8 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpGet("{productId}/average-rate")]
+    [Authorize(Policy = Constants.Policies.ProductRead)]
+
     public async Task<ActionResult<GetProductAverageRateByProductIdFeature.Response>> GetAverageProductRatesByProductId(
         [FromRoute] int productId)
     {
@@ -133,7 +144,7 @@ public sealed class ProductsController : ControllerBase
     }
 
     [ApiVersion(2.0)]
-    [Authorize(Policy = Constants.Policies.MustBeTrader)]
+    [Authorize(Policy = Constants.Policies.ProductWrite)]
     [EnsureStoreProfileCompleteness]
     [EnsureSingleStore]
     [HttpPost]
@@ -151,7 +162,7 @@ public sealed class ProductsController : ControllerBase
     }
 
     [ApiVersion(2.0)]
-    [Authorize(Policy = Constants.Policies.MustBeTrader)]
+    [Authorize(Policy = Constants.Policies.ProductWrite)]
     [EnsureStoreProfileCompleteness]
     [EnsureSingleStore]
     [HttpPut("{productId}")]
@@ -170,7 +181,7 @@ public sealed class ProductsController : ControllerBase
 
 
     [ApiVersion(2.0)]
-    [Authorize(Policy = Constants.Policies.MustBeTrader)]
+    [Authorize(Policy = Constants.Policies.ProductWrite)]
     [EnsureStoreProfileCompleteness]
     [EnsureSingleStore]
     [HttpDelete("{productId}")]
@@ -191,9 +202,9 @@ public sealed class ProductsController : ControllerBase
     }
 
     [ApiVersion(2.0)]
-    //[EnsureStoreProfileCompleteness]
-    //[EnsureSingleStore]
-    //[Authorize(Policy = Constants.Policies.MustBeTrader)]
+    [EnsureStoreProfileCompleteness]
+    [EnsureSingleStore]
+    [Authorize(Policy = Constants.Policies.ProductWrite)]
     [HttpGet("{productId}/trader")]
     public async Task<ActionResult<GetProductByIdForTraderFeature.Response>> GetProductByIdForTrader([FromRoute] int productId)
     {

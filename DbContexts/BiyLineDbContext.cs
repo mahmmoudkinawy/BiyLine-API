@@ -54,6 +54,7 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<GovernorateShippingEntity> GovernorateShippings { get; set; }
     public DbSet<StoreChatMessageEntity> StoreMessages { get; set; }
     public DbSet<AddressEntity> Addresses { get; set; }
+    public DbSet<PermissionEntity> Permissions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -157,10 +158,6 @@ public sealed class BiyLineDbContext : IdentityDbContext<
             .WithOne()
             .HasForeignKey<InventoryEntity>(i => i.WarehouseId);
 
-        builder.Entity<EmployeeEntity>()
-            .HasOne(e => e.ImageOwner)
-            .WithOne()
-            .HasForeignKey<EmployeeEntity>(e => e.ImageOwnerId);
 
         builder.Entity<QuantityPricingTierEntity>()
             .HasOne(qpt => qpt.Product)
@@ -456,6 +453,7 @@ public sealed class BiyLineDbContext : IdentityDbContext<
             .WithMany(s => s.StoreWallets)
             .HasForeignKey(s => s.StoreId)
             .OnDelete(DeleteBehavior.NoAction);
+
 
     }
 }

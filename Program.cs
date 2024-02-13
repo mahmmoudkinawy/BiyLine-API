@@ -1,3 +1,8 @@
+using Hangfire;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSwaggerServices();
@@ -7,6 +12,9 @@ builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
 
 builder.Services.AddConfigureCors(builder.Configuration);
+
+builder.Services.AddHandfireService(builder.Configuration);
+
 
 var app = builder.Build();
 
@@ -30,6 +38,8 @@ app.UseAuthorization();
 
 app.UseRequestLocalization(
     app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
+
+app.UseHangfireDashboard("/dashboard");
 
 app.MapControllers();
 

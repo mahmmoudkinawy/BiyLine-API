@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240205194616_UpdateEmployeeEntity")]
+    partial class UpdateEmployeeEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -392,6 +395,21 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("BiyLineApi.Entities.EmployeePermissionEntity", b =>
+                {
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("EmployeeId", "PermissionId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("EmployeePermissions");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.ExpenseEntity", b =>
@@ -949,29 +967,19 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal?>("Deduction")
+                    b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("Increase")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Notes")
+                    b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("PaidAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("PaymentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("StoreWalletId")
+                    b.Property<int>("StoreWalletId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1334,7 +1342,7 @@ namespace BiyLineApi.DbContexts.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("TotalBalance")
+                    b.Property<decimal>("TotalBalance")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -1665,21 +1673,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.ToTable("ContractOrderProductEntityContractOrderVariationEntity");
                 });
 
-            modelBuilder.Entity("EmployeeEntityPermissionEntity", b =>
-                {
-                    b.Property<int>("EmployeePermissionsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PermissionsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("EmployeePermissionsId", "PermissionsId");
-
-                    b.HasIndex("PermissionsId");
-
-                    b.ToTable("EmployeeEntityPermissionEntity");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -1930,6 +1923,25 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BiyLineApi.Entities.EmployeePermissionEntity", b =>
+                {
+                    b.HasOne("BiyLineApi.Entities.EmployeeEntity", "Employee")
+                        .WithMany("EmployeePermissions")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BiyLineApi.Entities.PermissionEntity", "Permission")
+                        .WithMany("EmployeePermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Permission");
+                });
+
             modelBuilder.Entity("BiyLineApi.Entities.ExpenseEntity", b =>
                 {
                     b.HasOne("BiyLineApi.Entities.ExpenseTypeEntity", "ExpenseType")
@@ -2168,7 +2180,9 @@ namespace BiyLineApi.DbContexts.Migrations
 
                     b.HasOne("BiyLineApi.Entities.StoreWalletEntity", "StoreWallet")
                         .WithMany("SalaryPayments")
-                        .HasForeignKey("StoreWalletId");
+                        .HasForeignKey("StoreWalletId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Employee");
 
@@ -2517,21 +2531,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("EmployeeEntityPermissionEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.EmployeeEntity", null)
-                        .WithMany()
-                        .HasForeignKey("EmployeePermissionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.PermissionEntity", null)
-                        .WithMany()
-                        .HasForeignKey("PermissionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("BiyLineApi.Entities.RoleEntity", null)
@@ -2598,6 +2597,8 @@ namespace BiyLineApi.DbContexts.Migrations
 
             modelBuilder.Entity("BiyLineApi.Entities.EmployeeEntity", b =>
                 {
+                    b.Navigation("EmployeePermissions");
+
                     b.Navigation("SalaryPayments");
 
                     b.Navigation("StoreWallets");
@@ -2620,6 +2621,11 @@ namespace BiyLineApi.DbContexts.Migrations
             modelBuilder.Entity("BiyLineApi.Entities.OfferEntity", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("BiyLineApi.Entities.PermissionEntity", b =>
+                {
+                    b.Navigation("EmployeePermissions");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.ProductEntity", b =>

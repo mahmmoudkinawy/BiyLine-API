@@ -60,7 +60,7 @@ public sealed class SendConfirmationEmailFeature
                 var data = new
                 {
                     username = user.Name ?? user.Email,
-                    verificationLink = $"https://biyline.vercel.app/account/confirm-email?userId={user.Id}&token={WebUtility.UrlEncode(tokenToVerify)}" // will be replaced
+                    verificationLink = $"http://173.249.40.131:2004/account/confirm-email?userId={user.Id}&token={WebUtility.UrlEncode(tokenToVerify)}" // will be replaced
                 };
 
                 var emailTemplate = _mailService.LoadEmailTemplate("ConfirmationEmailTemplate.html");

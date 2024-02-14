@@ -1,3 +1,8 @@
+using Hangfire;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSwaggerServices();
@@ -8,7 +13,12 @@ builder.Services.AddIdentityServices(builder.Configuration);
 
 builder.Services.AddConfigureCors(builder.Configuration);
 
+builder.Services.AddHandfireService(builder.Configuration);
+
+
 var app = builder.Build();
+
+//app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseSwagger();
 
@@ -32,6 +42,8 @@ app.UseAuthorization();
 app.UseRequestLocalization(
     app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
+app.UseHangfireDashboard("/dashboard");
+
 app.MapControllers();
 
 app.MapHub<StoreChatHub>("/hubs/storechathub");
@@ -39,3 +51,58 @@ app.MapHub<StoreChatHub>("/hubs/storechathub");
 await app.ApplyDatabaseMigrations();
 
 await app.RunAsync();
+
+
+////public class ExceptionMiddleware
+//{
+//    private readonly RequestDelegate _next;
+//    private readonly IWebHostEnvironment _env;
+//    private readonly ILogger<ExceptionMiddleware> _logger;
+
+//    public ExceptionMiddleware(
+//        RequestDelegate next,
+//        IWebHostEnvironment env,
+//        ILogger<ExceptionMiddleware> logger)
+//    {
+//        _next = next;
+//        _env = env;
+//        _logger = logger;
+//    }
+
+//    public async Task InvokeAsync(HttpContext context)
+//    {
+//        try
+//        {
+//            await _next(context);
+//        }
+//        catch (Exception ex)
+//        {
+//            _logger.LogError(ex, ex.Message);
+//            context.Response.ContentType = "application/json";
+//            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+//            var response = _env.IsDevelopment() ?
+//                new ProblemDetails
+//                {
+//                    Status = context.Response.StatusCode,
+//                    Instance = ex.Message,
+//                    Detail = ex.StackTrace
+//                }
+//                :
+//                new ProblemDetails
+//                {
+//                    Status = context.Response.StatusCode,
+//                    Instance = "Internal Server Error"
+//                };
+
+//            var options = new JsonSerializerOptions
+//            {
+//                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+//            };
+
+//            var json = JsonSerializer.Serialize(response, options);
+
+//            await context.Response.WriteAsync(json);
+//        }
+//    }
+//}

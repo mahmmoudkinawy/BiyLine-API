@@ -1,4 +1,6 @@
-﻿namespace BiyLineApi.Features.Coupons;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace BiyLineApi.Features.Coupons;
 public sealed class CreateCouponFeature
 {
     public sealed class Request : IRequest
@@ -75,7 +77,7 @@ public sealed class CreateCouponFeature
 
             var store = await _context.Stores
                 .FirstOrDefaultAsync(s => s.OwnerId == userId, cancellationToken: cancellationToken);
-
+           
             var coupon = new CouponEntity
             {
                 StoreId = store.Id,

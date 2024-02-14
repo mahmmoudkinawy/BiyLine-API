@@ -1,9 +1,9 @@
-﻿namespace BiyLineApi.Controllers;
+﻿
+namespace BiyLineApi.Controllers;
 
 [ApiController]
 [ApiVersion(2.0)]
 [Route("api/v{version:apiVersion}/employees")]
-[Authorize(Policy = Constants.Policies.MustBeTrader)]
 [EnsureSingleStore]
 [EnsureStoreProfileCompleteness]
 public sealed class EmployeesController : ControllerBase
@@ -14,11 +14,13 @@ public sealed class EmployeesController : ControllerBase
     {
         _mediator = mediator ??
             throw new ArgumentNullException(nameof(mediator));
+
     }
 
     [HttpPost]
+    [Authorize(Policy = Constants.Policies.EmployeeWrite)]
     public async Task<IActionResult> CreateEmployeeForStoreByTrader(
-        [FromForm] CreateEmployeerForStoreByTraderFeature.Request request)
+        [FromBody] CreateEmployeerForStoreByTraderFeature.Request request)
     {
         var response = await _mediator.Send(request);
 
@@ -27,10 +29,21 @@ public sealed class EmployeesController : ControllerBase
             return BadRequest(response.Errors);
         }
 
+        var createSalaryPaymentRequest = new CreateSalaryPaymentFeature.Request { EmployeeId = response.Value.EmployeeId };
+
+        var createSalaryPaymentResponse = await _mediator.Send(createSalaryPaymentRequest);
+
+        if (!createSalaryPaymentResponse.IsSuccess)
+        {
+            return BadRequest(createSalaryPaymentResponse.Errors);
+        }
+
         return NoContent();
     }
 
     [HttpPut("{employeeId}/suspend")]
+    [Authorize(Policy = Constants.Policies.EmployeeWrite)]
+
     public async Task<IActionResult> SuspendEmployeeByTrader(
         [FromRoute] int employeeId)
     {
@@ -48,9 +61,10 @@ public sealed class EmployeesController : ControllerBase
     }
 
     [HttpPut("{employeeId}")]
+    [Authorize(Policy = Constants.Policies.EmployeeWrite)]
+
     public async Task<IActionResult> UpdateEmployeeForStoreByTrader(
-        [FromRoute] int employeeId,
-        [FromForm] UpdateEmployeeForStoreByTraderFeature.Request request)
+        [FromBody] UpdateEmployeeForStoreByTraderFeature.Request request)
     {
         var response = await _mediator.Send(request);
 
@@ -63,6 +77,7 @@ public sealed class EmployeesController : ControllerBase
     }
 
     [HttpGet("current-store-employee/{employeeId}")]
+    [Authorize(Policy = Constants.Policies.EmployeeRead)]
     public async Task<ActionResult<GetEmployeeForStoreByTraderByEmployeeIdFeature.Response>> GetEmployeeForStoreByTraderByEmployeeIdFeature(
         [FromRoute] int employeeId)
     {
@@ -80,6 +95,8 @@ public sealed class EmployeesController : ControllerBase
     }
 
     [HttpGet("current-store-employees")]
+    [Authorize(Policy = Constants.Policies.EmployeeRead)]
+
     public async Task<ActionResult<IReadOnlyList<GetEmployeesForStoreByTraderFeature.Response>>> GetEmployeesForStoreByTrader(
         [FromQuery] EmployeeParams employeeParams)
     {
@@ -91,11 +108,15 @@ public sealed class EmployeesController : ControllerBase
         });
 
         Response.AddPaginationHeader(
-            response.CurrentPage,
-            response.PageSize,
-            response.TotalPages,
-            response.TotalCount);
+            response.Data.CurrentPage,
+            response.Data.PageSize,
+            response.Data.TotalPages,   
+            response.Data.TotalCount);
+
 
         return Ok(response);
     }
+
+   
+
 }

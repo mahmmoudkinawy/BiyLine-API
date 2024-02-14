@@ -1,8 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
-using static System.Net.Mime.MediaTypeNames;
-
-namespace BiyLineApi.DbContexts;
+﻿namespace BiyLineApi.DbContexts;
 public sealed class BiyLineDbContext : IdentityDbContext<
     UserEntity, RoleEntity, int, IdentityUserClaim<int>,
     UserRoleEntity, IdentityUserLogin<int>, IdentityRoleClaim<int>,
@@ -37,6 +33,8 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<SubcategoryEntity> Subcategories { get; set; }
     public DbSet<SubSpecializationEntity> SubSpecializations { get; set; }
     public DbSet<ShippingCompanyEntity> ShippingCompanies { get; set; }
+    //public DbSet<ShippingCompanyGovernorateEntity> ShippingCompanyGovernorates { get; set; }
+
     public DbSet<ShippingCompanyGovernorateDetailsEntity> ShippingCompanyGovernorateDetails { get; set; }
     public DbSet<ShippingCompanyGovernorateEntity> ShippingCompanyGovernorates { get; set; }
 
@@ -62,6 +60,7 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<GovernorateShippingEntity> GovernorateShippings { get; set; }
     public DbSet<StoreChatMessageEntity> StoreMessages { get; set; }
     public DbSet<AddressEntity> Addresses { get; set; }
+    public DbSet<PermissionEntity> Permissions { get; set; }
 
     public DbSet<PickUpPointEntity> PickUpPoints { get; set; }
     public DbSet<ShipmentEntity> Shipments { get; set; }
@@ -186,10 +185,6 @@ public sealed class BiyLineDbContext : IdentityDbContext<
             .WithOne()
             .HasForeignKey<InventoryEntity>(i => i.WarehouseId);
 
-        builder.Entity<EmployeeEntity>()
-            .HasOne(e => e.ImageOwner)
-            .WithOne()
-            .HasForeignKey<EmployeeEntity>(e => e.ImageOwnerId);
 
         builder.Entity<QuantityPricingTierEntity>()
             .HasOne(qpt => qpt.Product)
@@ -472,6 +467,16 @@ public sealed class BiyLineDbContext : IdentityDbContext<
             .WithMany(s => s.StoreWallets)
             .HasForeignKey(s => s.StoreId)
             .OnDelete(DeleteBehavior.NoAction);
+        builder.Entity<CouponCategory>()
+       .HasOne(cc => cc.Coupon)
+       .WithMany(c => c.CouponCategories)
+        .HasForeignKey(cc => cc.CouponId);
+
+        builder.Entity<CouponCategory>()
+            .HasOne(cc => cc.Category)
+            .WithMany(c => c.CouponCategories)
+            .HasForeignKey(cc => cc.CategoryId);
+
 
         builder.Entity<ShippingCompanyGovernorateDetailsEntity>().HasOne(s => s.ShippingCompany)
             .WithMany(s => s.ShippingCompanyGovernorateDetails)

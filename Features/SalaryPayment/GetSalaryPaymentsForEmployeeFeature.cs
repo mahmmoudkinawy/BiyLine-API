@@ -14,7 +14,7 @@ public sealed class GetSalaryPaymentsForEmployeeFeature
         public string EmployeeName { get; set; }
         public string JobRole { get; set; }
         public decimal? Salary { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
     }
 
     public sealed class Handler : IRequestHandler<Request, OneOf<PagedList<Response>, Result<Response>>>
@@ -66,7 +66,7 @@ public sealed class GetSalaryPaymentsForEmployeeFeature
                 EmployeeName = s.Employee.User.Name,
                 Salary = s.Employee.Salary,
                 JobRole = null, // will be replace
-                Date = s.Date
+                Date = s.PaymentDate
             });
 
             return await PagedList<Response>.CreateAsync(

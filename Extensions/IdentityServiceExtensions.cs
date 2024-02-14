@@ -1,4 +1,8 @@
-﻿namespace BiyLineApi.Extensions;
+﻿using BiyLineApi.policy.Address;
+using BiyLineApi.policy.Employee;
+using BiyLineApi.policy.Product;
+
+namespace BiyLineApi.Extensions;
 public static class IdentityServiceExtensions
 {
     public static IServiceCollection AddIdentityServices(
@@ -69,6 +73,53 @@ public static class IdentityServiceExtensions
             {
                 policy.RequireClaim(ClaimTypes.Role, Constants.Roles.Trader, Constants.Roles.Employee);
             });
+
+            // address
+
+
+
+            configure.AddPolicy(Constants.Policies.AddressWrite, policy =>
+            {
+                policy.Requirements.Add(new AddressWriteRequirement());
+                policy.RequireAuthenticatedUser();
+            });
+
+            configure.AddPolicy(Constants.Policies.AddressRead, policy =>
+            {
+                policy.Requirements.Add(new AddressReadRequirement());
+                policy.RequireAuthenticatedUser();
+            });
+
+
+            // product
+            configure.AddPolicy(Constants.Policies.ProductRead, policy =>
+            {
+                policy.Requirements.Add(new ProductReadRequirement());
+                policy.RequireAuthenticatedUser();
+            });
+
+            configure.AddPolicy(Constants.Policies.ProductWrite, policy =>
+            {
+                policy.Requirements.Add(new ProductWriteRequirement());
+                policy.RequireAuthenticatedUser();
+            });
+
+            // employee
+            configure.AddPolicy(Constants.Policies.EmployeeRead, policy =>
+            {
+                policy.Requirements.Add(new EmployeeReadRequirement());
+                policy.RequireAuthenticatedUser();
+            });
+
+            configure.AddPolicy(Constants.Policies.EmployeeWrite, policy =>
+            {
+                policy.Requirements.Add(new EmployeeWriteRequirement());
+                policy.RequireAuthenticatedUser();
+            });
+
+
+
+
 
         });
 

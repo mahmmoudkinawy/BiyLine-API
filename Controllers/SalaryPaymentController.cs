@@ -33,6 +33,23 @@ public class SalaryPaymentController : ControllerBase
         return NoContent();
     }
 
+    [HttpPut("salaryPaymentRecords/{salaryPaymentRecordId}/Employees/{employeeId}")]
+    public async Task<IActionResult> UpdateSalaryPayment([FromBody] UpdateSalaryPaymentFeature.Request request)
+    {
+        var response  =await _mediator.Send(request);
+        if (!response.IsSuccess)
+        {
+            return NotFound(response.Errors);
+        }
+
+        if (response.IsBadRequest)
+        {
+            return BadRequest(response.Errors);
+        }
+
+        return NoContent();
+    }
+
     [HttpGet("{storeWalletId}")]
     public async Task<ActionResult<IReadOnlyList<GetAllEmployeesWithLastSalaryPaymentFeature.Response>>> GetAllEmployeesWithLastSalaryPayment([FromQuery] FilterParams filterParams)
     {
@@ -93,5 +110,6 @@ public class SalaryPaymentController : ControllerBase
 
         return Ok(response.Value);
     }
+
 
 }

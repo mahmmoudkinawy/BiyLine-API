@@ -40,6 +40,7 @@ public class GetAddressesForCustomerFeature
 
             var  addresses = query.Select(s => new Response
             {
+                Id = s.Id,
                 Name = s.User.Name,
                 PhoneNumber = s.PhoneNumber,
                 AddressDetails = s.AddressDetails,

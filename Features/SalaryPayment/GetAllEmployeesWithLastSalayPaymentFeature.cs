@@ -17,7 +17,7 @@ public sealed class GetAllEmployeesWithLastSalaryPaymentFeature
 
         public decimal? Salary {get; set; } 
 
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
 
     }
 
@@ -73,7 +73,7 @@ public sealed class GetAllEmployeesWithLastSalaryPaymentFeature
                   EmployeeName = group.Key,
                   JobRole = null,    // Replace it with the actual logic
                   Salary = group.First().Employee.Salary,
-                  Date = group.Max(s => s.Date)
+                  Date = group.Max(s => s.PaymentDate)
               });
 
             return await PagedList<Response>.CreateAsync(

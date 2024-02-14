@@ -46,6 +46,19 @@ public static class ApplicationServiceExtensions
 
         services.AddTransient<IDateTimeProvider, DateTimeProvider>();
 
+        services.AddSingleton<IAuthorizationHandler, AddressReadHandler>();
+        services.AddSingleton<IAuthorizationHandler, AddressWriteHandler>();
+        services.AddSingleton<IAuthorizationHandler, ProductReadHandler>();
+        services.AddSingleton<IAuthorizationHandler, ProductWriteHandler>();
+        services.AddSingleton<IAuthorizationHandler, EmployeeReadHandler>();
+        services.AddSingleton<IAuthorizationHandler, EmployeeWriteHandler>();
+
+
+
+
+
+
+
         return services;
     }
 

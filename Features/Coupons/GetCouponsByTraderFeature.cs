@@ -14,6 +14,7 @@ public sealed class GetCouponsByTraderFeature
     public sealed class Response
     {
         public int Id { get; set; }
+        public string Name { get; set; }
         public string Code { get; set; }
         public decimal DiscountAmount { get; set; }
         public DateTime StartDate { get; set; }
@@ -66,6 +67,7 @@ public sealed class GetCouponsByTraderFeature
 
             var query = _context.Coupons
                 .Where(c => c.StoreId == store.Id)
+                .Include(c => c.Usage)
                 .OrderByDescending(c => c.EndDate)
                     .ThenByDescending(c => c.StartDate)
                 .AsQueryable();
@@ -80,7 +82,7 @@ public sealed class GetCouponsByTraderFeature
                 Id = coupon.Id,
                 Code = coupon.Code,
                 StartDate = coupon.StartDate.Value,
-                DiscountAmount = coupon.DiscountAmount,
+                DiscountAmount = coupon.DiscountAmount.Value,
                 EndDate = coupon.EndDate.Value,
                 IsActive = coupon.Status,
                 UsageCount = coupon.Usage.Count,

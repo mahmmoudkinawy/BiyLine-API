@@ -9,7 +9,6 @@ public sealed class CreateShippingCompanyFeature
         public string? Name { get; set; }
         public string? Address { get; set; }
         public string? CountryCode { get; set; }
-
         public IFormFile? CommercialRegisterImage { get; set; }
         public IFormFile? ProfileImage { get; set; }
         public IFormFile? IDImage { get; set; }
@@ -110,8 +109,6 @@ public sealed class CreateShippingCompanyFeature
 
         public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
-            try
-            {
                 var userId = _httpContextAccessor.GetUserById();
 
 
@@ -128,11 +125,12 @@ public sealed class CreateShippingCompanyFeature
 
                 var shippingCompany = new ShippingCompanyEntity
                 {
+                    StoreId = user.StoreId,
                     CountryCode = request.CountryCode,
                     Name = request.Name,
                     Address = request.Address,
                     UserEntityId = userId,
-
+                    
                 };
                 _context.ShippingCompanies.Add(shippingCompany);
 
@@ -186,11 +184,7 @@ public sealed class CreateShippingCompanyFeature
                 await _context.SaveChangesAsync(cancellationToken);
 
                 return Result<Response>.Success(new Response { ShippinCompany = shippingCompany });
-            }
-            catch (Exception ex)
-            {
-                return Result<Response>.Failure(new List<string> { ex.Message });
-            }
+            
         }
     }
 }

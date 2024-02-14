@@ -75,7 +75,7 @@ public sealed class UpdateCouponFeature
 
         public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
-
+            
             var userId = _httpContextAccessor.HttpContext.User.GetUserById();
 
             var store = await _context.Stores
@@ -88,15 +88,15 @@ public sealed class UpdateCouponFeature
                     "Cupon Not Found"
                 });
             }
-
-            coupon.StoreId = store.Id;
-            coupon.Code = request.Code;
-            coupon.DiscountAmount = request.DiscountAmount.Value;
-            coupon.StartDate = request.StartDate;
-            coupon.EndDate = request.EndDate;
-            coupon.CommissionRate = request.CommissionRate;
-            coupon.DiscountPercentage = request.DiscountPercentage;
-
+      
+                coupon.StoreId = store.Id;
+                coupon.Code = request.Code;
+                coupon.DiscountAmount = request.DiscountAmount.Value;
+                coupon.StartDate = request.StartDate;
+                coupon.EndDate = request.EndDate;
+                coupon.CommissionRate = request.CommissionRate;
+                coupon.DiscountPercentage = request.DiscountPercentage;
+          
 
             _context.Coupons.Update(coupon);
             await _context.SaveChangesAsync(cancellationToken);
@@ -107,13 +107,13 @@ public sealed class UpdateCouponFeature
                 {
                     if (!_context.CouponCategory.Any(cc => cc.CouponId == coupon.Id && cc.CategoryId == category.Id))
                     {
-                        await _context.CouponCategory.AddAsync(new CouponCategory
-                        {
-                            CategoryId = category.Id,
-                            CouponId = coupon.Id
-                        });
-                    }
+                    await _context.CouponCategory.AddAsync(new CouponCategory
+                    {
+                        CategoryId = category.Id,
+                        CouponId = coupon.Id
+                    });
                 }
+            }
             }
             await _context.SaveChangesAsync(cancellationToken);
             return Result<Response>.Success(new Response { });

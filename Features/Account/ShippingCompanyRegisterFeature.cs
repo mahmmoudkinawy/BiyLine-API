@@ -109,7 +109,7 @@
                 var data = new
                 {
                     username = userToCreate.Name ?? userToCreate.Email,
-                    verificationLink = $"https://biyline.vercel.app/account/verify-email?userId={userToCreate.Id}&token={WebUtility.UrlEncode(tokenToVerify)}" // will be replaced
+                    verificationLink = $"http://173.249.40.131:2004/account/verify-email?userId={userToCreate.Id}&token={WebUtility.UrlEncode(tokenToVerify)}" // will be replaced
                 };
 
                 var emailTemplate = _mailService.LoadEmailTemplate("VerificationEmailTemplate.html");

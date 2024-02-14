@@ -11,7 +11,7 @@ public sealed class ShippingCompanyEntity
     public DeliveryCases? DeliveryCases{ get; set; }
     public PaymentMethodEnum? PaymentMethod { get; set; }
     public int? StoreId { get; set; }
-    public StoreEntity Store { get; set; }
+    public StoreEntity? Store { get; set; }
     //public int? IDImageId { get; set; }
     //public ImageEntity? IDImage { get; set; }
     

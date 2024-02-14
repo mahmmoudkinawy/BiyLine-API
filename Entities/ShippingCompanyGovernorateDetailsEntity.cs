@@ -3,7 +3,7 @@
     public class ShippingCompanyGovernorateDetailsEntity
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        //public string Name { get; set; }
         public decimal ShippingCost { get; set; }
         public decimal PickUpCost { get; set; }
         public decimal ReturnCost { get; set; }

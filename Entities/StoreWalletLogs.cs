@@ -1,4 +1,6 @@
-﻿namespace BiyLineApi.Entities
+﻿using System.Xml.Linq;
+
+namespace BiyLineApi.Entities
 {
     public class StoreWalletLogs
     {
@@ -9,6 +11,8 @@
         public StoreWalletLogType? LogStatus { get; set; }
         public int? EmpId { get; set; }
         public UserEntity? Emp { get; set; }
+        public int? DocumentId { get; set; }
+        public DocumentType? DocumentType { get; set; }
 
     }
 }

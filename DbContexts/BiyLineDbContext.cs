@@ -63,6 +63,10 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<StoreChatMessageEntity> StoreMessages { get; set; }
     public DbSet<AddressEntity> Addresses { get; set; }
 
+    public DbSet<PickUpPointEntity> PickUpPoints { get; set; }
+    public DbSet<ShipmentEntity> Shipments { get; set; }
+    public DbSet<ShipmentDetailsEntity> ShipmentDetails { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

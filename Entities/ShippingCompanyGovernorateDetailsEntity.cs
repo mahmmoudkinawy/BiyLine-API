@@ -10,7 +10,8 @@
         public double Weight { get; set; }
         public decimal OverweightFees { get; set; }
         public bool Status { get; set; }
-
+        public int GovernorateId { get; set; }
+        public GovernorateEntity Governorate { get; set; }
         public int ShippingCompanyId { get; set; }
         public ShippingCompanyEntity ShippingCompany { get; set; }
     }

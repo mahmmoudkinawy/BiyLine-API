@@ -13,5 +13,6 @@ public sealed class StoreWalletEntity
     public ICollection<CashDepositePermissionEntity> CashDepositePermissions { get; set; } = new List<CashDepositePermissionEntity>();
     public ICollection<CashDiscountPermissionEntity> CashDiscountPermissions { get; set; } = new List<CashDiscountPermissionEntity>();
     public ICollection<SalaryPaymentEntity> SalaryPayments { get; set; } = new List<SalaryPaymentEntity>();
+    public ICollection<StoreWalletLogs> Logs { get; set; } = new List<StoreWalletLogs>();
 
 }

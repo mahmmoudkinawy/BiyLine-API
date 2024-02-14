@@ -41,7 +41,7 @@ public sealed class GetProductDetailsByProductIdFeature
     }
     public record VariationSizeVM
     {
-        public int Id {get; set; }
+        public int VariationId {get; set; }
         public string? Size { get; set; }
         public int? Quantity { get; set; }
     }
@@ -102,7 +102,7 @@ public sealed class GetProductDetailsByProductIdFeature
                 .Select(g => new VariationColorVM
                      {
                         Color = g.Key,
-                        Sizes = g.Select(pv => new VariationSizeVM{ Size = pv.Size, Quantity = pv.Quantity, Id = pv.Id }).ToList()
+                        Sizes = g.Select(pv => new VariationSizeVM{ Size = pv.Size, Quantity = pv.Quantity, VariationId = pv.Id }).ToList()
                      })
                 .ToListAsync();
 

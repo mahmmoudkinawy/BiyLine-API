@@ -3,6 +3,6 @@
     public enum CouponStatus
     {
         Active = 1,
-        NotActive
+        NotActive= 0
     }
 }

@@ -97,6 +97,7 @@ public sealed class CreateCouponFeature
                     CouponId = coupon.Id
                 });
             }
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

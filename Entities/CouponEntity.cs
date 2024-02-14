@@ -22,7 +22,7 @@ public sealed class CouponEntity
             {
                 return CouponStatus.NotActive;
             }
-            return CouponStatus.NotActive;
+            return CouponStatus.Active;
         } 
     }
 

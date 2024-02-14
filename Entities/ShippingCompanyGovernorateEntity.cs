@@ -1,6 +1,7 @@
 ﻿namespace BiyLineApi.Entities;
 public sealed class ShippingCompanyGovernorateEntity
 {
+    public int Id { get; set; }
     public decimal ShippingPrice { get; set; }
 
     public int ShippingCompanyId { get; set; }

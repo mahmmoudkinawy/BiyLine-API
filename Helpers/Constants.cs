@@ -28,7 +28,17 @@ public abstract class Constants
         public const string EmployeeRead = "Employee.Read";
         public const string EmployeeWrite = "Employee.Write";
         public const string ShippingCompanyRead = "ShippingCompany.Read";
-        public const string ShippingCompanyWrite = "ShippingCompany.Write";
+        public const string ShippingCompanyWrite = "ShippingCompany.Write"; 
+        public const string DashboardRead = "Dashboard.Read";
+        public const string DashboardWrite = "Dashboard.Write";
+        public const string OrdersRead = "Orders.Read";
+        public const string OrdersWrite = "Orders.Write";
+        public const string SupportRead = "Support.Read";
+        public const string SupportWrite = "Support.Write";
+        public const string WarehouseRead = "Warehouse.Read";
+        public const string WarehouseWrite = "Warehouse.Write";
+        public const string CouponsRead = "Coupons.Read";
+        public const string CouponsWrite = "Coupons.Write";
 
     }
 

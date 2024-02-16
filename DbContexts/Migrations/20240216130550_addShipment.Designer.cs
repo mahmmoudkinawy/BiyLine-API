@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240216130550_addShipment")]
+    partial class addShipment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -773,14 +776,9 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<int>("GovernorateId")
                         .HasColumnType("int");
 
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("GovernorateId");
-
-                    b.HasIndex("StoreId");
 
                     b.ToTable("PickUpPoints");
                 });
@@ -1093,6 +1091,9 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ProductVariationEntity")
+                        .HasColumnType("int");
+
                     b.Property<int>("ProductVariationId")
                         .HasColumnType("int");
 
@@ -1123,9 +1124,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CashOutType")
-                        .HasColumnType("int");
 
                     b.Property<string>("ClientName")
                         .HasColumnType("nvarchar(max)");
@@ -1167,9 +1165,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("StoreWalletId")
                         .HasColumnType("int");
 
@@ -1189,8 +1184,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.HasIndex("PickUpPointId");
 
                     b.HasIndex("ShippingCompanyId");
-
-                    b.HasIndex("StoreId");
 
                     b.HasIndex("StoreWalletId");
 
@@ -1927,46 +1920,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.ToTable("Warehouses");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.WarehouseLogEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DocumentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DocumentType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductVariationId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("Quantity")
-                        .HasColumnType("float");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WarehouseId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ProductVariationId");
-
-                    b.HasIndex("WarehouseId");
-
-                    b.ToTable("WarehouseLogs");
-                });
-
             modelBuilder.Entity("ContractOrderEntityContractOrderProductEntity", b =>
                 {
                     b.Property<int>("ContractOrderProductsId")
@@ -2444,15 +2397,7 @@ namespace BiyLineApi.DbContexts.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
-                        .WithMany()
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Governorate");
-
-                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.ProductEntity", b =>
@@ -2613,12 +2558,6 @@ namespace BiyLineApi.DbContexts.Migrations
                         .WithMany()
                         .HasForeignKey("ShippingCompanyId");
 
-                    b.HasOne("BiyLineApi.Entities.StoreEntity", "Store")
-                        .WithMany()
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("BiyLineApi.Entities.StoreWalletEntity", "StoreWallet")
                         .WithMany()
                         .HasForeignKey("StoreWalletId");
@@ -2634,8 +2573,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("PickUpPoint");
 
                     b.Navigation("ShippingCompany");
-
-                    b.Navigation("Store");
 
                     b.Navigation("StoreWallet");
 
@@ -2975,33 +2912,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Store");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.WarehouseLogEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.ProductEntity", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.ProductVariationEntity", "ProductVariation")
-                        .WithMany()
-                        .HasForeignKey("ProductVariationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.WarehouseEntity", "Warehouse")
-                        .WithMany("Logs")
-                        .HasForeignKey("WarehouseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("ProductVariation");
-
-                    b.Navigation("Warehouse");
-                });
-
             modelBuilder.Entity("ContractOrderEntityContractOrderProductEntity", b =>
                 {
                     b.HasOne("BiyLineApi.Entities.ContractOrderProductEntity", null)
@@ -3279,8 +3189,6 @@ namespace BiyLineApi.DbContexts.Migrations
             modelBuilder.Entity("BiyLineApi.Entities.WarehouseEntity", b =>
                 {
                     b.Navigation("DestinationStocks");
-
-                    b.Navigation("Logs");
 
                     b.Navigation("Products");
 

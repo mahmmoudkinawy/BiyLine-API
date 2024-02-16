@@ -36,7 +36,7 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     //public DbSet<ShippingCompanyGovernorateEntity> ShippingCompanyGovernorates { get; set; }
 
     public DbSet<ShippingCompanyGovernorateDetailsEntity> ShippingCompanyGovernorateDetails { get; set; }
-    public DbSet<ShippingCompanyGovernorateEntity> ShippingCompanyGovernorates { get; set; }
+   // public DbSet<ShippingCompanyGovernorateEntity> ShippingCompanyGovernorates { get; set; }
 
     public DbSet<EmployeeEntity> Employees { get; set; }
     public DbSet<WarehouseEntity> Warehouses { get; set; }
@@ -50,6 +50,8 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<SupplierInvoiceEntity> SupplierInvoices { get; set; }
     public DbSet<StockEntity> Stocks { get; set; }
     public DbSet<StoreWalletEntity> StoreWallets { get; set; }
+    public DbSet<StoreWalletLogs> StoreWalletLogs { get; set; }
+    public DbSet<WarehouseLogEntity> WarehouseLogs { get; set; }
     public DbSet<CashDepositePermissionEntity> CashDepositePermissions { get; set; }
     public DbSet<CashDiscountPermissionEntity> CashDiscountPermissions { get; set; }
     public DbSet<SalaryPaymentEntity> SalaryPayments { get; set; }

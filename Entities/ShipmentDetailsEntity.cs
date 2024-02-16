@@ -9,7 +9,7 @@ namespace BiyLineApi.Entities
         public ShipmentEntity Shipment { get; set; }
         public int ProductId { get; set; }
         public ProductEntity Product { get; set; }
-        public int ProductVariationEntity { get; set; }
+        public int ProductVariationId { get; set; }
         public ProductVariationEntity ProductVariation { get; set; }
         public double UnitCost { get; set; }
         public double DiscountPercentage { get; set; }

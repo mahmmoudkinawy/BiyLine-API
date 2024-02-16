@@ -12,6 +12,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Enums\CuponStatus.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Remove="DbContexts\BiyLineDbContext.cs~RF505188e.TMP" />
 	</ItemGroup>
 
@@ -48,6 +52,10 @@
 		<PackageReference Include="SignalRSwaggerGen" Version="4.5.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Features\Warehouses\WareHouseLog\Commands\DeleteWarehouse\" />
 	</ItemGroup>
 
 </Project>

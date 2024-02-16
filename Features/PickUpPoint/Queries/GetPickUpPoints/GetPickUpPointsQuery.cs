@@ -1,0 +1,72 @@
+﻿namespace BiyLineApi.Features.PickUpPoint.Queries.GetPickUpPoints
+{
+    public class GetPickUpPointsQuery
+    {
+        public sealed class Request : IRequest<Result<Response>>
+        {
+
+        }
+
+        public sealed class Response
+        {
+            public List<PickUpPointEntity> PickUpPoints { get; set; }
+        }
+
+  
+
+        public sealed class Handler : IRequestHandler<Request, Result<Response>>
+        {
+            private readonly BiyLineDbContext _context;
+            private readonly IHttpContextAccessor _httpContextAccessor;
+            private readonly UserManager<UserEntity> _userManager;
+            private readonly IImageService _imageService;
+            private readonly IDateTimeProvider _dateTimeProvider;
+
+            public Handler(
+                BiyLineDbContext context,
+                UserManager<UserEntity> userManager,
+                            IImageService imageService,
+                                        IDateTimeProvider dateTimeProvider,
+
+                IHttpContextAccessor httpContextAccessor)
+            {
+                _userManager = userManager ??
+        throw new ArgumentNullException(nameof(userManager));
+                _context = context ??
+                    throw new ArgumentNullException(nameof(context));
+                _httpContextAccessor = httpContextAccessor ??
+                    throw new ArgumentNullException(nameof(httpContextAccessor));
+                _imageService = imageService ?? throw new ArgumentNullException(nameof(imageService));
+                _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
+            }
+
+            public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
+            {
+                try
+                {
+                    var userId = _httpContextAccessor.GetUserById();
+                    var user = await _userManager.FindByIdAsync(userId.ToString());
+                    if (user == null)
+                    {
+                        return Result<Response>.Failure("User Not Found");
+                    }
+                    var store = await _context.Stores.FirstOrDefaultAsync(s => s.Id == user.StoreId);
+                    if (store == null)
+                    {
+                        return Result<Response>.Failure("Store Not Found");
+                    }
+                    var pickUpPoint = await _context.PickUpPoints.AsNoTracking().Where(p => p.StoreId == store.Id).ToListAsync();
+                    if (pickUpPoint == null)
+                    {
+                        return Result<Response>.Failure("PickUp Point Not Found");
+                    }
+                    return Result<Response>.Success(new Response { PickUpPoints = pickUpPoint });
+                }
+                catch (Exception ex)
+                {
+                    return Result<Response>.Failure(ex.Message);
+                }
+            }
+        }
+    }
+}

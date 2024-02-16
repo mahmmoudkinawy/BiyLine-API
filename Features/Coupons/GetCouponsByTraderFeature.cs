@@ -21,7 +21,6 @@ public sealed class GetCouponsByTraderFeature
         public DateTime EndDate { get; set; }
         public CouponStatus IsActive { get; set; }
         public int UsageCount { get; set; } = new Random().Next(1, 500); // will be replaced
-        public string? Name { get; internal set; }
         public decimal? CommissionRate { get; internal set; }
         public decimal? DiscountPercentage { get; internal set; }
         public List<CategoryEntity> categories { get; internal set; }
@@ -82,7 +81,7 @@ public sealed class GetCouponsByTraderFeature
                 Id = coupon.Id,
                 Code = coupon.Code,
                 StartDate = coupon.StartDate.Value,
-                DiscountAmount = coupon.DiscountAmount.Value,
+                DiscountAmount = coupon.DiscountAmount,
                 EndDate = coupon.EndDate.Value,
                 IsActive = coupon.Status,
                 UsageCount = coupon.Usage.Count,

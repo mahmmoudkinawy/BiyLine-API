@@ -2,7 +2,16 @@
 {
     public enum ShipmentStatus
     {
-        Delivered = 0,
+        Now = 1,
+        WaitingShipping,
+        ReadyToShipping,
+        ShippingCompanyAcceptance,
+        SendingRepresentativeToPickUp,
+        ReceivingShipmentFromStore,
+        InShippningCompanyWareHouse,
+        DeliveredToDeliveryRepresentative,
+        OnTheWay,
+        Delivered
     }
     public enum CashOutType
     {
@@ -24,5 +33,10 @@
     {
         Paid =1,
         UnPaid
+    }
+    public enum WarehouseLogType
+    {
+        In = 1,
+        Out 
     }
 }

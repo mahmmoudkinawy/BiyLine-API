@@ -2,7 +2,7 @@
 {
     public enum CuponStatus
     {
-        Active,
-        NotActive
+        Active=1,
+        NotActive=0
     }
 }

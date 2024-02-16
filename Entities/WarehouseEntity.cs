@@ -14,4 +14,5 @@ public sealed class WarehouseEntity
     public ICollection<ProductEntity> Products { get; set; } = new List<ProductEntity>();
     public ICollection<StockEntity> SourceStocks { get; set; }
     public ICollection<StockEntity> DestinationStocks { get; set; }
+    public ICollection<WarehouseLogEntity> Logs { get; set; }
 }

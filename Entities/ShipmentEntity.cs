@@ -8,10 +8,16 @@ namespace BiyLineApi.Entities
         //public string Serial { get; set; }
         public int WarehouseId { get; set; }
         public WarehouseEntity Warehouse { get; set; }
+
+        public int StoreId { get; set; }
+        public StoreEntity Store { get; set; }
+
+
         public string? ClientName { get; set; }
         public string? ClientPhone { get; set; }
         public double? TotalDiscountPercentage { get; set; }
         public double? ValueAddedTax { get; set; }
+        public CashOutType CashOutType { get; set; }
         public ShipmentStatus Status { get; set; }
         public DateTime CreatedDate { get; set; }
         public CollectingShipmentCost CollectingShipmentCost { get; set; }

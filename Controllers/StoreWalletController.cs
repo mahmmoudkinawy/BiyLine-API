@@ -1,4 +1,7 @@
-﻿namespace BiyLineApi.Controllers;
+﻿using BiyLineApi.Features.StoreWallet.StoreWalletLog.Queries;
+using BiyLineApi.Features.Warehouses.WareHouseLog.Queries.GetWarehouseLog;
+
+namespace BiyLineApi.Controllers;
 
 [Route("api/v{version:apiVersion}/storeWallet")]
 [ApiController]
@@ -82,6 +85,19 @@ public sealed class StoreWalletController : ControllerBase
         }
 
         return NoContent();
+    }
+    [HttpGet("GetStoreWalletLog")]
+    public async Task<ActionResult<GetStoreWalletLogsQuery.Response>>
+        GetStoreWalletLog(int DocId, DocumentType documentType)
+    {
+        var request = new GetStoreWalletLogsQuery.Request { DocumentId = DocId, DocumentType = documentType };
+        var response = await _mediator.Send(request);
+
+        if (!response.IsSuccess)
+        {
+            return NotFound(response.Errors);
+        }
+        return Ok(response.Value);
     }
 }
 

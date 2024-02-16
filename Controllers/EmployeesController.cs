@@ -97,7 +97,7 @@ public sealed class EmployeesController : ControllerBase
     [HttpGet("current-store-employees")]
     [Authorize(Policy = Constants.Policies.EmployeeRead)]
 
-    public async Task<ActionResult<IReadOnlyList<GetEmployeesForStoreByTraderFeature.Response>>> GetEmployeesForStoreByTrader(
+    public async Task<ActionResult<GetEmployeesForStoreByTraderFeature.Response>> GetEmployeesForStoreByTrader(
         [FromQuery] EmployeeParams employeeParams)
     {
         var response = await _mediator.Send(new GetEmployeesForStoreByTraderFeature.Request

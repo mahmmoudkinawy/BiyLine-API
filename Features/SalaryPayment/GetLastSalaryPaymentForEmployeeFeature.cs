@@ -15,7 +15,7 @@ public sealed class GetLastSalaryPaymentForEmployeeFeature
 
         public decimal? Salary { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
 
         public string Notes { get; set; }
 
@@ -64,7 +64,7 @@ public sealed class GetLastSalaryPaymentForEmployeeFeature
                   .Include(s=>s.StoreWallet)
                   .ThenInclude(s => s.Store)
                   .ThenInclude(s => s.Employees)
-                  .OrderByDescending(s=>s.Date)
+                  .OrderByDescending(s=>s.PaymentDate)
                   .FirstOrDefaultAsync(s => s.EmployeeId==request.EmployeeId && s.StoreWallet.Store.OwnerId == userId && s.StoreWallet.Store.Employees.Any(s => s.Id == request.EmployeeId));
 
                 if (salaryPayment == null)
@@ -81,7 +81,7 @@ public sealed class GetLastSalaryPaymentForEmployeeFeature
                    .ThenInclude(s => s.Employees)
                    .Include(s => s.StoreWallet)
                    .ThenInclude(s=>s.Employee)
-                   .OrderByDescending(s => s.Date)
+                   .OrderByDescending(s => s.PaymentDate)
                    .FirstOrDefaultAsync(s => s.EmployeeId == request.EmployeeId && s.StoreWallet.Employee.User.Id == userId &&  s.StoreWallet.Store.Employees.Any(s => s.Id == request.EmployeeId));
 
                 if (salaryPayment == null)
@@ -94,42 +94,18 @@ public sealed class GetLastSalaryPaymentForEmployeeFeature
             {
                 EmployeeName = employee.User.Name,
                 Salary = employee.Salary,
-                Notes = salaryPayment.Note,
-                Date = salaryPayment.Date,
+                Notes = salaryPayment.Notes,
+                Date = salaryPayment.PaymentDate,
                 StoreWalletName = salaryPayment.StoreWallet.Name
             };
 
-            if(employee.PaymentPeriod == PaymentPeriodEnum.Monthly.ToString())
-                
-            {
+            
                 if ((DateTime.UtcNow - response.Date) > new TimeSpan(30, 0, 0, 0))
                    response.SalaryPaymentStatus = SalaryPaymentEnum.Paid.ToString(); 
                 else
                     response.SalaryPaymentStatus = SalaryPaymentEnum.Unpaid.ToString();
 
-            }
-            else if(employee.PaymentPeriod == PaymentPeriodEnum.TwoWeeks.ToString() )
-            {
-                if ((DateTime.UtcNow - response.Date) > new TimeSpan(14, 0, 0, 0))
-                    response.SalaryPaymentStatus = SalaryPaymentEnum.Paid.ToString();
-                else
-                    response.SalaryPaymentStatus = SalaryPaymentEnum.Unpaid.ToString();
-            }
-            else if(employee.PaymentPeriod == PaymentPeriodEnum.Weekly.ToString())
-            {
-                if ((DateTime.UtcNow - response.Date) > new TimeSpan(7, 0, 0, 0))
-                    response.SalaryPaymentStatus = SalaryPaymentEnum.Paid.ToString();
-                else
-                    response.SalaryPaymentStatus = SalaryPaymentEnum.Unpaid.ToString();
-            }
-            else if(employee.PaymentPeriod == PaymentPeriodEnum.Yearly.ToString())
-            {
-                if ((DateTime.UtcNow - response.Date) > new TimeSpan(356, 0, 0, 0))
-                    response.SalaryPaymentStatus = SalaryPaymentEnum.Paid.ToString();
-                else
-                    response.SalaryPaymentStatus = SalaryPaymentEnum.Unpaid.ToString();
-            }
-
+            
             return Result<Response>.Success(response);  
         }
     }

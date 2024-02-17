@@ -76,7 +76,7 @@ namespace BiyLineApi.Controllers
             }
             return Ok(response.Value);
         }
-        [HttpPost("UpdateShipmentShipping")]
+        [HttpPost("UpdateShipmentShippingStatus")]
         public async Task<ActionResult<UpdateShipmentStatusCommand.Response>>
         UpdateShipmentStatus([FromBody] UpdateShipmentStatusCommand.Request request)
         {

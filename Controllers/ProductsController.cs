@@ -14,9 +14,8 @@ public sealed class ProductsController : ControllerBase
             throw new ArgumentNullException(nameof(mediator));
     }
 
-    [HttpGet]
-    [Authorize(Constants.Policies.ProductRead)]
-    public async Task<ActionResult<IReadOnlyList<GetProductsFeature.Response>>> GetProducts(
+    [HttpGet("GetProducts")]
+    public async Task<ActionResult<GetProductsFeature.Response>> GetProducts(
         [FromQuery] ProductParams productParams)
     {
         var response = await _mediator.Send(new GetProductsFeature.Request

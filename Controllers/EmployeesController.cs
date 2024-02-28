@@ -97,7 +97,7 @@ public sealed class EmployeesController : ControllerBase
     [HttpGet("current-store-employees")]
     [Authorize(Policy = Constants.Policies.EmployeeRead)]
 
-    public async Task<ActionResult<IReadOnlyList<GetEmployeesForStoreByTraderFeature.Response>>> GetEmployeesForStoreByTrader(
+    public async Task<ActionResult<GetEmployeesForStoreByTraderFeature.Response>> GetEmployeesForStoreByTrader(
         [FromQuery] EmployeeParams employeeParams)
     {
         var response = await _mediator.Send(new GetEmployeesForStoreByTraderFeature.Request
@@ -115,6 +115,24 @@ public sealed class EmployeesController : ControllerBase
 
 
         return Ok(response);
+    }
+
+    [HttpPut("{employeeId}/change-password")]
+    [Authorize(Policy =Constants.Policies.MustBeTrader)]
+    public async Task<IActionResult> ChangeEmployeePassword([FromBody] ChangeEmployeePasswordByTraderFeature.Request request)
+    {
+        var response = await _mediator.Send(request);
+        if (!response.IsSuccess)
+        {
+            return NotFound(response.Errors);
+        }
+        if(response.IsBadRequest)
+        {
+            return BadRequest(response.Errors);
+        }
+
+        return Ok(response.Value);
+
     }
 
    

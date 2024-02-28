@@ -18,8 +18,8 @@ public sealed class ProductsController : ControllerBase
             throw new ArgumentNullException(nameof(mediator));
     }
 
-    [HttpGet]
-    [Authorize(Constants.Policies.ProductRead)]
+    [HttpGet("GetProducts")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyList<GetProductsFeature.Response>))]
     public async Task<ActionResult<IReadOnlyList<GetProductsFeature.Response>>> GetProducts(
         [FromQuery] ProductParams productParams)
     {

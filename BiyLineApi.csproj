@@ -55,6 +55,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Features\Warehouses\Commands\" />
 	  <Folder Include="Features\Warehouses\WareHouseLog\Commands\DeleteWarehouse\" />
 	</ItemGroup>
 

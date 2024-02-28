@@ -172,6 +172,7 @@ namespace BiyLineApi.Features.Shipment.Commands.CreateShipment
                     if(shipment.CashOutType == CashOutType.Now)
                     {
                         var warehouseLogs = new List<WarehouseLogEntity>();
+                        var code = Guid.NewGuid();
                         Parallel.ForEach(request.ShipmentDetails, shipmentDetail =>
                         {
                             var warehouselog = new WarehouseLogEntity
@@ -182,7 +183,10 @@ namespace BiyLineApi.Features.Shipment.Commands.CreateShipment
                                 WarehouseId = shipment.WarehouseId,
                                 Type = WarehouseLogType.Out,
                                 DocumentType = DocumentType.Shipment,
-                                DocumentId = shipment.Id
+                                DocumentId = shipment.Id,
+                                Code = code,
+                                OperationDate = _dateTimeProvider.GetCurrentDateTimeUtc(),
+                                SellingPrice = (decimal)shipmentDetail.UnitCost
                             };
                             warehouseLogs.Add(warehouselog);
 

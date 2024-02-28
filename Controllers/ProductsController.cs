@@ -1,4 +1,8 @@
-﻿namespace BiyLineApi.Controllers;
+﻿using BiyLineApi.Features.Products.Commands;
+using BiyLineApi.Features.Products.Queries;
+using BiyLineApi.Features.Products.Queries.GetProductWarehouseLogs;
+
+namespace BiyLineApi.Controllers;
 
 [ApiVersion(1.0)]
 [ApiVersion(2.0)]
@@ -79,6 +83,24 @@ public sealed class ProductsController : ControllerBase
         }
 
         return Ok(response.Value);
+    }
+    
+    [EnsureStoreProfileCompleteness]
+    [EnsureSingleStore]
+    [Authorize(Policy = Constants.Policies.ProductRead)]
+    [HttpGet("GetProductWarehouseLogs")]
+    public async Task<ActionResult<GetProductWarehouseLogsFeature.Response>> GetProductWarehouseLogs(GetProductWarehouseLogsFeature.Request query)
+    {
+        var response = await _mediator.Send(query);
+
+
+        Response.AddPaginationHeader(
+            response.CurrentPage,
+            response.PageSize,
+            response.TotalPages,
+            response.TotalCount);
+
+        return Ok(response);
     }
 
     [HttpGet("{productId}/rating-statistics")]

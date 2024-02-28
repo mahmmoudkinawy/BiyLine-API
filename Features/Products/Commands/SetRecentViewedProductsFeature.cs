@@ -1,4 +1,4 @@
-﻿namespace BiyLineApi.Features.Products;
+﻿namespace BiyLineApi.Features.Products.Commands;
 public sealed class SetRecentViewedProductsFeature
 {
     public sealed class Request : IRequest

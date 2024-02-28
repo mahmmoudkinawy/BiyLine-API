@@ -1,4 +1,4 @@
-﻿namespace BiyLineApi.Features.Products;
+﻿namespace BiyLineApi.Features.Products.Queries;
 public sealed class GetThresholdedProductsFeature
 {
     public sealed class Request : IRequest<OneOf<PagedList<Response>, Result<Response>>>

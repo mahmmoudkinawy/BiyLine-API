@@ -1,30 +1,28 @@
-﻿namespace BiyLineApi.Features.Products;
-public sealed class GetProductByIdFeature
+﻿namespace BiyLineApi.Features.Products.Queries;
+public sealed class GetProductsFeature
 {
-    public sealed class Request : IRequest<Result<Response>>
+    public sealed class Request : IRequest<PagedList<Response>>
     {
-        public int ProductId { get; set; }
+        public bool? IsInStock { get; set; }
+        public string? Predicate { get; set; }
+        public int? PageNumber { get; set; }
+        public int? PageSize { get; set; }
     }
 
     public sealed class Response
     {
         public int Id { get; set; }
-        public string? Name { get; set; }
-        public decimal? SellingPrice { get; set; }
+        public string? Username { get; set; }
+        public decimal? Price { get; set; }
         public string? Description { get; set; }
         public string? Brand { get; set; }
         public string? GeneralOverview { get; set; }
         public string? Specifications { get; set; }
+        public int? CountInStock { get; set; }
         public decimal? Weight { get; set; }
         public string? Dimensions { get; set; }
         public int? NumberOfReviews { get; set; }
         public DateTime? DateAdded { get; set; }
-        public decimal? PriceBeforeDiscount { get; set; }
-        public decimal? PriceAfterDiscount { get; set; }
-        public decimal? Discount { get; set; }
-        public string? SellerName { get; set; }
-        public int? CountInStock { get; set; }
-        public int? WarrantyMonths { get; set; }
         public int? CategoryId { get; set; }
         public List<ImageResponse> Images { get; set; }
     }
@@ -41,13 +39,6 @@ public sealed class GetProductByIdFeature
         public Mapper()
         {
             CreateMap<ProductEntity, Response>()
-                .ForMember(dest => dest.SellerName, opt => opt.MapFrom(src => src.Store.Username))
-                .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Offer.DiscountPercentage))
-                .ForMember(dest => dest.PriceBeforeDiscount, opt => opt.MapFrom(src => src.SellingPrice.Value))
-                .ForMember(dest => dest.PriceAfterDiscount, opt =>
-                    opt.MapFrom(src => src.SellingPrice.CalculatePriceAfterDiscount(src.Offer.DiscountPercentage.Value)))
-                .ForMember(dest => dest.Name,
-                    opt => opt.MapFrom(src => src.ProductTranslations.FirstOrDefault().Name))
                 .ForMember(dest => dest.Description,
                     opt => opt.MapFrom(src => src.ProductTranslations.FirstOrDefault().Description))
                 .ForMember(dest => dest.Brand,
@@ -60,39 +51,50 @@ public sealed class GetProductByIdFeature
         }
     }
 
-    public sealed class Handler : IRequestHandler<Request, Result<Response>>
+    public sealed class Handler : IRequestHandler<Request, PagedList<Response>>
     {
         private readonly BiyLineDbContext _context;
+        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMapper _mapper;
 
         public Handler(
             BiyLineDbContext context,
+            IDateTimeProvider dateTimeProvider,
             IMapper mapper)
         {
             _context = context ??
                 throw new ArgumentNullException(nameof(context));
+            _dateTimeProvider = dateTimeProvider ??
+                throw new ArgumentNullException(nameof(dateTimeProvider));
             _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
+        public async Task<PagedList<Response>> Handle(Request request,CancellationToken cancellationToken)
         {
-            var product = await _context.Products
-                .Include(p => p.ProductTranslations)
-                .Include(p => p.Images)
-                .Include(p => p.Store)
-                .Where(p => p.Id == request.ProductId)
-                .ProjectTo<Response>(_mapper.ConfigurationProvider)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+            var query = _context.Products
+                .Include(c => c.ProductTranslations)
+                .AsQueryable();
 
-            if (product is null)
+            var currentDateTime = _dateTimeProvider.GetCurrentDateTimeUtc();
+
+            query = request.Predicate switch
             {
-                // will be replaced with localization
-                return Result<Response>.Failure("Product does not exist");
+                "hot" => query
+                    .Where(p => p.Offer != null && p.Offer.StartDate <= currentDateTime && currentDateTime <= p.Offer.EndDate)
+                    .OrderByDescending(p => p.DateAdded),
+                _ => query
+            };
+
+            if (request.IsInStock.Value)
+            {
+                query = query.Where(p => p.CountInStock > 0);
             }
 
-            return Result<Response>.Success(product);
+            return await PagedList<Response>.CreateAsync(
+                query.ProjectTo<Response>(_mapper.ConfigurationProvider).AsNoTracking(),
+                request.PageNumber.Value,
+                request.PageSize.Value);
         }
     }
 }

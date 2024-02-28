@@ -40,4 +40,6 @@ public sealed class ProductEntity
     public ICollection<QuantityPricingTierEntity> QuantityPricingTiers { get; set; } = new List<QuantityPricingTierEntity>();
     public ICollection<ProductTranslationEntity> ProductTranslations { get; set; } = new List<ProductTranslationEntity>();
     public ICollection<ContractOrderProductEntity> ContractOrderProducts { get; set; } = new List<ContractOrderProductEntity>();
+    public ICollection<WarehouseSummaryEntity> Summaries { get; set; } = new List<WarehouseSummaryEntity>();
+
 }

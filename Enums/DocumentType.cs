@@ -4,6 +4,7 @@
     {
         Shipment = 1,
         ReturnShipment,
-        Coupon
+        Coupon,
+        Manual
     }
 }

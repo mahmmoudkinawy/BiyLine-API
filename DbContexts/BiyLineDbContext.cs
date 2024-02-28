@@ -52,6 +52,7 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<StoreWalletEntity> StoreWallets { get; set; }
     public DbSet<StoreWalletLogs> StoreWalletLogs { get; set; }
     public DbSet<WarehouseLogEntity> WarehouseLogs { get; set; }
+    public DbSet<WarehouseSummaryEntity> WarehouseSummaries { get; set; }
     public DbSet<CashDepositePermissionEntity> CashDepositePermissions { get; set; }
     public DbSet<CashDiscountPermissionEntity> CashDiscountPermissions { get; set; }
     public DbSet<SalaryPaymentEntity> SalaryPayments { get; set; }

@@ -1,4 +1,4 @@
-﻿namespace BiyLineApi.Features.Products;
+﻿namespace BiyLineApi.Features.Products.Queries;
 public sealed class GetRatingStatisticsForProductByProductIdFeature
 {
     public sealed class Request : IRequest<Response>

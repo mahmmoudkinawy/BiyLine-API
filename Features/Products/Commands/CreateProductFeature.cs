@@ -1,4 +1,4 @@
-﻿namespace BiyLineApi.Features.Products;
+﻿namespace BiyLineApi.Features.Products.Commands;
 public sealed class CreateProductFeature
 {
     public sealed class Request : IRequest<Result<Response>>
@@ -330,7 +330,7 @@ public sealed class CreateProductFeature
 
             if (request.Images != null)
             {
-                var images = await Task.WhenAll(request.Images?.Select(async image =>
+                var images = await Task.WhenAll(request.Images.Select(async image =>
                 {
                     return new ImageEntity
                     {
@@ -349,7 +349,40 @@ public sealed class CreateProductFeature
 
             _context.Products.Add(productToCreate);
             await _context.SaveChangesAsync(cancellationToken);
+            if (request.CountInStock.HasValue)
+            {
+                if (productToCreate.ProductVariations != null)
+                {
+                    var code = Guid.NewGuid();
+                    var wareHouseLogs = new List<WarehouseLogEntity>();
+                    foreach (var v in productToCreate.ProductVariations)
+                    {
+                        var wareHouseLog = new WarehouseLogEntity
+                        {
+                            DocumentType = DocumentType.Manual,
+                            ProductId = productToCreate.Id,
+                            ProductVariationId = v.Id,
+                            Quantity = v.Quantity ?? 0.0,
+                            WarehouseId = request.WarehouseId,
+                            Type = WarehouseLogType.In,
+                            Code = code,
+                            OperationDate = _dateTimeProvider.GetCurrentDateTimeUtc(),
+                            SellingPrice = request.SellingPrice
+                        };
+                        wareHouseLogs.Add(wareHouseLog);
+                    }
+                    await _context.WarehouseLogs.AddRangeAsync(wareHouseLogs);
+                    await _context.SaveChangesAsync(cancellationToken);
+                }
+                var productSummary =  _context.WarehouseSummaries.Add(new WarehouseSummaryEntity
+                {
+                    ProductId = productToCreate.Id,
+                    Quantity = request.CountInStock??0,
+                    WarehouseId=request.WarehouseId,
+                });
+                await _context.SaveChangesAsync(cancellationToken);
 
+            }
             return Result<Response>.Success(new Response { });
         }
     }

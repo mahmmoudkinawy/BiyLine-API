@@ -11,7 +11,10 @@
         public WarehouseLogType Type { get; set; }
         public int ProductVariationId { get; set; }
         public ProductVariationEntity ProductVariation { get; set; }
-        public int DocumentId { get; set; }
+        public int? DocumentId { get; set; }
         public DocumentType DocumentType { get; set; }
+        public Guid Code { get; set; }
+        public DateTime OperationDate { get; set; }
+        public decimal? SellingPrice { get; set; }
     }
 }

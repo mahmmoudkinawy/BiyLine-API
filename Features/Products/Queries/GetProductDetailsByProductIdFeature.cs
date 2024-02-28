@@ -1,4 +1,4 @@
-﻿namespace BiyLineApi.Features.Products;
+﻿namespace BiyLineApi.Features.Products.Queries;
 public sealed class GetProductDetailsByProductIdFeature
 {
     public sealed class Request : IRequest<Result<Response>>
@@ -41,7 +41,7 @@ public sealed class GetProductDetailsByProductIdFeature
     }
     public record VariationSizeVM
     {
-        public int VariationId {get; set; }
+        public int VariationId { get; set; }
         public string? Size { get; set; }
         public int? Quantity { get; set; }
     }
@@ -100,10 +100,10 @@ public sealed class GetProductDetailsByProductIdFeature
                 .Where(pv => pv.ProductId == request.ProductId)
                 .GroupBy(pv => pv.Color)
                 .Select(g => new VariationColorVM
-                     {
-                        Color = g.Key,
-                        Sizes = g.Select(pv => new VariationSizeVM{ Size = pv.Size, Quantity = pv.Quantity, VariationId = pv.Id }).ToList()
-                     })
+                {
+                    Color = g.Key,
+                    Sizes = g.Select(pv => new VariationSizeVM { Size = pv.Size, Quantity = pv.Quantity, VariationId = pv.Id }).ToList()
+                })
                 .ToListAsync();
 
             productBelongsToCurrentUserStore.Images = await _context

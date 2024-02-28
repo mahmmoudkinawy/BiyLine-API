@@ -1,4 +1,6 @@
-﻿namespace BiyLineApi.Controllers;
+﻿using BiyLineApi.Features.Products.Queries;
+
+namespace BiyLineApi.Controllers;
 
 [Route("api/v{version:apiVersion}/stockTrackers/{warehouseId}")]
 [ApiVersion(2.0)]

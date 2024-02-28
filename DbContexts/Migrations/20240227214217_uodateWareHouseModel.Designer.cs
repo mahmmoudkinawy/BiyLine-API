@@ -4,6 +4,7 @@ using BiyLineApi.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BiyLineApi.DbContexts.Migrations
 {
     [DbContext(typeof(BiyLineDbContext))]
-    partial class BiyLineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240227214217_uodateWareHouseModel")]
+    partial class uodateWareHouseModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1976,32 +1979,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.ToTable("WarehouseLogs");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.WarehouseSummaryEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WarehouseId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("WarehouseId");
-
-                    b.ToTable("WarehouseSummaries");
-                });
-
             modelBuilder.Entity("ContractOrderEntityContractOrderProductEntity", b =>
                 {
                     b.Property<int>("ContractOrderProductsId")
@@ -3037,25 +3014,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Warehouse");
                 });
 
-            modelBuilder.Entity("BiyLineApi.Entities.WarehouseSummaryEntity", b =>
-                {
-                    b.HasOne("BiyLineApi.Entities.ProductEntity", "Product")
-                        .WithMany("Summaries")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BiyLineApi.Entities.WarehouseEntity", "Warehouse")
-                        .WithMany("Summaries")
-                        .HasForeignKey("WarehouseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("Warehouse");
-                });
-
             modelBuilder.Entity("ContractOrderEntityContractOrderProductEntity", b =>
                 {
                     b.HasOne("BiyLineApi.Entities.ContractOrderProductEntity", null)
@@ -3215,8 +3173,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Rates");
 
                     b.Navigation("Stocks");
-
-                    b.Navigation("Summaries");
                 });
 
             modelBuilder.Entity("BiyLineApi.Entities.ProductVariationEntity", b =>
@@ -3341,8 +3297,6 @@ namespace BiyLineApi.DbContexts.Migrations
                     b.Navigation("Products");
 
                     b.Navigation("SourceStocks");
-
-                    b.Navigation("Summaries");
                 });
 #pragma warning restore 612, 618
         }

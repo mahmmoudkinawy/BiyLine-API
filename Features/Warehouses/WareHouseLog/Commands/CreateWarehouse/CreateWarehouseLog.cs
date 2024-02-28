@@ -7,6 +7,7 @@
             public int Id { get; set; }
             public int WarehouseId { get; set; }
             public double Quantity { get; set; }
+            public decimal? SellingPrice { get; set; }
             public int ProductId { get; set; }
             public WarehouseLogType Type { get; set; }
             public int ProductVariationId { get; set; }
@@ -68,7 +69,10 @@
                         WarehouseId = request.WarehouseId,
                         Type = request.Type,
                         DocumentType = request.DocumentType,
-                        DocumentId = request.DocumentId
+                        DocumentId = request.DocumentId,
+                        Code = Guid.NewGuid(),
+                        OperationDate = _dateTimeProvider.GetCurrentDateTimeUtc(),
+                        SellingPrice = request.SellingPrice
                     };
                     _context.WarehouseLogs.Add(warehouselog);
                     await _context.SaveChangesAsync();

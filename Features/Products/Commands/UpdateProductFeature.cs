@@ -1,4 +1,4 @@
-﻿namespace BiyLineApi.Features.Products;
+﻿namespace BiyLineApi.Features.Products.Commands;
 public sealed class UpdateProductFeature
 {
     public sealed class Request : IRequest<Result<Response>>

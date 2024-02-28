@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.Contracts;
 
-namespace BiyLineApi.Features.Products;
+namespace BiyLineApi.Features.Products.Queries;
 
 public sealed class GetProductByIdForTraderFeature
 {

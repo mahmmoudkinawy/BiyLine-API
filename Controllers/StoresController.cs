@@ -1,4 +1,6 @@
-﻿namespace BiyLineApi.Controllers;
+﻿using BiyLineApi.Features.Products.Queries;
+
+namespace BiyLineApi.Controllers;
 
 [ApiVersion(2.0)]
 [ApiController]

@@ -14,6 +14,8 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<ProductEntity> Products { get; set; }
     public DbSet<CategoryEntity> Categories { get; set; }
     public DbSet<CouponCategory> CouponCategory { get; set; }
+    public DbSet<WarehouseTranseferDetails> WarehouseTranseferDetails { get; set; }
+    public DbSet<WarehouseTranseferEntity> WarehouseTransefers { get; set; }
     public DbSet<OfferEntity> Offers { get; set; }
     public DbSet<StoreEntity> Stores { get; set; }
     public DbSet<RateEntity> Rates { get; set; }

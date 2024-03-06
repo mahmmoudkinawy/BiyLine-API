@@ -5,6 +5,8 @@
         Shipment = 1,
         ReturnShipment,
         Coupon,
-        Manual
+        Manual,
+        Transefer,
+
     }
 }

@@ -1,4 +1,9 @@
-﻿namespace BiyLineApi.Controllers;
+﻿using BiyLineApi.Features.WarehouseTransefer.Commands.CreateWarehouseTransefer;
+using BiyLineApi.Features.WarehouseTransefer.Commands.DeleteWarehouseTransefer;
+using BiyLineApi.Features.WarehouseTransefer.Queries.GetWarehouseTransefer;
+using BiyLineApi.Features.WarehouseTransefer.Queries.GetWarehouseTranseferes;
+
+namespace BiyLineApi.Controllers;
 
 [Route("api/v{version:apiVersion}/warehouses")]
 [ApiVersion(2.0)]
@@ -140,6 +145,94 @@ public sealed class WarehousesController : ControllerBase
         var response = await _mediator.Send(new DeleteWarehouseForStoreFeature.Request
         {
             WarehouseId = warehouseId
+        });
+
+        if (!response.IsSuccess)
+        {
+            return NotFound(response.Errors);
+        }
+
+        return NoContent();
+    }
+    
+    
+    [HttpGet("{warehouseTranseferId}")]
+    public async Task<IActionResult> GetWarehouseTransefer(
+        [FromRoute] int warehouseTranseferId)
+    {
+        var response = await _mediator.Send(new GetWarehouseTranseferQuery.Request
+        {
+            WareHouseTranseferId = warehouseTranseferId
+        });
+
+        if (!response.IsSuccess)
+        {
+            return NotFound(response.Errors);
+        }
+
+        return NoContent();
+    }
+    [HttpGet("GetWarehouseTranseferes")]
+    public async Task<ActionResult<IReadOnlyList<GetWarehouseTranseferesQuery.Response>>> GetWarehouseTranseferes(
+       [FromQuery] FilterParams filterParams)
+    {
+        var response = await _mediator.Send(new GetWarehouseTranseferesQuery.Request
+        {
+            Predicate = filterParams.Predicate,
+            PageNumber = filterParams.PageNumber,
+            PageSize = filterParams.PageSize
+        });
+
+        Response.AddPaginationHeader(
+            response.CurrentPage,
+            response.PageSize,
+            response.TotalPages,
+            response.TotalCount);
+
+        return Ok(response);
+    }
+    
+    [HttpGet("GetWarehouseTransefereDetails/{WarehouseTranseferId}")]
+    public async Task<ActionResult<IReadOnlyList<GetWarehouseTranseferesDetailsQuery.Response>>> GetWarehouseTranseferes(
+       [FromQuery] FilterParams filterParams,int WarehouseTranseferId)
+    {
+        var response = await _mediator.Send(new GetWarehouseTranseferesDetailsQuery.Request
+        {
+            WarehouseTranseferId = WarehouseTranseferId,
+            Predicate = filterParams.Predicate,
+            PageNumber = filterParams.PageNumber,
+            PageSize = filterParams.PageSize
+        });
+
+        Response.AddPaginationHeader(
+            response.CurrentPage,
+            response.PageSize,
+            response.TotalPages,
+            response.TotalCount);
+
+        return Ok(response);
+    }
+
+    [HttpPost("CreateWarehouseTransefer")]
+    public async Task<IActionResult> CreateWarehouseTransefer(
+        [FromBody] CreateWarehouseTranseferCommand.Request request)
+    {
+        var response = await _mediator.Send(request);
+
+        if (!response.IsSuccess)
+        {
+            return NotFound(response.Errors);
+        }
+
+        return Ok(response);
+    }
+    [HttpDelete("{warehouseTranseferId}")]
+    public async Task<IActionResult> DeleteWarehouseTransefer(
+        [FromRoute] int warehouseTranseferId)
+    {
+        var response = await _mediator.Send(new DeleteWarehouseTranseferCommand.Request
+        {
+            WareHouseTranseferId = warehouseTranseferId
         });
 
         if (!response.IsSuccess)

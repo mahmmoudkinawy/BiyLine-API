@@ -7,5 +7,8 @@ public sealed class RateEntity
     public DateTime? RatingDate { get; set; }
 
     public int? ProductId { get; set; }
+
+    public int UserId { get; set; }
+    public UserEntity User { get; set; }
     public ProductEntity? Product { get; set; }
 }

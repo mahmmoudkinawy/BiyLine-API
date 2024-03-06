@@ -18,6 +18,28 @@ public sealed class ProductsController : ControllerBase
             throw new ArgumentNullException(nameof(mediator));
     }
 
+    [HttpPost]
+    [Authorize(Roles =Constants.Roles.Customer)]
+    public async Task<IActionResult> CreateProductRate(
+        [FromForm] CreateProductRateFeature.Request request)
+    {
+        var response= await _mediator.Send(request);
+        return Ok(response);
+    }
+    [Authorize(Roles = Constants.Roles.Customer)]
+    public async Task<IActionResult> UpdateProductRate(
+        [FromForm] UpdateProductRateFeature.Request request)
+    {
+        var response = await _mediator.Send(request);
+        return Ok(response);
+    }
+    [Authorize(Roles = Constants.Roles.Admin)]
+    public async Task<IActionResult> DeleteProductRate(
+        [FromForm] DeleteProductRateFeature.Request request)
+    {
+        var response = await _mediator.Send(request);
+        return Ok(response);
+    }
     [HttpGet("GetProducts")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyList<GetProductsFeature.Response>))]
     public async Task<ActionResult<IReadOnlyList<GetProductsFeature.Response>>> GetProducts(

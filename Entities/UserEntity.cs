@@ -1,4 +1,6 @@
-﻿namespace BiyLineApi.Entities;
+﻿using Microsoft.Identity.Client;
+
+namespace BiyLineApi.Entities;
 public sealed class UserEntity : IdentityUser<int>
 {
     public string? Name { get; set; }
@@ -17,5 +19,7 @@ public sealed class UserEntity : IdentityUser<int>
 
     public ICollection<AddressEntity> Addresses { get; set; } = new List<AddressEntity>();
     public ICollection<CouponUsageEntity> CouponUsages { get; set; } = new List<CouponUsageEntity>();
+
+    public ICollection<UserFavoriteProduct> FavoriteProducts { get; set; }=new List<UserFavoriteProduct>();
 
 }

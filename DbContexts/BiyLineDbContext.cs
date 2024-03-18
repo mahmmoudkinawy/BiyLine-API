@@ -69,6 +69,8 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<ShipmentEntity> Shipments { get; set; }
     public DbSet<ShipmentDetailsEntity> ShipmentDetails { get; set; }
 
+    public DbSet<UserFavoriteProduct> UserFavoriteProducts { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

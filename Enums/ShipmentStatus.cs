@@ -32,7 +32,8 @@
     public enum PaymentStatus
     {
         Paid =1,
-        UnPaid
+        UnPaid,
+        PartialPaid
     }
     public enum WarehouseLogType
     {

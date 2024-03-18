@@ -26,18 +26,16 @@
         public sealed class Handler : IRequestHandler<Request, PagedList<Response>>
         {
             private readonly BiyLineDbContext _context;
-            private readonly IMapper _mapper;
             private readonly IHttpContextAccessor _httpContextAccessor;
 
             public Handler(
                 BiyLineDbContext context,
-                IMapper mapper,
+     
                 IHttpContextAccessor httpContextAccessor)
             {
                 _context = context ??
                     throw new ArgumentNullException(nameof(context));
-                _mapper = mapper ??
-                    throw new ArgumentNullException(nameof(mapper));
+               
                 _httpContextAccessor = httpContextAccessor ??
                     throw new ArgumentNullException(nameof(httpContextAccessor));
             }

@@ -70,7 +70,9 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<PickUpPointEntity> PickUpPoints { get; set; }
     public DbSet<ShipmentEntity> Shipments { get; set; }
     public DbSet<ShipmentDetailsEntity> ShipmentDetails { get; set; }
-
+    public DbSet<VendorEntity> Vendors { get; set; }
+    public DbSet<ReceiptEntity> Receipts { get; set; }
+    public DbSet<ReceiptDetailsEntity> ReceiptDetails { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

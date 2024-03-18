@@ -10,7 +10,7 @@ namespace BiyLineApi.Entities
         public WarehouseEntity Warehouse { get; set; }
 
         public int StoreId { get; set; }
-        public StoreEntity Store { get; set; }
+        public StoreEntity Store { get; set; } 
 
 
         public string? ClientName { get; set; }

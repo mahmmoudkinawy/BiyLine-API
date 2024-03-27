@@ -7,6 +7,7 @@
         Coupon,
         Manual,
         Transefer,
-
+        Receipt,
+        ReturnReceipt,
     }
 }

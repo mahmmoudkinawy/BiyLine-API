@@ -73,6 +73,10 @@ public sealed class BiyLineDbContext : IdentityDbContext<
     public DbSet<VendorEntity> Vendors { get; set; }
     public DbSet<ReceiptEntity> Receipts { get; set; }
     public DbSet<ReceiptDetailsEntity> ReceiptDetails { get; set; }
+    
+    
+    public DbSet<ReturnReceiptEntity> ReturnReceipts { get; set; }
+    public DbSet<ReturnReceiptDetailsEntity> ReturnReceiptDetails { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
